@@ -1,0 +1,11 @@
+{
+  "standard": "NIST AI Risk Management Framework",
+  "version": "1.0",
+  "functions": [
+    {"id": "GOVERN", "name": "Govern", "description": "Cultivate and implement a culture of risk management"},
+    {"id": "MAP", "name": "Map", "description": "Context is recognized and risks related to context are identified"},
+    {"id": "MEASURE", "name": "Measure", "description": "Identified risks are assessed, analyzed, or tracked"},
+    {"id": "MANAGE", "name": "Manage", "description": "Risks are prioritized and acted upon"}
+  ],
+  "note": "Placeholder — will be populated in Session 3"
+}

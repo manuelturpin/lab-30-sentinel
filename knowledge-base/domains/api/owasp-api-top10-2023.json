@@ -1,0 +1,97 @@
+{
+  "standard": "OWASP API Security Top 10 2023",
+  "version": "2023",
+  "mapping": [
+    {
+      "id": "API1:2023",
+      "name": "Broken Object Level Authorization",
+      "description": "APIs expose endpoints that handle object identifiers, creating a wide attack surface for BOLA/IDOR.",
+      "cwes": ["CWE-284", "CWE-285", "CWE-639", "CWE-862"],
+      "sentinel_rules": ["API-BOLA-001"],
+      "prevalence": "CRITICAL",
+      "impact": "HIGH"
+    },
+    {
+      "id": "API2:2023",
+      "name": "Broken Authentication",
+      "description": "Authentication mechanisms are complex and often implemented incorrectly.",
+      "cwes": ["CWE-287", "CWE-306", "CWE-307", "CWE-347", "CWE-384", "CWE-521", "CWE-613"],
+      "sentinel_rules": ["API-AUTH-001", "API-AUTH-002"],
+      "prevalence": "HIGH",
+      "impact": "CRITICAL"
+    },
+    {
+      "id": "API3:2023",
+      "name": "Broken Object Property Level Authorization",
+      "description": "Lack of or improper validation of object property level access.",
+      "cwes": ["CWE-213", "CWE-915"],
+      "sentinel_rules": ["API-PROP-001", "API-PROP-002"],
+      "prevalence": "HIGH",
+      "impact": "HIGH"
+    },
+    {
+      "id": "API4:2023",
+      "name": "Unrestricted Resource Consumption",
+      "description": "API does not restrict size or number of resources that can be requested.",
+      "cwes": ["CWE-770", "CWE-400", "CWE-799"],
+      "sentinel_rules": ["API-RESOURCE-001", "API-RESOURCE-002", "API-RESOURCE-003"],
+      "prevalence": "HIGH",
+      "impact": "MEDIUM"
+    },
+    {
+      "id": "API5:2023",
+      "name": "Broken Function Level Authorization",
+      "description": "Complex access control policies with different hierarchies, groups, and roles.",
+      "cwes": ["CWE-269", "CWE-285"],
+      "sentinel_rules": ["API-FUNC-001"],
+      "prevalence": "MEDIUM",
+      "impact": "HIGH"
+    },
+    {
+      "id": "API6:2023",
+      "name": "Unrestricted Access to Sensitive Business Flows",
+      "description": "APIs vulnerable to automated abuse of business flows.",
+      "cwes": ["CWE-799", "CWE-840"],
+      "sentinel_rules": [],
+      "prevalence": "MEDIUM",
+      "impact": "HIGH",
+      "note": "Requires business logic context to detect"
+    },
+    {
+      "id": "API7:2023",
+      "name": "Server-Side Request Forgery",
+      "description": "API fetches a remote resource without validating the user-supplied URL.",
+      "cwes": ["CWE-918"],
+      "sentinel_rules": ["API-SSRF-001"],
+      "prevalence": "MEDIUM",
+      "impact": "HIGH"
+    },
+    {
+      "id": "API8:2023",
+      "name": "Security Misconfiguration",
+      "description": "Improper configuration of API and supporting infrastructure.",
+      "cwes": ["CWE-209", "CWE-489", "CWE-749", "CWE-942"],
+      "sentinel_rules": ["API-MISCONF-001", "API-MISCONF-002"],
+      "prevalence": "HIGH",
+      "impact": "MEDIUM"
+    },
+    {
+      "id": "API9:2023",
+      "name": "Improper Inventory Management",
+      "description": "APIs tend to expose more endpoints than traditional web applications.",
+      "cwes": [],
+      "sentinel_rules": ["API-INVENTORY-001"],
+      "prevalence": "MEDIUM",
+      "impact": "MEDIUM"
+    },
+    {
+      "id": "API10:2023",
+      "name": "Unsafe Consumption of APIs",
+      "description": "Developers trust data received from third-party APIs more than user input.",
+      "cwes": ["CWE-20", "CWE-73", "CWE-285"],
+      "sentinel_rules": ["API-CONSUMPTION-001"],
+      "prevalence": "MEDIUM",
+      "impact": "HIGH"
+    }
+  ]
+}

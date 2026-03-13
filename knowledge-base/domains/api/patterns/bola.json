@@ -1,0 +1,47 @@
+[
+  {
+    "id": "BOLA-DIRECT-001",
+    "type": "direct-access",
+    "title": "Direct object access by ID without ownership check",
+    "pattern": "findById\\(req\\.params\\.id\\)(?![\\s\\S]{0,100}(userId|user\\.id|owner|author))",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Resource fetched by ID parameter without subsequent ownership verification.",
+    "cwe": "CWE-639",
+    "remediation": "Add WHERE userId = req.user.id to query or check ownership after fetch"
+  },
+  {
+    "id": "BOLA-DIRECT-002",
+    "type": "direct-access",
+    "title": "Prisma findUnique without user filter",
+    "pattern": "findUnique\\(\\{\\s*where:\\s*\\{\\s*id:\\s*req\\.params",
+    "negative_pattern": "userId|user\\.id|AND",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Prisma query fetches record by ID alone without user ownership filter.",
+    "cwe": "CWE-639",
+    "remediation": "Add userId to the where clause: { id: req.params.id, userId: req.user.id }"
+  },
+  {
+    "id": "BOLA-ENUM-001",
+    "type": "enumeration",
+    "title": "Sequential numeric IDs in routes",
+    "pattern": "/:id\\b.*parseInt\\(req\\.params\\.id",
+    "severity": "MEDIUM",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Route uses sequential numeric IDs which are easily enumerable.",
+    "cwe": "CWE-639",
+    "remediation": "Use UUIDs instead of sequential IDs, or ensure authorization on every request"
+  },
+  {
+    "id": "BOLA-LIST-001",
+    "type": "list-exposure",
+    "title": "List endpoint without user filtering",
+    "pattern": "findMany\\(\\{(?![^}]*where.*userId|[^}]*where.*user)",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "List endpoint returns all records without filtering by authenticated user.",
+    "cwe": "CWE-862",
+    "remediation": "Filter list results by authenticated user: where: { userId: req.user.id }"
+  }
+]

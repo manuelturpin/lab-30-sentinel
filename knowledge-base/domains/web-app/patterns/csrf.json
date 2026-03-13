@@ -1,0 +1,48 @@
+[
+  {
+    "id": "CSRF-MISSING-001",
+    "type": "missing-protection",
+    "title": "POST endpoint without CSRF token",
+    "pattern": "(app|router)\\.post\\s*\\(",
+    "negative_pattern": "csrf|csurf|xsrf|csrfToken|lusca",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "State-changing POST endpoint without CSRF protection.",
+    "cwe": "CWE-352",
+    "remediation": "Add CSRF middleware: app.use(csrf({ cookie: { sameSite: 'strict' } }))"
+  },
+  {
+    "id": "CSRF-MISSING-002",
+    "type": "missing-protection",
+    "title": "PUT/DELETE endpoint without CSRF token",
+    "pattern": "(app|router)\\.(put|delete|patch)\\s*\\(",
+    "negative_pattern": "csrf|csurf|xsrf|csrfToken",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "State-changing PUT/DELETE/PATCH endpoint without CSRF protection.",
+    "cwe": "CWE-352",
+    "remediation": "Add CSRF middleware or use SameSite=Strict cookies"
+  },
+  {
+    "id": "CSRF-COOKIE-001",
+    "type": "cookie-misconfiguration",
+    "title": "Session cookie without SameSite attribute",
+    "pattern": "cookie.*\\{(?![^}]*sameSite|[^}]*SameSite)",
+    "severity": "MEDIUM",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Session cookie set without SameSite attribute, relying on browser defaults.",
+    "cwe": "CWE-352",
+    "remediation": "Set SameSite=Strict or SameSite=Lax on session cookies"
+  },
+  {
+    "id": "CSRF-FORM-001",
+    "type": "missing-token",
+    "title": "HTML form without CSRF hidden field",
+    "pattern": "<form[^>]*method=['\"]post['\"][^>]*>(?!.*csrf|.*_token|.*xsrf)",
+    "severity": "MEDIUM",
+    "file_types": ["*.html", "*.ejs", "*.hbs", "*.pug", "*.jsx", "*.tsx"],
+    "description": "HTML form with POST method lacks a CSRF token hidden field.",
+    "cwe": "CWE-352",
+    "remediation": "Add a hidden CSRF token field to all POST forms"
+  }
+]

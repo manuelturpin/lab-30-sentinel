@@ -1,0 +1,17 @@
+{
+  "standard": "OWASP Top 10 Web Application Security Risks 2025",
+  "version": "2025",
+  "categories": [
+    {"id": "A01:2025", "name": "Broken Access Control"},
+    {"id": "A02:2025", "name": "Cryptographic Failures"},
+    {"id": "A03:2025", "name": "Injection"},
+    {"id": "A04:2025", "name": "Insecure Design"},
+    {"id": "A05:2025", "name": "Security Misconfiguration"},
+    {"id": "A06:2025", "name": "Vulnerable and Outdated Components"},
+    {"id": "A07:2025", "name": "Identification and Authentication Failures"},
+    {"id": "A08:2025", "name": "Software and Data Integrity Failures"},
+    {"id": "A09:2025", "name": "Security Logging and Monitoring Failures"},
+    {"id": "A10:2025", "name": "Server-Side Request Forgery (SSRF)"}
+  ],
+  "note": "Category index. Full mapping with CWE and rule references in domains/web-app/owasp-top10-2025.json"
+}

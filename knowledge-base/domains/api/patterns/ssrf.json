@@ -1,0 +1,46 @@
+[
+  {
+    "id": "SSRF-FETCH-001",
+    "type": "server-fetch",
+    "title": "User-supplied URL in fetch()",
+    "pattern": "fetch\\(.*req\\.(body|query)\\.url",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Server fetches a URL provided by the user without validation.",
+    "cwe": "CWE-918",
+    "remediation": "Validate URL against allowlist of approved domains"
+  },
+  {
+    "id": "SSRF-FETCH-002",
+    "type": "server-fetch",
+    "title": "User-supplied URL in axios",
+    "pattern": "axios\\.(get|post|put|delete)\\(.*req\\.(body|query)",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Axios request to user-supplied URL.",
+    "cwe": "CWE-918",
+    "remediation": "Validate and allowlist target URLs"
+  },
+  {
+    "id": "SSRF-REDIRECT-001",
+    "type": "open-redirect",
+    "title": "Open redirect via user-supplied URL",
+    "pattern": "res\\.redirect\\(req\\.(body|query|params)\\.",
+    "severity": "MEDIUM",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Redirect to user-supplied URL without validation.",
+    "cwe": "CWE-601",
+    "remediation": "Validate redirect URL is relative or on same domain"
+  },
+  {
+    "id": "SSRF-METADATA-001",
+    "type": "cloud-metadata",
+    "title": "No blocking of cloud metadata endpoints",
+    "pattern": "169\\.254\\.169\\.254|metadata\\.google|metadata\\.azure",
+    "severity": "INFO",
+    "file_types": ["*.js", "*.ts", "*.py"],
+    "description": "Cloud metadata IP/hostname detected in code. Ensure SSRF protections block access.",
+    "cwe": "CWE-918",
+    "remediation": "Block requests to 169.254.169.254 and cloud metadata endpoints in URL validation"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "standard": "MITRE ATLAS — Adversarial Threat Landscape for AI Systems",
+  "version": "4.0",
+  "techniques": [
+    {"id": "AML.T0043", "name": "Craft Adversarial Data", "tactic": "ML Attack Staging"},
+    {"id": "AML.T0051", "name": "LLM Prompt Injection", "tactic": "Initial Access"},
+    {"id": "AML.T0054", "name": "LLM Jailbreak", "tactic": "Defense Evasion"},
+    {"id": "AML.T0056", "name": "LLM Plugin Compromise", "tactic": "Persistence"},
+    {"id": "AML.T0057", "name": "MCP Tool Poisoning", "tactic": "Execution"}
+  ],
+  "note": "Placeholder — will be populated with full technique tree in Session 3"
+}

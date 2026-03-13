@@ -1,0 +1,489 @@
+[
+  {
+    "id": "WEB-AC-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.1,
+    "category": "web-app",
+    "subcategory": "access-control",
+    "title": "Missing authorization check on route handler",
+    "description": "Route handler processes requests without verifying the user's authorization level. Any authenticated (or unauthenticated) user may access protected resources.",
+    "detect": {
+      "patterns": ["app\\.(get|post|put|patch|delete)\\s*\\([^)]*,\\s*(async\\s+)?\\(req", "router\\.(get|post|put|patch|delete)\\s*\\([^)]*,\\s*(async\\s+)?\\(req"],
+      "negative_patterns": ["isAuthenticated", "requireAuth", "authorize", "checkPermission", "protect", "guard", "middleware.*auth"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build", "test", "__test__"]
+    },
+    "remediation": {
+      "description": "Add authentication and authorization middleware to all route handlers. Use role-based or attribute-based access control.",
+      "code_example": "router.get('/admin/users', requireAuth, requireRole('admin'), async (req, res) => { ... })",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-862", "OWASP-A01:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa", "hono"]
+  },
+  {
+    "id": "WEB-AC-002",
+    "severity": "HIGH",
+    "cvss_v4": 8.2,
+    "category": "web-app",
+    "subcategory": "access-control",
+    "title": "Insecure Direct Object Reference (IDOR)",
+    "description": "Resource accessed by user-supplied ID without verifying ownership. Attacker can enumerate and access other users' resources by changing the ID parameter.",
+    "detect": {
+      "patterns": ["findById\\(req\\.params", "findOne\\(\\{.*id:\\s*req\\.params", "findUnique\\(\\{.*where:\\s*\\{.*id:\\s*req\\.params", "\\.findByPk\\(req\\.params"],
+      "negative_patterns": ["userId.*req\\.user", "where.*userId", "owner", "belongsTo"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Always verify that the authenticated user owns or has permission to access the requested resource. Add ownership checks after fetching the resource.",
+      "code_example": "const resource = await Resource.findById(req.params.id);\nif (resource.userId !== req.user.id) return res.status(403).json({ error: 'Forbidden' });",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-639", "OWASP-A01:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa"]
+  },
+  {
+    "id": "WEB-AC-003",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "web-app",
+    "subcategory": "access-control",
+    "title": "Path traversal in file access",
+    "description": "User-supplied path used in file system operations without sanitization, allowing access to arbitrary files outside the intended directory.",
+    "detect": {
+      "patterns": ["readFile.*req\\.(params|query|body)", "createReadStream.*req\\.", "sendFile.*req\\.", "path\\.join.*req\\.(params|query|body)", "fs\\..*\\(.*req\\."],
+      "negative_patterns": ["path\\.normalize", "path\\.resolve.*__dirname", "sanitize", "whitelist"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Normalize the path and verify it stays within the allowed base directory. Use path.resolve() and check that the resolved path starts with the expected prefix.",
+      "code_example": "const safePath = path.resolve(BASE_DIR, req.params.filename);\nif (!safePath.startsWith(BASE_DIR)) return res.status(400).send('Invalid path');",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-22", "OWASP-A01:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa", "node"]
+  },
+  {
+    "id": "WEB-CRYPTO-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.0,
+    "category": "web-app",
+    "subcategory": "cryptographic-failures",
+    "title": "Hardcoded secret or API key in source code",
+    "description": "Sensitive credentials (API keys, passwords, tokens) are hardcoded in the source code, risking exposure through version control or build artifacts.",
+    "detect": {
+      "patterns": ["(api[_-]?key|apiKey|API_KEY)\\s*[:=]\\s*['\"][A-Za-z0-9_\\-]{16,}['\"]", "(password|passwd|pwd|secret)\\s*[:=]\\s*['\"][^'\"]{8,}['\"]", "sk-[a-zA-Z0-9]{20,}", "AKIA[0-9A-Z]{16}"],
+      "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx", "*.py", "*.rb", "*.go", "*.java", "*.env"],
+      "exclude": ["node_modules", "dist", "build", "*.test.*", "*.spec.*", "*.example"]
+    },
+    "remediation": {
+      "description": "Move all secrets to environment variables. Use a .env file (excluded from version control) or a secrets manager.",
+      "code_example": "const apiKey = process.env.API_KEY;\nif (!apiKey) throw new Error('API_KEY environment variable is required');",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-798", "OWASP-A02:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "WEB-CRYPTO-002",
+    "severity": "HIGH",
+    "cvss_v4": 7.4,
+    "category": "web-app",
+    "subcategory": "cryptographic-failures",
+    "title": "Insecure cookie configuration",
+    "description": "Session cookies set without HttpOnly, Secure, or SameSite flags, making them vulnerable to XSS theft or CSRF attacks.",
+    "detect": {
+      "patterns": ["res\\.cookie\\((?![^)]*httpOnly)", "cookie\\s*:\\s*\\{(?![^}]*httpOnly)", "session\\(\\{(?![^}]*cookie.*secure)"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Set HttpOnly, Secure, and SameSite flags on all session cookies.",
+      "code_example": "res.cookie('session', token, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 3600000 });",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-614", "CWE-1004", "OWASP-A02:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa"]
+  },
+  {
+    "id": "WEB-CRYPTO-003",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "web-app",
+    "subcategory": "cryptographic-failures",
+    "title": "Weak password hashing algorithm",
+    "description": "Passwords hashed with MD5, SHA1, or SHA256 without proper salting.",
+    "detect": {
+      "patterns": ["createHash\\(['\"]md5['\"]\\)", "createHash\\(['\"]sha1['\"]\\)", "createHash\\(['\"]sha256['\"]\\).*password", "hashlib\\.md5", "hashlib\\.sha1"],
+      "negative_patterns": ["bcrypt", "argon2", "scrypt", "pbkdf2"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb", "*.go", "*.java"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Use bcrypt, argon2, or scrypt for password hashing.",
+      "code_example": "import bcrypt from 'bcrypt';\nconst hash = await bcrypt.hash(password, 12);",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-328", "CWE-916", "OWASP-A02:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "WEB-INJ-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.6,
+    "category": "web-app",
+    "subcategory": "xss",
+    "title": "DOM-based XSS via innerHTML",
+    "description": "User input directly inserted into DOM via innerHTML without sanitization, allowing script execution.",
+    "detect": {
+      "patterns": ["innerHTML\\s*=\\s*(?!.*DOMPurify)", "innerHTML\\s*\\+=", "outerHTML\\s*="],
+      "negative_patterns": ["textContent", "innerText", "DOMPurify", "sanitize", "escape"],
+      "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx", "*.vue", "*.svelte"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Use textContent instead of innerHTML. If HTML is required, sanitize with DOMPurify.",
+      "code_example": "import DOMPurify from 'dompurify';\nelement.innerHTML = DOMPurify.sanitize(userInput);",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-79", "OWASP-A03:2025"],
+    "ai_specific": false,
+    "frameworks": ["vanilla-js", "jquery"]
+  },
+  {
+    "id": "WEB-INJ-002",
+    "severity": "HIGH",
+    "cvss_v4": 8.6,
+    "category": "web-app",
+    "subcategory": "xss",
+    "title": "React unsafe HTML rendering prop",
+    "description": "React component uses the dangerous HTML rendering prop, bypassing React's built-in XSS protection.",
+    "detect": {
+      "patterns": ["dangerously[Ss]et[Ii]nner[Hh][Tt][Mm][Ll]"],
+      "negative_patterns": ["DOMPurify", "sanitize", "xss-filters"],
+      "file_types": ["*.jsx", "*.tsx"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Avoid React's dangerous HTML prop. If necessary, sanitize the HTML with DOMPurify before passing it.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-79", "OWASP-A03:2025"],
+    "ai_specific": false,
+    "frameworks": ["react", "nextjs"]
+  },
+  {
+    "id": "WEB-INJ-003",
+    "severity": "HIGH",
+    "cvss_v4": 8.6,
+    "category": "web-app",
+    "subcategory": "xss",
+    "title": "Vue v-html directive with unsanitized content",
+    "description": "Vue's v-html directive renders raw HTML, bypassing automatic escaping.",
+    "detect": {
+      "patterns": ["v-html"],
+      "negative_patterns": ["DOMPurify", "sanitize", "xss"],
+      "file_types": ["*.vue"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Use v-text or {{ }} interpolation instead of v-html. If HTML rendering is required, sanitize with DOMPurify.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-79", "OWASP-A03:2025"],
+    "ai_specific": false,
+    "frameworks": ["vue", "nuxt"]
+  },
+  {
+    "id": "WEB-INJ-004",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.4,
+    "category": "web-app",
+    "subcategory": "sqli",
+    "title": "SQL injection via string concatenation",
+    "description": "SQL query built with string concatenation using user input, allowing injection of arbitrary SQL.",
+    "detect": {
+      "patterns": ["\\.query\\s*\\(\\s*[`'\"].*\\$\\{", "\\.query\\s*\\(\\s*['\"].*\\+\\s*req\\.", "execute\\s*\\(\\s*[`'\"].*\\$\\{.*req\\.", "\\.raw\\s*\\(\\s*[`'\"].*\\$\\{"],
+      "negative_patterns": ["\\$1", "\\?", "prepared", "parameterized", "escape"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Use parameterized queries or an ORM. Never concatenate user input into SQL strings.",
+      "code_example": "const result = await db.query('SELECT * FROM users WHERE id = $1', [req.params.id]);",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-89", "OWASP-A03:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa", "node"]
+  },
+  {
+    "id": "WEB-INJ-005",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.4,
+    "category": "web-app",
+    "subcategory": "command-injection",
+    "title": "OS command injection via user input",
+    "description": "User-controlled data passed to shell execution functions without sanitization.",
+    "detect": {
+      "patterns": ["exec\\s*\\(.*req\\.(body|query|params)", "execSync\\s*\\(.*req\\.", "spawn\\s*\\(.*req\\.", "child_process.*req\\.", "os\\.system\\(.*request", "subprocess\\..*\\(.*request"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Avoid passing user input to shell commands. Use execFile/spawn with arguments array (no shell interpretation).",
+      "code_example": "import { execFile } from 'child_process';\nexecFile('convert', ['-resize', '100x100', validatedFilePath], callback);",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-78", "OWASP-A03:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "WEB-INJ-006",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "web-app",
+    "subcategory": "injection",
+    "title": "Dynamic code execution vulnerability",
+    "description": "Dynamic code evaluation function used with potentially user-controlled input, allowing arbitrary code execution.",
+    "detect": {
+      "patterns": ["\\beval\\b\\s*\\((?!.*JSON\\.parse)", "setTimeout\\s*\\(\\s*['\"]", "setInterval\\s*\\(\\s*['\"]"],
+      "negative_patterns": ["JSON\\.parse", "strict mode"],
+      "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx"],
+      "exclude": ["node_modules", "dist", "build", "*.config.*"]
+    },
+    "remediation": {
+      "description": "Replace dynamic code evaluation with safe alternatives. Use JSON.parse() for JSON data.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-94", "OWASP-A03:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "WEB-INJ-007",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "web-app",
+    "subcategory": "csrf",
+    "title": "Missing CSRF protection on state-changing endpoint",
+    "description": "POST/PUT/DELETE endpoint lacks CSRF token validation.",
+    "detect": {
+      "patterns": ["app\\.post\\(", "app\\.put\\(", "app\\.delete\\(", "router\\.post\\(", "router\\.put\\(", "router\\.delete\\("],
+      "negative_patterns": ["csrf", "csrfToken", "csurf", "xsrf", "_csrf", "lusca"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build", "*.test.*"]
+    },
+    "remediation": {
+      "description": "Implement CSRF protection using tokens or SameSite cookies. For APIs using Bearer tokens, CSRF is typically not needed.",
+      "code_example": "import csrf from 'csurf';\napp.use(csrf({ cookie: { sameSite: 'strict', httpOnly: true } }));",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-352", "OWASP-A03:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa"]
+  },
+  {
+    "id": "WEB-DESIGN-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "web-app",
+    "subcategory": "insecure-design",
+    "title": "Missing rate limiting on authentication endpoint",
+    "description": "Login endpoint has no rate limiting, enabling brute-force attacks.",
+    "detect": {
+      "patterns": ["(login|signin|authenticate|auth).*post", "passport\\.authenticate"],
+      "negative_patterns": ["rateLimit", "rate-limit", "limiter", "throttle", "brute", "slowDown"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Add rate limiting to authentication endpoints.",
+      "code_example": "import rateLimit from 'express-rate-limit';\nconst loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5 });\napp.post('/login', loginLimiter, loginHandler);",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-307", "OWASP-A04:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa"]
+  },
+  {
+    "id": "WEB-MISCONF-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "web-app",
+    "subcategory": "misconfiguration",
+    "title": "Missing Content-Security-Policy header",
+    "description": "Application does not set a CSP header.",
+    "detect": {
+      "patterns": ["app\\.listen", "server\\.listen", "createServer"],
+      "negative_patterns": ["Content-Security-Policy", "contentSecurityPolicy", "helmet", "csp"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Set a Content-Security-Policy header. Use helmet.js for Express apps.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-693", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa", "node"]
+  },
+  {
+    "id": "WEB-MISCONF-002",
+    "severity": "LOW",
+    "cvss_v4": 3.7,
+    "category": "web-app",
+    "subcategory": "misconfiguration",
+    "title": "Debug mode enabled in production configuration",
+    "description": "Application configured with debug mode in production.",
+    "detect": {
+      "patterns": ["DEBUG\\s*[:=]\\s*true", "debug\\s*:\\s*true", "NODE_ENV.*development(?!.*test)"],
+      "file_types": ["*.js", "*.ts", "*.json", "*.env.production", "*.yaml", "*.yml"],
+      "exclude": ["node_modules", "dist", "build", "*.test.*", ".env.development", ".env.local"]
+    },
+    "remediation": {
+      "description": "Ensure debug mode is disabled in production.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-489", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "WEB-MISCONF-003",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "web-app",
+    "subcategory": "misconfiguration",
+    "title": "Permissive CORS configuration",
+    "description": "CORS configured with wildcard origin or reflects request origin without validation.",
+    "detect": {
+      "patterns": ["origin:\\s*true", "origin:\\s*['\"]\\*['\"]", "Access-Control-Allow-Origin.*\\*", "cors\\(\\)\\s*(?!\\{)"],
+      "file_types": ["*.js", "*.ts", "*.mjs", "*.conf"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Configure CORS with a specific allowlist of trusted origins.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/CORS_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-942", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa"]
+  },
+  {
+    "id": "WEB-AUTH-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "web-app",
+    "subcategory": "authentication",
+    "title": "JWT token stored in localStorage",
+    "description": "JWT stored in localStorage, accessible to any JavaScript and vulnerable to XSS-based theft.",
+    "detect": {
+      "patterns": ["localStorage\\.setItem.*token", "localStorage\\.setItem.*jwt", "localStorage\\.setItem.*auth"],
+      "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Store tokens in HttpOnly cookies instead of localStorage.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-922", "OWASP-A07:2025"],
+    "ai_specific": false,
+    "frameworks": ["react", "vue", "angular", "svelte"]
+  },
+  {
+    "id": "WEB-AUTH-002",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "web-app",
+    "subcategory": "authentication",
+    "title": "JWT without expiration or with excessive TTL",
+    "description": "JWT tokens issued without expiration claim or with excessively long TTL.",
+    "detect": {
+      "patterns": ["jwt\\.sign\\((?![^)]*expiresIn)", "jwt\\.sign.*expiresIn.*['\"]\\d{2,}d['\"]"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Always set an expiration on JWT tokens. Use short-lived access tokens (15-60 minutes).",
+      "code_example": "const token = jwt.sign(payload, secret, { expiresIn: '15m' });",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-613", "OWASP-A07:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "node"]
+  },
+  {
+    "id": "WEB-INTEGRITY-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.5,
+    "category": "web-app",
+    "subcategory": "integrity",
+    "title": "Insecure deserialization of user input",
+    "description": "User input deserialized without validation, potentially allowing object injection or prototype pollution.",
+    "detect": {
+      "patterns": ["JSON\\.parse\\(req\\.", "deserialize\\(req\\.", "pickle\\.loads", "yaml\\.load\\((?!.*SafeLoader)", "Marshal\\.load"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Validate all deserialized data against expected schemas.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-502", "OWASP-A08:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "WEB-LOG-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 4.5,
+    "category": "web-app",
+    "subcategory": "logging",
+    "title": "Sensitive data in log output",
+    "description": "Passwords, tokens, or sensitive data logged to console or files.",
+    "detect": {
+      "patterns": ["console\\.log.*password", "console\\.log.*token", "console\\.log.*secret", "logger\\.(info|debug).*password"],
+      "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Never log sensitive data. Use structured logging with field-level redaction.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-532", "OWASP-A09:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "WEB-SSRF-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.6,
+    "category": "web-app",
+    "subcategory": "ssrf",
+    "title": "Server-Side Request Forgery via user-controlled URL",
+    "description": "Server makes HTTP requests to a user-supplied URL without validation.",
+    "detect": {
+      "patterns": ["fetch\\(req\\.(body|query|params)", "axios\\.(get|post)\\(req\\.", "http\\.request\\(.*req\\.", "requests\\.(get|post)\\(.*request\\."],
+      "negative_patterns": ["allowlist", "whitelist", "validateUrl", "isAllowedUrl"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb", "*.go"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Validate and allowlist URLs before making server-side requests. Block private/internal IP ranges.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-918", "OWASP-A10:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "MASS-ASSIGN-001",
+    "type": "mass-assignment",
+    "title": "Direct request body spread into create/update",
+    "pattern": "\\{\\s*\\.\\.\\.req\\.body\\s*\\}|create\\(req\\.body\\)|update\\(req\\.body\\)|Object\\.assign\\(.*req\\.body",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Entire request body passed to data modification without field filtering.",
+    "cwe": "CWE-915",
+    "remediation": "Destructure only allowed fields: const { name, email } = req.body"
+  },
+  {
+    "id": "MASS-ASSIGN-002",
+    "type": "mass-assignment",
+    "title": "Django model create with unfiltered request.data",
+    "pattern": "serializer\\.save\\(\\)|ModelSerializer.*class Meta.*fields.*=.*'__all__'",
+    "severity": "HIGH",
+    "file_types": ["*.py"],
+    "description": "Django REST serializer with __all__ fields exposes all model fields to modification.",
+    "cwe": "CWE-915",
+    "remediation": "Explicitly list allowed fields in serializer Meta.fields"
+  },
+  {
+    "id": "MASS-ASSIGN-003",
+    "type": "mass-assignment",
+    "title": "Rails strong parameters bypass",
+    "pattern": "params\\.permit!|params\\[.*\\](?!\\.permit)",
+    "severity": "HIGH",
+    "file_types": ["*.rb"],
+    "description": "Rails controller bypasses strong parameters or uses params without permit.",
+    "cwe": "CWE-915",
+    "remediation": "Always use params.require(:model).permit(:field1, :field2)"
+  }
+]

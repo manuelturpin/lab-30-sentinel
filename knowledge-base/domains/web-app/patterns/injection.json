@@ -1,0 +1,101 @@
+[
+  {
+    "id": "INJ-CMD-001",
+    "type": "command-injection",
+    "title": "Shell exec with user input",
+    "pattern": "exec\\s*\\(.*req\\.(body|query|params)",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "child_process exec with user-controlled input enables shell command injection.",
+    "cwe": "CWE-78",
+    "remediation": "Use execFile() with argument array instead"
+  },
+  {
+    "id": "INJ-CMD-002",
+    "type": "command-injection",
+    "title": "spawn with shell option enabled",
+    "pattern": "spawn\\s*\\([^)]*\\{[^}]*shell\\s*:\\s*true",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "spawn() with shell:true re-enables shell interpretation.",
+    "cwe": "CWE-78",
+    "remediation": "Remove shell:true option from spawn()"
+  },
+  {
+    "id": "INJ-CMD-003",
+    "type": "command-injection",
+    "title": "Python os.system/subprocess with user input",
+    "pattern": "os\\.system\\(.*request|subprocess\\.(call|run|Popen)\\(.*request|subprocess\\..*shell\\s*=\\s*True",
+    "severity": "CRITICAL",
+    "file_types": ["*.py"],
+    "description": "Shell command execution with user-controlled input.",
+    "cwe": "CWE-78",
+    "remediation": "Use subprocess.run() with argument list and shell=False"
+  },
+  {
+    "id": "INJ-TEMPLATE-001",
+    "type": "template-injection",
+    "title": "Server-side template injection (SSTI)",
+    "pattern": "render_template_string\\(.*request|Template\\(.*request|Jinja2.*from_string",
+    "severity": "CRITICAL",
+    "file_types": ["*.py"],
+    "description": "User input rendered as a server-side template.",
+    "cwe": "CWE-94",
+    "remediation": "Never render user input as template. Use pre-compiled templates."
+  },
+  {
+    "id": "INJ-LDAP-001",
+    "type": "ldap-injection",
+    "title": "LDAP query with unsanitized input",
+    "pattern": "ldap\\.(search|bind).*req\\.(body|query|params)",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.py"],
+    "description": "LDAP query with unescaped user input.",
+    "cwe": "CWE-90",
+    "remediation": "Escape LDAP special characters"
+  },
+  {
+    "id": "INJ-XPATH-001",
+    "type": "xpath-injection",
+    "title": "XPath query with unsanitized input",
+    "pattern": "xpath\\(.*req\\.|selectNodes.*req\\.",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.py", "*.java"],
+    "description": "XPath query built with unescaped user input.",
+    "cwe": "CWE-643",
+    "remediation": "Use parameterized XPath queries"
+  },
+  {
+    "id": "INJ-HEADER-001",
+    "type": "header-injection",
+    "title": "HTTP response header injection",
+    "pattern": "res\\.set(Header)?\\(.*req\\.(body|query|params)",
+    "severity": "MEDIUM",
+    "file_types": ["*.js", "*.ts"],
+    "description": "User input directly set as HTTP response header.",
+    "cwe": "CWE-113",
+    "remediation": "Validate and sanitize before setting headers"
+  },
+  {
+    "id": "INJ-SSRF-001",
+    "type": "ssrf",
+    "title": "Fetch with user-controlled URL",
+    "pattern": "fetch\\(req\\.(body|query|params)|axios\\.(get|post)\\(req\\.(body|query)",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Server-side HTTP request to user-supplied URL.",
+    "cwe": "CWE-918",
+    "remediation": "Validate URLs against allowlist, block internal IPs"
+  },
+  {
+    "id": "INJ-PROTOTYPE-001",
+    "type": "prototype-pollution",
+    "title": "Prototype pollution via deep merge",
+    "pattern": "Object\\.assign\\(\\{\\}.*req\\.body|merge\\(.*req\\.body|deepMerge.*req\\.body",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Deep merge of user input may allow __proto__ pollution.",
+    "cwe": "CWE-1321",
+    "remediation": "Filter __proto__, constructor, prototype keys from input"
+  }
+]

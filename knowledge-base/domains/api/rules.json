@@ -1,0 +1,320 @@
+[
+  {
+    "id": "API-BOLA-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.1,
+    "category": "api",
+    "subcategory": "bola",
+    "title": "Broken Object Level Authorization — resource accessed without ownership check",
+    "description": "API endpoint retrieves or modifies a resource by ID from request parameters without verifying that the authenticated user owns or has permission to access it. This is the #1 API vulnerability (BOLA/IDOR).",
+    "detect": {
+      "patterns": ["findById\\(req\\.params\\.", "findOne\\(\\{.*id:\\s*req\\.params", "findUnique.*where.*id.*req\\.params", "findByPk\\(req\\.params", "get.*/:id.*findById", "Model\\.objects\\.get\\(pk="],
+      "negative_patterns": ["req\\.user\\.id", "userId.*req\\.user", "author.*req\\.user", "owner.*req\\.user", "belongsTo", "checkOwnership", "authorize"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb", "*.go"],
+      "exclude": ["node_modules", "dist", "build", "test"]
+    },
+    "remediation": {
+      "description": "Always verify resource ownership after fetching. Add a WHERE clause that includes the authenticated user's ID, or check ownership before returning the resource.",
+      "code_example": "// Good: ownership check in query\nconst item = await prisma.item.findFirst({\n  where: { id: req.params.id, userId: req.user.id }\n});\nif (!item) return res.status(404).json({ error: 'Not found' });",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/"]
+    },
+    "standards": ["CWE-639", "CWE-862", "OWASP-API1:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "rails", "fastapi"]
+  },
+  {
+    "id": "API-AUTH-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.0,
+    "category": "api",
+    "subcategory": "authentication",
+    "title": "Missing authentication on sensitive API endpoint",
+    "description": "API endpoint handling sensitive data or actions does not require authentication, allowing unauthenticated access.",
+    "detect": {
+      "patterns": ["router\\.(get|post|put|patch|delete)\\s*\\(['\"]/(admin|user|account|settings|profile|payment|billing)", "app\\.(get|post|put|patch|delete)\\s*\\(['\"]/(admin|user|account)"],
+      "negative_patterns": ["requireAuth", "isAuthenticated", "authenticate", "protect", "guard", "jwt", "bearer", "passport", "@login_required", "before_action.*authenticate"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build", "test"]
+    },
+    "remediation": {
+      "description": "Apply authentication middleware to all sensitive endpoints. Use a default-deny approach: require authentication everywhere, then explicitly mark public routes.",
+      "code_example": "// Default: all routes require auth\napp.use(requireAuth);\n\n// Explicitly public routes\napp.post('/auth/login', loginHandler);\napp.post('/auth/register', registerHandler);",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/"]
+    },
+    "standards": ["CWE-306", "CWE-287", "OWASP-API2:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "rails", "fastapi"]
+  },
+  {
+    "id": "API-AUTH-002",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "api",
+    "subcategory": "authentication",
+    "title": "JWT signature not properly verified",
+    "description": "JWT token accepted without proper signature verification, or using algorithm confusion (e.g., accepting 'none' algorithm).",
+    "detect": {
+      "patterns": ["jwt\\.decode\\((?!.*verify)", "jwt\\.decode.*verify.*false", "algorithms.*none", "jwt\\.verify.*\\{\\s*\\}"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Always use jwt.verify() with explicit algorithm specification. Never accept the 'none' algorithm. Validate issuer and audience claims.",
+      "code_example": "const payload = jwt.verify(token, publicKey, {\n  algorithms: ['RS256'],\n  issuer: 'https://auth.example.com',\n  audience: 'https://api.example.com'\n});",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/"]
+    },
+    "standards": ["CWE-347", "OWASP-API2:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "node"]
+  },
+  {
+    "id": "API-PROP-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "api",
+    "subcategory": "property-authorization",
+    "title": "Mass assignment vulnerability — unfiltered request body",
+    "description": "API endpoint directly passes the request body to create/update operations without filtering, allowing attackers to set privileged fields (e.g., role, isAdmin, price).",
+    "detect": {
+      "patterns": ["create\\(req\\.body\\)", "update\\(req\\.body\\)", "\\{\\s*\\.\\.\\.req\\.body\\s*\\}", "Object\\.assign\\(.*req\\.body", "Model\\.create\\(request\\.data\\)", "serializer\\.save\\(\\)"],
+      "negative_patterns": ["pick\\(", "omit\\(", "allowedFields", "sanitize", "validate.*schema"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Explicitly pick allowed fields from the request body. Never pass the entire request body to create/update operations.",
+      "code_example": "const { name, email, bio } = req.body; // Only allowed fields\nconst user = await prisma.user.update({\n  where: { id: req.user.id },\n  data: { name, email, bio } // role, isAdmin excluded\n});",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/"]
+    },
+    "standards": ["CWE-915", "OWASP-API3:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "rails"]
+  },
+  {
+    "id": "API-PROP-002",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.5,
+    "category": "api",
+    "subcategory": "property-authorization",
+    "title": "Excessive data exposure in API response",
+    "description": "API endpoint returns full database objects including sensitive fields (passwords, tokens, internal IDs) that the client doesn't need.",
+    "detect": {
+      "patterns": ["res\\.json\\(user\\)", "res\\.json\\(await.*find", "return.*serialize.*all", "res\\.send\\(result\\)"],
+      "negative_patterns": ["select\\(", "exclude\\(", "toJSON", "pick\\(", "omit\\(", "serializer", "dto"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Use DTOs or select specific fields in queries. Never return raw database objects. Strip sensitive fields before responding.",
+      "code_example": "const user = await prisma.user.findUnique({\n  where: { id: req.params.id },\n  select: { id: true, name: true, email: true, avatar: true }\n});\nres.json(user);",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/"]
+    },
+    "standards": ["CWE-213", "OWASP-API3:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "rails", "fastapi"]
+  },
+  {
+    "id": "API-RESOURCE-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "api",
+    "subcategory": "resource-consumption",
+    "title": "Missing rate limiting on API endpoint",
+    "description": "API endpoint has no rate limiting, allowing unlimited requests that can lead to DoS, brute-force attacks, or excessive resource consumption.",
+    "detect": {
+      "patterns": ["app\\.use\\(.*router", "app\\.(get|post|put|patch|delete)"],
+      "negative_patterns": ["rateLimit", "rate-limit", "throttle", "limiter", "slowDown", "express-rate-limit"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Apply rate limiting to all API endpoints. Use different limits for different endpoint types (auth: strict, read: moderate, write: moderate).",
+      "code_example": "import rateLimit from 'express-rate-limit';\n\nconst apiLimiter = rateLimit({\n  windowMs: 15 * 60 * 1000,\n  max: 100,\n  standardHeaders: true,\n  legacyHeaders: false\n});\napp.use('/api/', apiLimiter);",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/"]
+    },
+    "standards": ["CWE-770", "OWASP-API4:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa"]
+  },
+  {
+    "id": "API-RESOURCE-002",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "api",
+    "subcategory": "resource-consumption",
+    "title": "Missing pagination limit on list endpoint",
+    "description": "API list endpoint returns unbounded results or accepts arbitrarily large page sizes, enabling resource exhaustion attacks.",
+    "detect": {
+      "patterns": ["findMany\\(\\{(?![^}]*take)", "find\\(\\{(?![^}]*limit)", "\\.find\\(\\)(?!\\.limit)", "\\.all\\(\\)"],
+      "negative_patterns": ["take:", "limit:", "\\.limit\\(", "pageSize.*Math\\.min", "maxLimit"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Always enforce maximum page size limits. Set sensible defaults and cap user-requested page sizes.",
+      "code_example": "const MAX_PAGE_SIZE = 100;\nconst pageSize = Math.min(parseInt(req.query.limit) || 20, MAX_PAGE_SIZE);\nconst items = await prisma.item.findMany({\n  take: pageSize,\n  skip: (page - 1) * pageSize\n});",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/"]
+    },
+    "standards": ["CWE-770", "OWASP-API4:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "rails", "fastapi"]
+  },
+  {
+    "id": "API-RESOURCE-003",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.5,
+    "category": "api",
+    "subcategory": "resource-consumption",
+    "title": "GraphQL query without depth/complexity limits",
+    "description": "GraphQL API accepts queries without depth or complexity limits, allowing deeply nested queries that can cause exponential resource consumption.",
+    "detect": {
+      "patterns": ["ApolloServer", "createYoga", "graphqlHTTP", "new.*GraphQLSchema"],
+      "negative_patterns": ["depthLimit", "costAnalysis", "queryComplexity", "maxDepth", "validationRules"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Add query depth limiting and complexity analysis. Limit maximum query depth to 5-10 levels and set a complexity budget per query.",
+      "code_example": "import depthLimit from 'graphql-depth-limit';\nimport { createComplexityLimitRule } from 'graphql-validation-complexity';\n\nnew ApolloServer({\n  validationRules: [\n    depthLimit(5),\n    createComplexityLimitRule(1000)\n  ]\n});",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/"]
+    },
+    "standards": ["CWE-770", "OWASP-API4:2023"],
+    "ai_specific": false,
+    "frameworks": ["apollo", "yoga", "graphql"]
+  },
+  {
+    "id": "API-FUNC-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "api",
+    "subcategory": "function-authorization",
+    "title": "Admin endpoint without role verification",
+    "description": "Administrative API endpoint lacks role-based access control, potentially allowing regular users to access admin functionality.",
+    "detect": {
+      "patterns": ["router\\.(get|post|put|patch|delete)\\s*\\(['\"].*admin", "app\\.(get|post|put|patch|delete)\\s*\\(['\"].*admin", "@api_view.*admin"],
+      "negative_patterns": ["requireRole.*admin", "isAdmin", "role.*admin", "checkRole", "authorize.*admin", "permission.*admin"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Implement role-based access control (RBAC) middleware. Apply admin role checks to all administrative endpoints.",
+      "code_example": "const requireAdmin = (req, res, next) => {\n  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });\n  next();\n};\nrouter.delete('/admin/users/:id', requireAuth, requireAdmin, deleteUser);",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa5-broken-function-level-authorization/"]
+    },
+    "standards": ["CWE-269", "OWASP-API5:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "rails"]
+  },
+  {
+    "id": "API-SSRF-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.6,
+    "category": "api",
+    "subcategory": "ssrf",
+    "title": "API endpoint fetches user-supplied URL",
+    "description": "API endpoint makes server-side HTTP requests to a URL provided in the request, enabling SSRF attacks against internal services or cloud metadata endpoints.",
+    "detect": {
+      "patterns": ["fetch\\(req\\.(body|query)\\.url", "axios\\.(get|post)\\(req\\.(body|query)\\.url", "httpClient.*req\\.(body|query)\\.url", "requests\\.get\\(.*request\\.(data|args)"],
+      "negative_patterns": ["allowedUrls", "validateUrl", "isAllowed", "urlWhitelist", "allowlist"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb", "*.go"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Validate URLs against an allowlist of domains. Block private/internal IP ranges. Use DNS resolution checks to prevent DNS rebinding.",
+      "code_example": "const ALLOWED_DOMAINS = ['api.example.com', 'cdn.example.com'];\n\nfunction validateUrl(url) {\n  const parsed = new URL(url);\n  if (!ALLOWED_DOMAINS.includes(parsed.hostname)) throw new Error('Domain not allowed');\n  if (parsed.protocol !== 'https:') throw new Error('HTTPS required');\n  return parsed.toString();\n}",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/"]
+    },
+    "standards": ["CWE-918", "OWASP-API7:2023"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "API-MISCONF-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "api",
+    "subcategory": "misconfiguration",
+    "title": "Verbose error responses exposing stack traces",
+    "description": "API returns detailed error messages including stack traces, database queries, or internal paths in production, providing valuable information to attackers.",
+    "detect": {
+      "patterns": ["res\\.status\\(500\\)\\.json\\(\\{.*err\\.(message|stack)", "res\\.send\\(err\\)", "res\\.json\\(err\\)", "traceback\\.format_exc", "raise.*detail=str\\(e\\)"],
+      "negative_patterns": ["NODE_ENV.*production", "process\\.env.*production"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Return generic error messages in production. Log detailed errors server-side but never expose them to clients.",
+      "code_example": "app.use((err, req, res, next) => {\n  console.error(err.stack); // Log internally\n  res.status(500).json({\n    error: 'Internal server error',\n    requestId: req.id // For support reference\n  });\n});",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/"]
+    },
+    "standards": ["CWE-209", "OWASP-API8:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "rails", "fastapi"]
+  },
+  {
+    "id": "API-MISCONF-002",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "api",
+    "subcategory": "misconfiguration",
+    "title": "API allows unnecessary HTTP methods",
+    "description": "API endpoint responds to HTTP methods it shouldn't (e.g., GET endpoint also accepts DELETE), increasing attack surface.",
+    "detect": {
+      "patterns": ["app\\.all\\(", "router\\.all\\(", "app\\.use\\(['\"]/(api|v[0-9])"],
+      "negative_patterns": ["methodNotAllowed", "allowedMethods"],
+      "file_types": ["*.js", "*.ts", "*.mjs"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Use specific HTTP method handlers instead of app.all(). Return 405 Method Not Allowed for unsupported methods.",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/"]
+    },
+    "standards": ["CWE-749", "OWASP-API8:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "koa"]
+  },
+  {
+    "id": "API-INVENTORY-001",
+    "severity": "LOW",
+    "cvss_v4": 3.7,
+    "category": "api",
+    "subcategory": "inventory",
+    "title": "Deprecated API version still accessible",
+    "description": "Old API versions remain accessible without deprecation headers or shutdown dates, increasing maintenance burden and attack surface.",
+    "detect": {
+      "patterns": ["/v1/", "/api/v1", "version.*deprecated", "@deprecated"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Set deprecation headers and sunset dates for old API versions. Redirect or return 410 Gone for fully deprecated endpoints.",
+      "code_example": "// Deprecation header for old version\napp.use('/api/v1', (req, res, next) => {\n  res.set('Deprecation', 'true');\n  res.set('Sunset', 'Sat, 01 Jun 2026 00:00:00 GMT');\n  res.set('Link', '</api/v2>; rel=\"successor-version\"');\n  next();\n});",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa9-improper-inventory-management/"]
+    },
+    "standards": ["OWASP-API9:2023"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "API-CONSUMPTION-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.5,
+    "category": "api",
+    "subcategory": "unsafe-consumption",
+    "title": "Third-party API response used without validation",
+    "description": "Data received from external/third-party APIs used directly without validation or sanitization, creating injection vectors via untrusted external data.",
+    "detect": {
+      "patterns": ["await fetch\\(['\"]https://.*\\.then.*\\.json\\(\\)\\s*(?!.*validate)", "axios\\.get\\(['\"]https://.*\\.data(?!.*schema)", "response\\.json\\(\\).*(?!.*validate|.*schema|.*zod|.*yup)"],
+      "file_types": ["*.js", "*.ts", "*.py"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Validate all data received from third-party APIs against expected schemas. Treat external API data as untrusted input.",
+      "code_example": "import { z } from 'zod';\n\nconst ExternalDataSchema = z.object({\n  id: z.string(),\n  name: z.string().max(255),\n  status: z.enum(['active', 'inactive'])\n});\n\nconst response = await fetch('https://api.external.com/data');\nconst rawData = await response.json();\nconst data = ExternalDataSchema.parse(rawData);",
+      "references": ["https://owasp.org/API-Security/editions/2023/en/0xa10-unsafe-consumption-of-apis/"]
+    },
+    "standards": ["CWE-20", "OWASP-API10:2023"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  }
+]

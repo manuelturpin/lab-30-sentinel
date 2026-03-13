@@ -1,0 +1,90 @@
+[
+  {
+    "id": "XSS-DOM-001",
+    "type": "dom-based",
+    "title": "innerHTML assignment",
+    "pattern": "innerHTML\\s*=",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx", "*.vue", "*.svelte"],
+    "description": "Direct innerHTML assignment can execute injected scripts.",
+    "cwe": "CWE-79",
+    "remediation": "Use textContent or DOMPurify.sanitize()"
+  },
+  {
+    "id": "XSS-DOM-002",
+    "type": "dom-based",
+    "title": "outerHTML assignment",
+    "pattern": "outerHTML\\s*=",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "outerHTML assignment replaces element with unescaped HTML.",
+    "cwe": "CWE-79",
+    "remediation": "Use safe DOM APIs"
+  },
+  {
+    "id": "XSS-DOM-003",
+    "type": "dom-based",
+    "title": "document.write usage",
+    "pattern": "document\\.write\\s*\\(",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.html"],
+    "description": "document.write injects raw HTML into the document.",
+    "cwe": "CWE-79",
+    "remediation": "Use DOM API methods instead"
+  },
+  {
+    "id": "XSS-REACT-001",
+    "type": "framework",
+    "title": "React dangerous HTML prop",
+    "pattern": "dangerously[Ss]et[Ii]nner[Hh][Tt][Mm][Ll]",
+    "severity": "HIGH",
+    "file_types": ["*.jsx", "*.tsx"],
+    "description": "Bypasses React XSS protection by rendering raw HTML.",
+    "cwe": "CWE-79",
+    "remediation": "Sanitize with DOMPurify before using"
+  },
+  {
+    "id": "XSS-VUE-001",
+    "type": "framework",
+    "title": "Vue v-html directive",
+    "pattern": "v-html",
+    "severity": "HIGH",
+    "file_types": ["*.vue"],
+    "description": "Renders raw HTML, bypassing Vue auto-escaping.",
+    "cwe": "CWE-79",
+    "remediation": "Use v-text or interpolation"
+  },
+  {
+    "id": "XSS-SVELTE-001",
+    "type": "framework",
+    "title": "Svelte @html tag",
+    "pattern": "\\{@html",
+    "severity": "HIGH",
+    "file_types": ["*.svelte"],
+    "description": "Svelte @html renders raw HTML without escaping.",
+    "cwe": "CWE-79",
+    "remediation": "Sanitize content before using @html"
+  },
+  {
+    "id": "XSS-ANGULAR-001",
+    "type": "framework",
+    "title": "Angular bypassSecurityTrust",
+    "pattern": "bypassSecurityTrust",
+    "severity": "HIGH",
+    "file_types": ["*.ts"],
+    "description": "Bypasses Angular built-in sanitization.",
+    "cwe": "CWE-79",
+    "remediation": "Avoid bypassing Angular sanitizer"
+  },
+  {
+    "id": "XSS-TEMPLATE-001",
+    "type": "template",
+    "title": "Unescaped template interpolation in DOM",
+    "pattern": "\\$\\{.*\\}.*innerHTML|innerHTML.*\\$\\{",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "Template literal with user data assigned to innerHTML.",
+    "cwe": "CWE-79",
+    "remediation": "Separate data from HTML, use textContent"
+  }
+]

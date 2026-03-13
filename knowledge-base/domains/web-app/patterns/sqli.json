@@ -1,0 +1,68 @@
+[
+  {
+    "id": "SQLI-CONCAT-001",
+    "type": "string-concatenation",
+    "title": "SQL query with template literal interpolation",
+    "pattern": "\\.(query|execute|raw)\\s*\\(\\s*`[^`]*\\$\\{",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "SQL query built with template literals containing interpolated values.",
+    "cwe": "CWE-89",
+    "remediation": "Use parameterized queries: db.query('SELECT * FROM t WHERE id = $1', [id])"
+  },
+  {
+    "id": "SQLI-CONCAT-002",
+    "type": "string-concatenation",
+    "title": "SQL query with string concatenation",
+    "pattern": "\\.(query|execute)\\s*\\(['\"].*\\+\\s*(req\\.|var|let|const|input|param|arg)",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "SQL query built with string concatenation operator.",
+    "cwe": "CWE-89",
+    "remediation": "Use parameterized queries with placeholders"
+  },
+  {
+    "id": "SQLI-ORM-001",
+    "type": "orm-bypass",
+    "title": "Raw SQL in ORM without parameterization",
+    "pattern": "\\.(raw|rawQuery|\\$queryRaw)\\s*\\(\\s*`[^`]*\\$\\{",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "ORM raw query method with interpolated values.",
+    "cwe": "CWE-89",
+    "remediation": "Use ORM's tagged template: prisma.$queryRaw`SELECT * FROM t WHERE id = ${id}`"
+  },
+  {
+    "id": "SQLI-PYTHON-001",
+    "type": "string-formatting",
+    "title": "Python SQL with string formatting",
+    "pattern": "cursor\\.(execute|executemany)\\s*\\(\\s*f['\"]|cursor\\.(execute|executemany)\\s*\\(['\"].*%s.*%|cursor\\.(execute|executemany)\\s*\\(['\"].*\\.format\\(",
+    "severity": "CRITICAL",
+    "file_types": ["*.py"],
+    "description": "Python SQL query built with f-strings, % formatting, or .format().",
+    "cwe": "CWE-89",
+    "remediation": "Use parameterized queries: cursor.execute('SELECT * FROM t WHERE id = %s', (id,))"
+  },
+  {
+    "id": "SQLI-RUBY-001",
+    "type": "string-interpolation",
+    "title": "Ruby/Rails SQL with string interpolation",
+    "pattern": "\\.where\\s*\\(\\s*['\"].*#\\{|\\.(find_by_sql|execute)\\s*\\(\\s*['\"].*#\\{",
+    "severity": "CRITICAL",
+    "file_types": ["*.rb"],
+    "description": "Rails SQL query built with Ruby string interpolation.",
+    "cwe": "CWE-89",
+    "remediation": "Use parameterized where: Model.where('col = ?', value)"
+  },
+  {
+    "id": "SQLI-NOSQL-001",
+    "type": "nosql-injection",
+    "title": "MongoDB query with unsanitized user input",
+    "pattern": "\\.(find|findOne|updateOne|deleteOne)\\s*\\(\\s*\\{.*req\\.(body|query|params)",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts"],
+    "description": "MongoDB query operators ($gt, $ne, $regex) may be injected via request body.",
+    "cwe": "CWE-943",
+    "remediation": "Validate and sanitize MongoDB query inputs. Use mongo-sanitize or explicit field extraction."
+  }
+]

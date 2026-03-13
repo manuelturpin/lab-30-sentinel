@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Sentinel",
+          "version": "0.1.0",
+          "informationUri": "https://github.com/bonsai974/sentinel",
+          "rules": []
+        }
+      },
+      "results": [],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "startTimeUtc": "",
+          "endTimeUtc": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "standard": "OWASP Mobile Top 10 2024",
+  "version": "2024",
+  "categories": [
+    {"id": "M1:2024", "name": "Improper Credential Usage"},
+    {"id": "M2:2024", "name": "Inadequate Supply Chain Security"},
+    {"id": "M3:2024", "name": "Insecure Authentication/Authorization"},
+    {"id": "M4:2024", "name": "Insufficient Input/Output Validation"},
+    {"id": "M5:2024", "name": "Insecure Communication"},
+    {"id": "M6:2024", "name": "Inadequate Privacy Controls"},
+    {"id": "M7:2024", "name": "Insufficient Binary Protections"},
+    {"id": "M8:2024", "name": "Security Misconfiguration"},
+    {"id": "M9:2024", "name": "Insecure Data Storage"},
+    {"id": "M10:2024", "name": "Insufficient Cryptography"}
+  ],
+  "note": "Placeholder — will be populated with full mappings in Session 4"
+}

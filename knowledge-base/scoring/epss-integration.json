@@ -1,0 +1,8 @@
+{
+  "version": "4",
+  "description": "EPSS — Exploit Prediction Scoring System integration config",
+  "api_url": "https://api.first.org/data/v1/epss",
+  "threshold_high": 0.5,
+  "threshold_medium": 0.1,
+  "note": "Full integration in Session 8"
+}

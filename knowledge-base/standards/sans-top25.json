@@ -1,0 +1,5 @@
+{
+  "standard": "SANS Top 25 Software Errors",
+  "version": "2024",
+  "note": "Largely overlaps with CWE Top 25 — cross-referenced in rules. Placeholder for Session 2."
+}
