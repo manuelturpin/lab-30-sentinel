@@ -1,0 +1,11 @@
+{
+  "name": "vulnerable-test-app",
+  "version": "1.0.0",
+  "description": "Intentionally vulnerable app for Sentinel E2E testing",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.1",
+    "cors": "^2.8.5"
+  }
+}
