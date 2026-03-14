@@ -76,6 +76,34 @@ localStorage\.setItem
 sessionStorage\.setItem
 ```
 
+## MCP Tools to Use
+
+| Tool | Purpose |
+|------|---------|
+| `scan-project` | Primary scan with domain `static-sites` — detects CSP issues, exposed configs |
+| `scan-headers` | Check security headers on live static site |
+| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
+
+**Example calls:**
+```
+mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
+mcp__sentinel-scanner__scan-headers({ url: "{target_url}" })
+mcp__sentinel-scanner__query-kb({ query: "CSP unsafe-inline", domain: "all" })
+```
+
+## Execution Protocol
+
+Follow the common execution protocol defined in `_protocol.md`:
+
+1. **MCP Scan**: Call `scan-project` with domain `static-sites`, then `scan-headers` if a URL is available
+2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check hosting configs (vercel.json, netlify.toml, _headers), CSP settings, and SRI attributes
+3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CWE references, and remediation
+4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
+
+**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+
 ## Output Format
 
-Return findings as JSON array with fields: id (STATIC-{category}-{number}), severity, title, description, location, standard, remediation, cvss_v4.
+Return ONLY a JSON code block with Finding[] array. See `_protocol.md` for the exact schema.
+
+Every finding MUST have: `id` (format: STATIC-{category}-{number}), `severity`, `title`, `description`, `location`, `remediation`. Include `standard`, `cwe`, `cvss_v4` when available.

@@ -67,6 +67,34 @@ postinstall
 preinstall
 ```
 
+## MCP Tools to Use
+
+| Tool | Purpose |
+|------|---------|
+| `scan-dependencies` | Primary tool — analyze package manifests for known CVEs |
+| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
+| `query-cve` | Query CVE database for specific component/version pairs |
+
+**Example calls:**
+```
+mcp__sentinel-scanner__scan-dependencies({ projectPath: "{target_path}" })
+mcp__sentinel-scanner__query-cve({ component: "lodash", version: "4.17.15" })
+mcp__sentinel-scanner__query-kb({ query: "typosquatting npm", domain: "supply-chain" })
+```
+
+## Execution Protocol
+
+Follow the common execution protocol defined in `_protocol.md`:
+
+1. **MCP Scan**: Call `scan-dependencies` to analyze all package manifests. Call `query-cve` for any flagged components
+2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check for postinstall scripts, unpinned versions, and AI supply chain issues
+3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CVE references, and remediation
+4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
+
+**Deduplication rule**: If `scan-dependencies` already reported a CVE for the same package, do NOT report it again from Grep.
+
 ## Output Format
 
-Return findings as JSON array with fields: id (SC-{category}-{number}), severity, title, description, location, standard, cve_id, remediation, cvss_v4.
+Return ONLY a JSON code block with Finding[] array. See `_protocol.md` for the exact schema.
+
+Every finding MUST have: `id` (format: SC-{category}-{number}), `severity`, `title`, `description`, `location`, `remediation`. Include `standard` (use CVE ID when available), `cwe`, `cvss_v4` when available.

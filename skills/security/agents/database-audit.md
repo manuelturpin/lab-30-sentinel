@@ -68,6 +68,32 @@ redis://
 password.*=.*['"]
 ```
 
+## MCP Tools to Use
+
+| Tool | Purpose |
+|------|---------|
+| `scan-project` | Primary scan with domain `database` — detects SQLi, NoSQLi, misconfigs |
+| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
+
+**Example calls:**
+```
+mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
+mcp__sentinel-scanner__query-kb({ query: "SQL injection parameterized", domain: "database" })
+```
+
+## Execution Protocol
+
+Follow the common execution protocol defined in `_protocol.md`:
+
+1. **MCP Scan**: Call `scan-project` with domain `database`
+2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check ORM raw queries, connection strings, and MongoDB-specific patterns
+3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CWE references, and remediation
+4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact connection strings/passwords, return JSON
+
+**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+
 ## Output Format
 
-Return findings as JSON array with fields: id (DB-{category}-{number}), severity, title, description, location, standard, cwe, remediation, cvss_v4.
+Return ONLY a JSON code block with Finding[] array. See `_protocol.md` for the exact schema.
+
+Every finding MUST have: `id` (format: DB-{category}-{number}), `severity`, `title`, `description`, `location`, `remediation`. Include `standard`, `cwe`, `cvss_v4` when available.

@@ -77,6 +77,36 @@ ssn|social.security
 credit.card
 ```
 
+## MCP Tools to Use
+
+| Tool | Purpose |
+|------|---------|
+| `scan-project` | Primary scan with domain `data-privacy` — detects PII exposure, GDPR issues |
+| `scan-secrets` | Detect hardcoded secrets, API keys, private keys |
+| `query-kb` | Enrich findings with KB rules, CVSS scores, GDPR references |
+
+**Example calls:**
+```
+mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
+mcp__sentinel-scanner__scan-secrets({ projectPath: "{target_path}", includeGitHistory: false })
+mcp__sentinel-scanner__query-kb({ query: "PII logging GDPR", domain: "data-privacy" })
+```
+
+## Execution Protocol
+
+Follow the common execution protocol defined in `_protocol.md`:
+
+1. **MCP Scan**: Call `scan-project` with domain `data-privacy`, then `scan-secrets`
+2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check for PII in logs, hardcoded secrets, and .env exposure
+3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, GDPR article references, and remediation
+4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, REDACT ALL SECRET VALUES, return JSON
+
+**Critical**: This agent handles the most sensitive data. ALWAYS redact actual secret values with `[REDACTED]` in findings.
+
+**Deduplication rule**: If `scan-project` or `scan-secrets` already reported a finding at the same file+line, do NOT report it again from Grep.
+
 ## Output Format
 
-Return findings as JSON array with fields: id (PRIV-{category}-{number}), severity, title, description, location, standard, gdpr_article, remediation, cvss_v4.
+Return ONLY a JSON code block with Finding[] array. See `_protocol.md` for the exact schema.
+
+Every finding MUST have: `id` (format: PRIV-{category}-{number}), `severity`, `title`, `description`, `location`, `remediation`. Include `standard`, `cwe`, `cvss_v4` when available. Use `owasp` field for GDPR article references (e.g., "GDPR-Art.32").

@@ -43,30 +43,43 @@ Detect the project's technology stack by checking for the presence of indicator 
 
 ### Step 2: Agent Dispatch
 
-For each detected agent, launch it in parallel using the Agent tool:
+For each detected agent, launch it in parallel using the Agent tool with the enriched prompt:
 
 ```
 For each agent in detected_agents:
   Launch Agent(
     subagent_type: "general-purpose",
-    prompt: "Read the agent file at lab-30-sentinel/skills/security/agents/{agent}.md and follow its instructions to audit the project at {target_path}. Return findings in SARIF-compatible JSON format.",
+    prompt: "You are a security audit agent. Follow these steps exactly:
+      1. Read your agent instructions at lab-30-sentinel/skills/security/agents/{agent}.md
+      2. Read the common execution protocol at lab-30-sentinel/skills/security/agents/_protocol.md
+      3. Audit the project at {target_path} following your Execution Protocol
+      4. Use the sentinel-scanner MCP tools listed in your 'MCP Tools to Use' section
+      5. Use Grep and Read tools for manual pattern detection as described in your Detection Patterns
+      6. Return ONLY a JSON code block containing a Finding[] array — no other text",
     run_in_background: true
   )
 ```
 
-### Step 3: Collect Results
+### Step 3: Collect & Parse Results
 
-Wait for all agents to complete. Collect their SARIF-formatted findings.
+Wait for all agents to complete. For each agent result:
+
+1. **Extract JSON**: Parse the agent's response to find the JSON code block (between ` ```json ` and ` ``` ` or `[` to `]`)
+2. **Validate findings**: Each finding must have at minimum: `id`, `severity`, `title`, `description`, `location.file`, `remediation`
+3. **Fallback**: If an agent does not return valid JSON:
+   - Log a warning: `"WARNING: Agent {agent_name} did not return valid Finding[] JSON — skipping"`
+   - Continue with remaining agents — do NOT fail the entire audit
+4. **Tag findings**: Add the originating agent name to each finding for traceability
 
 ### Step 4: Aggregate & Score
 
-1. Merge all agent findings into a unified SARIF report
-2. Deduplicate findings by location + rule ID
-3. Calculate risk scores:
-   - **CVSS v4** base score from the rule definition
-   - **EPSS** probability if CVE is mapped
-   - **Composite risk** = CVSS * EPSS weight * exploitability factor
-4. Sort findings by composite risk (highest first)
+1. **Merge** all agent findings into a unified array
+2. **Deduplicate** findings by `location.file` + `location.line` + `id` — keep the finding with the higher `cvss_v4` score
+3. **Calculate risk scores**:
+   - **CVSS v4** base score from the finding (set by agent from KB enrichment)
+   - **EPSS** probability if CVE is mapped (set by agent from KB enrichment)
+   - **Composite risk** = `cvss_v4 * (1 + epss)` (EPSS boosts score for actively exploited vulns)
+4. **Sort** findings by composite risk (highest first)
 
 ### Step 5: Generate Report
 

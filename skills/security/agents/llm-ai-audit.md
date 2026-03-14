@@ -114,6 +114,32 @@ fs\.unlink
 fetch\(.*\$\{
 ```
 
+## MCP Tools to Use
+
+| Tool | Purpose |
+|------|---------|
+| `scan-project` | Primary scan with domain `llm-ai` — detects prompt injection, excessive agency, skill abuse |
+| `query-kb` | Enrich findings with KB rules, CVSS scores, MITRE ATLAS references |
+
+**Example calls:**
+```
+mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "deep" })
+mcp__sentinel-scanner__query-kb({ query: "prompt injection prevention", domain: "llm-ai" })
+```
+
+## Execution Protocol
+
+Follow the common execution protocol defined in `_protocol.md`:
+
+1. **MCP Scan**: Call `scan-project` with domain `llm-ai` and depth `deep` (AI security requires thorough scanning)
+2. **Grep Scan**: Search for each pattern in Detection Patterns section. Pay special attention to SKILL.md, CLAUDE.md, and MCP tool definitions
+3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, OWASP LLM / MITRE ATLAS references, and remediation
+4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
+
+**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+
 ## Output Format
 
-Return findings as JSON array with fields: id (LLM-{category}-{number}), severity, title, description, location, standard, owasp_llm, mitre_atlas, remediation, cvss_v4.
+Return ONLY a JSON code block with Finding[] array. See `_protocol.md` for the exact schema.
+
+Every finding MUST have: `id` (format: LLM-{category}-{number}), `severity`, `title`, `description`, `location`, `remediation`. Include `standard`, `owasp` (use OWASP LLM ref like "LLM01:2025"), `cwe`, `cvss_v4` when available. Add `mitre_atlas` in the `standard` field when applicable.

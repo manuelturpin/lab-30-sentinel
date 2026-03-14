@@ -1,0 +1,115 @@
+[
+  {
+    "id": "TLS-PROTO-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.4,
+    "category": "ssl-tls",
+    "subcategory": "protocol",
+    "title": "Outdated TLS protocol version enabled",
+    "description": "Server configuration allows TLS 1.0 or TLS 1.1 connections, which have known vulnerabilities (BEAST, POODLE). Only TLS 1.2+ should be accepted.",
+    "detect": {
+      "patterns": ["ssl_protocols.*TLSv1[^.]", "ssl_protocols.*TLSv1\\.0", "ssl_protocols.*SSLv3", "tls\\.min.*1\\.[01]", "MinProtocol.*TLSv1[^.2-3]"],
+      "negative_patterns": ["TLSv1\\.2", "TLSv1\\.3"],
+      "file_types": ["*.conf", "*.cfg", "*.yaml", "*.yml", "*.toml", "*.json"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Configure the server to only accept TLS 1.2 and TLS 1.3. Disable SSLv3, TLS 1.0, and TLS 1.1.",
+      "code_example": "ssl_protocols TLSv1.2 TLSv1.3;",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-326", "OWASP-A02:2025"],
+    "ai_specific": false,
+    "frameworks": ["nginx", "apache", "node"]
+  },
+  {
+    "id": "TLS-CIPHER-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "ssl-tls",
+    "subcategory": "cipher",
+    "title": "Weak cipher suite enabled",
+    "description": "Server configuration includes weak cipher suites (RC4, DES, 3DES, NULL, export-grade) that are vulnerable to known attacks.",
+    "detect": {
+      "patterns": ["ssl_ciphers.*RC4", "ssl_ciphers.*DES", "ssl_ciphers.*3DES", "ssl_ciphers.*NULL", "ssl_ciphers.*EXPORT", "ssl_ciphers.*eNULL", "ssl_ciphers.*aNULL"],
+      "negative_patterns": ["!RC4", "!DES", "!NULL", "!EXPORT"],
+      "file_types": ["*.conf", "*.cfg", "*.yaml", "*.yml"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Use only strong cipher suites with forward secrecy. Follow Mozilla's recommended configurations.",
+      "code_example": "ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';",
+      "references": ["https://wiki.mozilla.org/Security/Server_Side_TLS"]
+    },
+    "standards": ["CWE-327", "OWASP-A02:2025"],
+    "ai_specific": false,
+    "frameworks": ["nginx", "apache"]
+  },
+  {
+    "id": "TLS-HSTS-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "ssl-tls",
+    "subcategory": "hsts",
+    "title": "Missing or weak HSTS configuration",
+    "description": "HTTP Strict Transport Security header is missing or has a max-age below the recommended 1 year (31536000 seconds), leaving users vulnerable to SSL stripping attacks.",
+    "detect": {
+      "patterns": ["app\\.listen", "server\\.listen", "createServer", "http\\.createServer"],
+      "negative_patterns": ["Strict-Transport-Security", "hsts", "helmet"],
+      "file_types": ["*.js", "*.ts", "*.mjs", "*.conf"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Set the HSTS header with a max-age of at least 1 year and includeSubDomains.",
+      "code_example": "add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\" always;",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-319", "OWASP-A02:2025"],
+    "ai_specific": false,
+    "frameworks": ["nginx", "apache", "express", "node"]
+  },
+  {
+    "id": "TLS-CERT-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.0,
+    "category": "ssl-tls",
+    "subcategory": "certificate",
+    "title": "Self-signed or invalid certificate in production",
+    "description": "Application uses a self-signed certificate or disables certificate verification, making it vulnerable to man-in-the-middle attacks.",
+    "detect": {
+      "patterns": ["rejectUnauthorized.*false", "NODE_TLS_REJECT_UNAUTHORIZED.*0", "verify.*false.*ssl", "CURLOPT_SSL_VERIFYPEER.*false", "InsecureSkipVerify.*true"],
+      "file_types": ["*.js", "*.ts", "*.py", "*.go", "*.yaml", "*.yml", "*.env"],
+      "exclude": ["node_modules", "dist", "build", "*.test.*", "*.spec.*"]
+    },
+    "remediation": {
+      "description": "Use valid CA-signed certificates in production. Never disable certificate verification outside of development.",
+      "code_example": "// Remove NODE_TLS_REJECT_UNAUTHORIZED=0 and use proper CA certificates\nconst agent = new https.Agent({ ca: fs.readFileSync('ca-cert.pem') });",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-295", "OWASP-A02:2025"],
+    "ai_specific": false,
+    "frameworks": ["*"]
+  },
+  {
+    "id": "TLS-PIN-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 4.8,
+    "category": "ssl-tls",
+    "subcategory": "pinning",
+    "title": "Missing certificate pinning for mobile/critical applications",
+    "description": "Application connecting to backend APIs does not implement certificate pinning, making it susceptible to man-in-the-middle attacks with rogue CA certificates.",
+    "detect": {
+      "patterns": ["fetch\\(", "axios\\.", "http\\.request", "URLSession", "OkHttpClient"],
+      "negative_patterns": ["pinning", "pin", "TrustManager", "ssl_pinning", "certificatePinner"],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Implement certificate pinning for connections to your own backend services. Use public key pinning rather than certificate pinning for easier rotation.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Pinning_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-295", "OWASP-M5:2024"],
+    "ai_specific": false,
+    "frameworks": ["ios", "android", "react-native", "flutter"]
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "CORS-ORIGIN-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "cors",
+    "subcategory": "origin",
+    "title": "Wildcard Access-Control-Allow-Origin on authenticated endpoint",
+    "description": "CORS configured with wildcard origin (*) on endpoints that handle authenticated requests. This allows any website to make cross-origin requests to the API.",
+    "detect": {
+      "patterns": ["Access-Control-Allow-Origin.*\\*", "origin:\\s*['\"]\\*['\"]", "origin:\\s*true", "cors\\(\\)\\s*(?!\\{)"],
+      "negative_patterns": ["origin:\\s*\\[", "allowlist", "whitelist", "origin.*function"],
+      "file_types": ["*.js", "*.ts", "*.mjs", "*.py", "*.rb", "*.conf"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Configure CORS with a specific allowlist of trusted origins instead of using wildcard.",
+      "code_example": "app.use(cors({\n  origin: ['https://app.example.com', 'https://admin.example.com'],\n  credentials: true\n}));",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/CORS_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-942", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "flask", "rails"]
+  },
+  {
+    "id": "CORS-CRED-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.1,
+    "category": "cors",
+    "subcategory": "credentials",
+    "title": "Credentials allowed with wildcard or reflected origin",
+    "description": "CORS configuration allows credentials (cookies, authorization headers) with wildcard origin or origin reflection. This enables any website to make authenticated requests on behalf of the user.",
+    "detect": {
+      "patterns": ["credentials.*true.*origin.*\\*", "credentials.*true.*origin.*true", "Access-Control-Allow-Credentials.*true"],
+      "negative_patterns": ["origin:\\s*\\[", "origin.*function.*includes"],
+      "file_types": ["*.js", "*.ts", "*.mjs", "*.py", "*.rb", "*.conf"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Never combine Access-Control-Allow-Credentials: true with wildcard or reflected origin. Use a strict allowlist.",
+      "code_example": "app.use(cors({\n  origin: (origin, cb) => {\n    const allowed = ['https://app.example.com'];\n    cb(null, allowed.includes(origin));\n  },\n  credentials: true\n}));",
+      "references": ["https://portswigger.net/web-security/cors"]
+    },
+    "standards": ["CWE-942", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "flask"]
+  },
+  {
+    "id": "CORS-NULL-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "cors",
+    "subcategory": "origin",
+    "title": "Null origin allowed in CORS configuration",
+    "description": "CORS configuration allows the null origin, which can be exploited via sandboxed iframes and redirects to bypass origin restrictions.",
+    "detect": {
+      "patterns": ["origin.*null", "allowedOrigins.*null", "Access-Control-Allow-Origin.*null"],
+      "file_types": ["*.js", "*.ts", "*.mjs", "*.py", "*.rb", "*.conf"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Never allow the null origin. Remove it from the origin allowlist.",
+      "references": ["https://portswigger.net/web-security/cors"]
+    },
+    "standards": ["CWE-942", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "flask"]
+  },
+  {
+    "id": "CORS-VARY-001",
+    "severity": "LOW",
+    "cvss_v4": 3.1,
+    "category": "cors",
+    "subcategory": "headers",
+    "title": "Missing Vary: Origin header in CORS response",
+    "description": "When Access-Control-Allow-Origin is set dynamically based on the request Origin, the response must include Vary: Origin to prevent cache poisoning.",
+    "detect": {
+      "patterns": ["Access-Control-Allow-Origin.*req\\.(headers|get)\\(.*origin", "origin.*function", "res\\.header.*Access-Control-Allow-Origin.*origin"],
+      "negative_patterns": ["Vary.*Origin", "vary.*origin"],
+      "file_types": ["*.js", "*.ts", "*.mjs", "*.py", "*.rb"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Add Vary: Origin header when dynamically setting Access-Control-Allow-Origin based on the request.",
+      "code_example": "res.header('Access-Control-Allow-Origin', allowedOrigin);\nres.header('Vary', 'Origin');",
+      "references": ["https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Vary"]
+    },
+    "standards": ["CWE-525"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "node"]
+  }
+]

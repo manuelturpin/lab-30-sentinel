@@ -70,6 +70,34 @@ MYSQL_ROOT_PASSWORD
 allowPrivilegeEscalation.*true
 ```
 
+## MCP Tools to Use
+
+| Tool | Purpose |
+|------|---------|
+| `scan-project` | Primary scan with domain `infrastructure` — detects Docker, K8s, Terraform misconfigs |
+| `scan-secrets` | Detect hardcoded credentials in IaC files |
+| `query-kb` | Enrich findings with KB rules, CVSS scores, CIS references |
+
+**Example calls:**
+```
+mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
+mcp__sentinel-scanner__scan-secrets({ projectPath: "{target_path}" })
+mcp__sentinel-scanner__query-kb({ query: "Docker privileged container", domain: "infrastructure" })
+```
+
+## Execution Protocol
+
+Follow the common execution protocol defined in `_protocol.md`:
+
+1. **MCP Scan**: Call `scan-project` with domain `infrastructure`, then `scan-secrets`
+2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check Dockerfiles, K8s manifests, and Terraform files
+3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CIS benchmark references, and remediation
+4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact secrets, return JSON
+
+**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+
 ## Output Format
 
-Return findings as JSON array with fields: id (INFRA-{category}-{number}), severity, title, description, location, standard, cis_benchmark, remediation, cvss_v4.
+Return ONLY a JSON code block with Finding[] array. See `_protocol.md` for the exact schema.
+
+Every finding MUST have: `id` (format: INFRA-{category}-{number}), `severity`, `title`, `description`, `location`, `remediation`. Include `standard`, `cwe`, `cvss_v4` when available. Use the `standard` field for CIS benchmark references.

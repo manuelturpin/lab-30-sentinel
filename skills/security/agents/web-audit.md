@@ -87,21 +87,36 @@ Use Grep to search for these vulnerability indicators in the project:
 - Dynamic function constructors — code injection
 - String concatenation in SQL query builders
 
+## MCP Tools to Use
+
+| Tool | Purpose |
+|------|---------|
+| `scan-project` | Primary scan with domain `web-app` — detects OWASP Top 10 patterns |
+| `scan-secrets` | Detect hardcoded API keys, tokens, passwords in source code |
+| `scan-headers` | Check security headers (CSP, HSTS, X-Frame-Options, etc.) |
+| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
+
+**Example calls:**
+```
+mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
+mcp__sentinel-scanner__scan-secrets({ projectPath: "{target_path}" })
+mcp__sentinel-scanner__scan-headers({ url: "{target_url}" })
+mcp__sentinel-scanner__query-kb({ query: "XSS innerHTML", domain: "web-app" })
+```
+
+## Execution Protocol
+
+Follow the common execution protocol defined in `_protocol.md`:
+
+1. **MCP Scan**: Call `scan-project` with domain `web-app`, then `scan-secrets`, then `scan-headers` if a URL is available
+2. **Grep Scan**: Search for each pattern in Detection Patterns section. For each match, read context and check negative patterns before reporting
+3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CWE/OWASP references, and remediation
+4. **Deduplicate & Return**: Remove duplicates (same file + line + vuln type), sort by cvss_v4 desc, redact secrets, return JSON
+
+**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+
 ## Output Format
 
-Return findings as a JSON array:
-```json
-[
-  {
-    "id": "WEB-{category}-{number}",
-    "severity": "CRITICAL|HIGH|MEDIUM|LOW|INFO",
-    "title": "Finding title",
-    "description": "Detailed description",
-    "location": {"file": "path", "line": 42},
-    "standard": "CWE-79",
-    "owasp": "A03:2025",
-    "remediation": "How to fix",
-    "cvss_v4": 7.5
-  }
-]
-```
+Return ONLY a JSON code block with Finding[] array. See `_protocol.md` for the exact schema.
+
+Every finding MUST have: `id` (format: WEB-{category}-{number}), `severity`, `title`, `description`, `location`, `remediation`. Include `standard`, `owasp`, `cwe`, `cvss_v4` when available.
