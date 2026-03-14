@@ -1,1 +1,282 @@
-[]
+[
+  {
+    "id": "PRIV-PII-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "data-privacy",
+    "subcategory": "pii-protection",
+    "title": "PII logged without masking",
+    "description": "Personally identifiable information (email, password, SSN) is written to application logs without masking or redaction. Attackers with log access can harvest sensitive data in bulk.",
+    "detect": {
+      "patterns": [
+        "console\\.(log|info|warn|error|debug)\\s*\\(.*\\b(email|e-mail|mail)\\b",
+        "(logger|log|logging)\\.(info|warn|error|debug)\\s*\\(.*\\b(password|passwd|pwd)\\b",
+        "(console|logger|log)\\.(log|info|warn|error|debug)\\s*\\(.*\\b(ssn|social_security|socialSecurity)\\b",
+        "print\\s*\\(.*\\b(email|password|ssn|social_security)\\b",
+        "logging\\.(info|warning|error|debug)\\s*\\(.*\\b(email|password|ssn)\\b"
+      ],
+      "negative_patterns": [
+        "mask(ed)?\\s*\\(", "redact(ed)?\\s*\\(", "\\*{3,}", "\\[REDACTED\\]", "sanitize\\s*\\("
+      ],
+      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go", "*.rb"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__", "__tests__"]
+    },
+    "remediation": {
+      "description": "Never log raw PII. Use a masking utility to redact sensitive fields before writing to any log output.",
+      "code_example": "function maskPII(value) {\n  if (!value) return value;\n  return value.slice(0, 2) + '***' + value.slice(-2);\n}\nlogger.info('User login', { email: maskPII(user.email) });",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
+        "https://cwe.mitre.org/data/definitions/532.html"
+      ]
+    },
+    "standards": ["CWE-532", "GDPR-Art-5", "GDPR-Art-25"],
+    "ai_specific": false,
+    "frameworks": ["express", "django", "flask", "fastapi", "spring", "rails"]
+  },
+  {
+    "id": "PRIV-PII-002",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "data-privacy",
+    "subcategory": "pii-protection",
+    "title": "PII exposed in API response without filtering",
+    "description": "Full user objects containing sensitive fields (password hash, SSN, date of birth, internal IDs) are returned in API responses without field filtering or DTO projection, exposing PII to clients.",
+    "detect": {
+      "patterns": [
+        "res\\.(json|send)\\s*\\(\\s*(user|account|profile|customer)\\b",
+        "return\\s+JsonResponse\\s*\\(.*\\buser\\b",
+        "jsonify\\s*\\(.*\\buser\\b",
+        "\\.findOne\\(.*\\)\\s*\\.then\\s*\\(.*=>\\s*res\\.json\\(",
+        "res\\.(json|send)\\s*\\(\\s*await\\s+.*\\.find(One|ById|ByPk)\\("
+      ],
+      "negative_patterns": [
+        "\\.select\\(", "\\.exclude\\(", "pick\\(", "omit\\(", "toDTO", "serialize",
+        "password.*undefined", "delete.*password", "\\.project\\(", "values\\("
+      ],
+      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Never return raw database objects in API responses. Use DTOs, serializers, or explicit field selection to exclude sensitive attributes.",
+      "code_example": "const userDTO = {\n  id: user.id,\n  name: user.name,\n  email: user.email\n};\nres.json(userDTO);\n// Or with Mongoose: User.findById(id).select('-password -ssn -__v')",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html",
+        "https://cwe.mitre.org/data/definitions/200.html"
+      ]
+    },
+    "standards": ["CWE-200", "GDPR-Art-5", "OWASP-API3:2023"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "flask", "fastapi", "spring"]
+  },
+  {
+    "id": "PRIV-CONSENT-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "data-privacy",
+    "subcategory": "consent-management",
+    "title": "Tracking scripts loaded before user consent",
+    "description": "Third-party tracking scripts (Google Analytics, Facebook Pixel, etc.) are loaded in the HTML head or at page initialization without waiting for explicit user consent, violating GDPR and ePrivacy requirements.",
+    "detect": {
+      "patterns": [
+        "<script[^>]*gtag\\s*\\(",
+        "<script[^>]*google-analytics\\.com",
+        "<script[^>]*googletagmanager\\.com",
+        "<script[^>]*fbq\\s*\\(",
+        "<script[^>]*connect\\.facebook\\.net",
+        "<script[^>]*analytics\\.js",
+        "<script[^>]*hotjar\\.com",
+        "<script[^>]*segment\\.com"
+      ],
+      "negative_patterns": [
+        "consent", "cookie.*accept", "gdpr", "CookieConsent", "onConsentGranted",
+        "data-consent", "type=['\"]text/plain['\"]"
+      ],
+      "file_types": ["*.html", "*.htm", "*.ejs", "*.hbs", "*.pug", "*.jsx", "*.tsx", "*.vue"],
+      "exclude": ["node_modules", "dist", "build"]
+    },
+    "remediation": {
+      "description": "Load tracking scripts only after the user has given explicit consent. Use a consent management platform (CMP) or implement a consent gate that loads scripts dynamically.",
+      "code_example": "<!-- Set type to text/plain to prevent execution -->\n<script type=\"text/plain\" data-consent=\"analytics\">\n  (function(i,s,o,g,r,a,m){...})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');\n</script>\n\n// Load only after consent\nfunction onConsentGranted() {\n  document.querySelectorAll('[data-consent=\"analytics\"]').forEach(s => {\n    s.type = 'text/javascript';\n  });\n}",
+      "references": [
+        "https://gdpr.eu/cookies/",
+        "https://cwe.mitre.org/data/definitions/359.html"
+      ]
+    },
+    "standards": ["CWE-359", "GDPR-Art-6", "GDPR-Art-7", "ePrivacy-Art-5"],
+    "ai_specific": false,
+    "frameworks": ["react", "next", "nuxt", "vue", "angular", "html"]
+  },
+  {
+    "id": "PRIV-CONSENT-002",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.5,
+    "category": "data-privacy",
+    "subcategory": "consent-management",
+    "title": "Cookies set without consent verification",
+    "description": "Non-essential cookies are set via document.cookie without checking whether the user has given consent. This violates GDPR and ePrivacy Directive requirements for prior informed consent on tracking cookies.",
+    "detect": {
+      "patterns": [
+        "document\\.cookie\\s*=\\s*['\"`]",
+        "document\\.cookie\\s*=\\s*`",
+        "Cookies\\.set\\s*\\(",
+        "setCookie\\s*\\(",
+        "res\\.cookie\\s*\\("
+      ],
+      "negative_patterns": [
+        "consent", "hasConsent", "cookieConsent", "gdpr", "isAccepted",
+        "checkConsent", "consentGranted", "essential", "necessary"
+      ],
+      "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx", "*.vue"],
+      "exclude": ["node_modules", "dist", "build", "test"]
+    },
+    "remediation": {
+      "description": "Implement a consent check before setting any non-essential cookie. Classify cookies into categories (essential, analytics, marketing) and only set non-essential ones after consent.",
+      "code_example": "function setTrackingCookie(name, value) {\n  if (!consentManager.hasConsent('analytics')) {\n    console.warn('Analytics consent not granted, skipping cookie');\n    return;\n  }\n  document.cookie = `${name}=${value}; SameSite=Strict; Secure`;\n}",
+      "references": [
+        "https://gdpr.eu/cookies/",
+        "https://cwe.mitre.org/data/definitions/359.html"
+      ]
+    },
+    "standards": ["CWE-359", "GDPR-Art-6", "GDPR-Art-7", "ePrivacy-Art-5"],
+    "ai_specific": false,
+    "frameworks": ["react", "next", "vue", "angular", "express"]
+  },
+  {
+    "id": "PRIV-RETAIN-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.0,
+    "category": "data-privacy",
+    "subcategory": "data-retention",
+    "title": "No data retention policy implemented on user data",
+    "description": "User data collections or tables have no TTL, expiration, or scheduled cleanup mechanism. Under GDPR storage limitation principle, personal data must not be kept longer than necessary for its purpose.",
+    "detect": {
+      "patterns": [
+        "new\\s+Schema\\s*\\(\\s*\\{[^}]*\\b(email|name|phone|address|dob|birth)\\b",
+        "createTable.*\\b(users|customers|accounts|profiles)\\b",
+        "CREATE\\s+TABLE\\s+(users|customers|accounts|profiles)",
+        "db\\.createCollection\\s*\\(['\"]users['\"]",
+        "class\\s+User.*Model"
+      ],
+      "negative_patterns": [
+        "expires", "ttl", "TTL", "expireAt", "expireAfter", "retention",
+        "deletedAt", "purge", "cleanup", "archiv", "createdAt.*index.*expireAfterSeconds"
+      ],
+      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.sql", "*.go"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__", "migrations"]
+    },
+    "remediation": {
+      "description": "Implement a data retention policy with automatic expiration or scheduled cleanup jobs. For MongoDB, use TTL indexes. For SQL, implement soft-delete with scheduled hard-delete jobs.",
+      "code_example": "// MongoDB TTL index — auto-delete inactive users after 2 years\nuserSchema.index({ lastActiveAt: 1 }, { expireAfterSeconds: 63072000 });\n\n// Or schedule a cleanup job\ncron.schedule('0 3 * * 0', async () => {\n  const cutoff = new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000);\n  await User.deleteMany({ lastActiveAt: { $lt: cutoff } });\n});",
+      "references": [
+        "https://gdpr.eu/article-5-how-to-process-personal-data/",
+        "https://cwe.mitre.org/data/definitions/459.html"
+      ]
+    },
+    "standards": ["CWE-459", "GDPR-Art-5", "GDPR-Art-17"],
+    "ai_specific": false,
+    "frameworks": ["mongoose", "sequelize", "typeorm", "prisma", "django", "sqlalchemy"]
+  },
+  {
+    "id": "PRIV-LOG-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "data-privacy",
+    "subcategory": "pii-protection",
+    "title": "Sensitive financial or authentication data in application logs",
+    "description": "Credit card numbers, authentication tokens, passwords, or SSNs are written to application logs. Attackers with log access can harvest credentials and financial data.",
+    "detect": {
+      "patterns": [
+        "(console|logger|log|logging)\\.(log|info|warn|error|debug)\\s*\\(.*\\b(credit.?card|card.?number|cardNumber|ccNumber)\\b",
+        "(console|logger|log|logging)\\.(log|info|warn|error|debug)\\s*\\(.*\\b(token|jwt|bearer|auth.?token|access.?token|refresh.?token)\\b",
+        "(console|logger|log|logging)\\.(log|info|warn|error|debug)\\s*\\(.*\\b(cvv|cvc|securityCode|security_code)\\b",
+        "(print|puts|fmt\\.Print).*\\b(password|token|secret|credit.?card|ssn)\\b",
+        "log\\.\\w+\\s*\\(.*\\b(password|secret|token|apiKey|api_key)\\b"
+      ],
+      "negative_patterns": [
+        "mask", "redact", "\\*{3,}", "\\[REDACTED\\]", "sanitize", "obfuscate",
+        "\"token\":\\s*\"\\*+\"", "FILTERED"
+      ],
+      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go", "*.rb", "*.php"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__", "__tests__"]
+    },
+    "remediation": {
+      "description": "Implement a structured logging library with automatic PII redaction. Register sensitive field names in a deny-list and strip them before writing to any log sink.",
+      "code_example": "const sensitiveFields = ['password', 'token', 'ssn', 'creditCard', 'cvv'];\n\nfunction sanitizeForLog(obj) {\n  const sanitized = { ...obj };\n  for (const field of sensitiveFields) {\n    if (sanitized[field]) sanitized[field] = '[REDACTED]';\n  }\n  return sanitized;\n}\n\nlogger.info('Payment processed', sanitizeForLog(paymentData));",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
+        "https://cwe.mitre.org/data/definitions/532.html"
+      ]
+    },
+    "standards": ["CWE-532", "GDPR-Art-5", "GDPR-Art-32", "PCI-DSS-3.4"],
+    "ai_specific": false,
+    "frameworks": ["express", "django", "flask", "fastapi", "spring", "rails", "laravel"]
+  },
+  {
+    "id": "PRIV-TRANS-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.2,
+    "category": "data-privacy",
+    "subcategory": "cross-border-transfer",
+    "title": "Cross-border data transfer without adequate safeguards",
+    "description": "Personal data is sent to external APIs or services in jurisdictions without adequate data protection, and the transfer lacks encryption or contractual safeguards (SCCs). GDPR Chapter V requires documented safeguards for international transfers.",
+    "detect": {
+      "patterns": [
+        "(fetch|axios|http|request)\\.(get|post|put|patch)\\s*\\(.*\\b(user|customer|profile|personal)\\b",
+        "https?://[^/]*(aliyun|baidu|yandex|mail\\.ru)[^'\"]*.*\\b(user|email|name|phone)\\b",
+        "(sendGrid|mailgun|twilio|sendSms|sendEmail)\\s*\\(.*\\b(user|customer)\\b",
+        "fetch\\s*\\(['\"]https?://(?!localhost)[^'\"]+['\"].*\\b(pii|personal|userData)\\b"
+      ],
+      "negative_patterns": [
+        "encrypt", "cipher", "tls", "https", "scc", "dpa", "dataProcessingAgreement",
+        "gdprCompliant", "adequacyDecision", "standardContractualClauses"
+      ],
+      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Encrypt personal data before cross-border transfer. Ensure third-party processors have signed Data Processing Agreements (DPAs) with Standard Contractual Clauses (SCCs). Conduct Transfer Impact Assessments (TIAs) for transfers outside the EU/EEA.",
+      "code_example": "// Encrypt PII before sending to external service\nconst crypto = require('crypto');\n\nfunction encryptPII(data, key) {\n  const iv = crypto.randomBytes(16);\n  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);\n  const encrypted = Buffer.concat([cipher.update(JSON.stringify(data)), cipher.final()]);\n  return { iv: iv.toString('hex'), data: encrypted.toString('hex'), tag: cipher.getAuthTag().toString('hex') };\n}\n\nawait axios.post('https://partner-api.example.com/sync', encryptPII(userData, encryptionKey));",
+      "references": [
+        "https://gdpr.eu/international-data-transfer-rules/",
+        "https://cwe.mitre.org/data/definitions/319.html"
+      ]
+    },
+    "standards": ["CWE-319", "GDPR-Art-44", "GDPR-Art-46", "GDPR-Art-49"],
+    "ai_specific": false,
+    "frameworks": ["express", "django", "flask", "fastapi", "spring"]
+  },
+  {
+    "id": "PRIV-GDPR-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "data-privacy",
+    "subcategory": "data-subject-rights",
+    "title": "No data deletion endpoint (right to erasure)",
+    "description": "The application provides CRUD operations for user data but lacks a DELETE endpoint or data erasure mechanism. GDPR Article 17 grants data subjects the right to have their personal data erased upon request.",
+    "detect": {
+      "patterns": [
+        "router\\.(get|post|put|patch)\\s*\\(['\"]/(users?|accounts?|profiles?|customers?)",
+        "app\\.(get|post|put|patch)\\s*\\(['\"]/(users?|accounts?|profiles?|customers?)",
+        "@(Get|Post|Put|Patch)Mapping.*/(users?|accounts?|profiles?|customers?)",
+        "@app\\.(get|post|put|patch)\\s*\\(['\"]/(users?|accounts?|profiles?|customers?)"
+      ],
+      "negative_patterns": [
+        "\\.(delete|del)\\s*\\(", "DELETE", "destroy", "remove", "erase", "purge",
+        "@DeleteMapping", "@app\\.delete", "router\\.delete", "app\\.delete"
+      ],
+      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go", "*.rb"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Implement a DELETE endpoint for user data that performs cascading deletion of all associated personal data across all storage systems (database, cache, backups, logs). Support both hard-delete and anonymization strategies.",
+      "code_example": "router.delete('/users/:id', requireAuth, async (req, res) => {\n  const userId = req.params.id;\n  if (req.user.id !== userId && !req.user.isAdmin) {\n    return res.status(403).json({ error: 'Forbidden' });\n  }\n  await User.findByIdAndDelete(userId);\n  await Order.updateMany({ userId }, { $set: { userId: null, email: '[DELETED]' } });\n  await AuditLog.create({ action: 'USER_ERASURE', targetId: userId, performedBy: req.user.id });\n  res.status(204).send();\n});",
+      "references": [
+        "https://gdpr.eu/right-to-be-forgotten/",
+        "https://cwe.mitre.org/data/definitions/459.html"
+      ]
+    },
+    "standards": ["CWE-459", "GDPR-Art-17", "CCPA-1798.105"],
+    "ai_specific": false,
+    "frameworks": ["express", "fastify", "django", "flask", "fastapi", "spring", "rails"]
+  }
+]

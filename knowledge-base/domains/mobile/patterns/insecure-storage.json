@@ -1,0 +1,62 @@
+[
+  {
+    "id": "STORE-SQLITE-001",
+    "type": "unencrypted-database",
+    "title": "SQLite database without encryption",
+    "pattern": "(SQLiteDatabase\\.openOrCreateDatabase|SQLiteOpenHelper|openDatabase|FMDB|sqflite)(?!.*SQLCipher|.*encrypt|.*password|.*key)",
+    "negative_pattern": "SQLCipher|EncryptedDatabase|encrypted_database|cipher_migrate",
+    "severity": "HIGH",
+    "file_types": ["*.kt", "*.java", "*.swift", "*.dart", "*.js", "*.ts"],
+    "description": "Detects creation or opening of SQLite databases without encryption. Unencrypted SQLite databases store all data in plaintext .db files that can be extracted from rooted/jailbroken devices, backups, or through file system access vulnerabilities.",
+    "cwe": "CWE-311",
+    "remediation": "Use SQLCipher to encrypt the database at rest. On Android, use the SQLCipher Android library. On iOS, use SQLCipher via FMDB or GRDB. For Flutter, use sqflite_sqlcipher. Store the encryption key in the platform keystore/keychain."
+  },
+  {
+    "id": "STORE-EXTERNAL-001",
+    "type": "external-storage",
+    "title": "Sensitive data written to Android external storage",
+    "pattern": "(getExternalStorageDirectory|getExternalFilesDir|getExternalCacheDir|Environment\\.getExternalStorage|WRITE_EXTERNAL_STORAGE).*(?:write|output|save|store|put)",
+    "negative_pattern": "MediaStore\\.Images|MediaStore\\.Video|download.*public",
+    "severity": "HIGH",
+    "file_types": ["*.kt", "*.java"],
+    "description": "Detects writing of data to Android external storage (SD card or shared storage). External storage is world-readable on Android versions prior to 10 and accessible to any app with storage permissions. Sensitive data on external storage can be read, modified, or deleted by malicious applications.",
+    "cwe": "CWE-276",
+    "remediation": "Store sensitive data in internal storage (context.filesDir) which is private to the application. If external storage is required, use Scoped Storage APIs (Android 10+) and encrypt data before writing. Never store credentials, tokens, or PII on external storage."
+  },
+  {
+    "id": "STORE-LOG-001",
+    "type": "logged-sensitive-data",
+    "title": "Sensitive data written to log output",
+    "pattern": "(Log\\.[dievw]|NSLog|print\\(|println\\(|debugPrint|console\\.log|logger\\.(info|debug|warn|error))\\(.*(?:ssn|social.?security|credit.?card|card.?number|cvv|pin.?code|bank.?account|medical|health|diagnosis)",
+    "negative_pattern": "\\[REDACTED\\]|masked|\\*{4,}|sanitized",
+    "severity": "MEDIUM",
+    "file_types": ["*.kt", "*.java", "*.swift", "*.dart", "*.js", "*.ts"],
+    "description": "Detects logging of sensitive personal data such as social security numbers, credit card details, medical information, or financial data to application logs. This data can persist in log files, crash reports, and system logs accessible to attackers.",
+    "cwe": "CWE-532",
+    "remediation": "Implement a centralized logging framework that automatically filters and redacts sensitive data patterns. Strip all debug/verbose logging from production builds using ProGuard rules or compiler flags."
+  },
+  {
+    "id": "STORE-BACKUP-001",
+    "type": "backup-exposure",
+    "title": "Application allows backup of sensitive data",
+    "pattern": "android:allowBackup=\"true\"|android:allowBackup\\s*=\\s*true|allowsBackup.*true|<key>UIFileSharingEnabled</key>\\s*<true/>",
+    "negative_pattern": "android:fullBackupContent|BackupAgent|android:allowBackup=\"false\"",
+    "severity": "MEDIUM",
+    "file_types": ["*.xml", "*.plist", "*.gradle"],
+    "description": "Detects application configurations that allow complete backup of app data. On Android, android:allowBackup=true enables ADB backup which can extract all app data including databases and shared preferences. On iOS, file sharing can expose app documents.",
+    "cwe": "CWE-530",
+    "remediation": "Set android:allowBackup to false, or use android:fullBackupContent to specify a backup rules XML that excludes sensitive files. On iOS, mark sensitive files with NSFileProtectionComplete and exclude them from backups using NSURLIsExcludedFromBackupKey."
+  },
+  {
+    "id": "STORE-CLIPBOARD-001",
+    "type": "clipboard-exposure",
+    "title": "Sensitive data copied to clipboard",
+    "pattern": "(UIPasteboard\\.general\\.string|setPrimaryClip|ClipboardManager|Clipboard\\.setData|navigator\\.clipboard\\.writeText).*(?:password|token|secret|key|ssn|credit|card|cvv|pin|account)",
+    "negative_pattern": "expireAfter|clearClipboard|setTimeout.*clipboard|localOnly.*true",
+    "severity": "MEDIUM",
+    "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts"],
+    "description": "Detects copying of sensitive data to the system clipboard. The clipboard is shared between all applications and its contents can be read by any app. On Android 12 and below, apps can silently read clipboard contents. Clipboard data may also be synced across devices.",
+    "cwe": "CWE-200",
+    "remediation": "Avoid copying sensitive data to the clipboard. If clipboard copy is required, use expiring clipboard entries (Android 13+ auto-clears after a timeout), set the ClipDescription as sensitive, or implement a custom in-app clipboard. Clear the clipboard after a short timeout."
+  }
+]

@@ -1,1 +1,328 @@
-[]
+[
+  {
+    "id": "DB-INJECT-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.1,
+    "category": "database",
+    "subcategory": "injection",
+    "title": "NoSQL Operator Injection via Unsanitized User Input",
+    "description": "User-controlled input is passed directly into a MongoDB query without sanitization, allowing attackers to inject NoSQL operators such as $gt, $lt, $ne, $regex, or $where to bypass authentication, exfiltrate data, or manipulate query logic.",
+    "detect": {
+      "patterns": [
+        "\\.(find|findOne|findOneAndUpdate|findOneAndDelete|updateOne|updateMany|deleteOne|deleteMany)\\s*\\(\\s*\\{[^}]*req\\.(body|query|params)",
+        "\\$where\\s*:\\s*['\"`]",
+        "\\{\\s*\\$(gt|gte|lt|lte|ne|in|nin|regex|exists|where)\\s*:\\s*req\\.(body|query|params)",
+        "\\.find\\(\\s*req\\.(body|query|params)",
+        "\\.(aggregate|mapReduce)\\s*\\(\\s*\\[?\\s*req\\.(body|query|params)"
+      ],
+      "negative_patterns": [
+        "mongo-sanitize",
+        "express-mongo-sanitize",
+        "sanitize\\(req\\.",
+        "\\.escape\\(req\\."
+      ],
+      "file_types": ["*.js", "*.ts", "*.mjs", "*.cjs"],
+      "exclude": ["node_modules", "dist", "build", "test", "__tests__", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Use input validation and sanitization libraries such as express-mongo-sanitize or mongo-sanitize. Validate expected types before passing user input to queries. Never pass raw request bodies directly into query objects.",
+      "code_example": "const sanitize = require('express-mongo-sanitize');\napp.use(sanitize());\n\n// Explicit field extraction instead of passing req.body\nconst user = await User.findOne({ email: String(req.body.email) });",
+      "references": [
+        "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05.6-Testing_for_NoSQL_Injection",
+        "https://cwe.mitre.org/data/definitions/943.html"
+      ]
+    },
+    "standards": ["CWE-943"],
+    "ai_specific": false,
+    "frameworks": ["mongodb", "mongoose", "mongoclient"]
+  },
+  {
+    "id": "DB-INJECT-002",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.3,
+    "category": "database",
+    "subcategory": "injection",
+    "title": "SQL Injection via String Concatenation or Template Literals",
+    "description": "SQL queries are constructed by concatenating or interpolating user-controlled input directly into query strings, allowing attackers to inject arbitrary SQL commands to read, modify, or delete data, or escalate privileges.",
+    "detect": {
+      "patterns": [
+        "query\\s*\\(\\s*['\"`]\\s*SELECT\\s+.*['\"`]\\s*\\+\\s*req\\.",
+        "query\\s*\\(\\s*['\"`]\\s*(INSERT|UPDATE|DELETE|SELECT).*['\"`]\\s*\\+\\s*(req\\.|user|input|param)",
+        "query\\s*\\(\\s*`[^`]*(INSERT|UPDATE|DELETE|SELECT)[^`]*\\$\\{\\s*req\\.",
+        "execute\\s*\\(\\s*['\"`].*['\"`]\\s*\\+\\s*req\\.",
+        "query\\s*\\(\\s*f?['\"].*\\{.*req\\.(body|query|params)",
+        "cursor\\.execute\\s*\\(\\s*f?['\"]\\s*(SELECT|INSERT|UPDATE|DELETE).*\\{",
+        "cursor\\.execute\\s*\\(\\s*['\"].*['\"]\\s*%\\s*\\(?(req|request|user_input|param)"
+      ],
+      "negative_patterns": [
+        "\\?\\s*,\\s*\\[",
+        "\\$\\d+\\s*,\\s*\\[",
+        "parameterized",
+        "prepared_statement",
+        "sqlalchemy\\.text\\(",
+        "bindParam"
+      ],
+      "file_types": ["*.js", "*.ts", "*.py", "*.php", "*.java", "*.rb", "*.go"],
+      "exclude": ["node_modules", "dist", "build", "test", "__tests__", "__pycache__", "vendor"]
+    },
+    "remediation": {
+      "description": "Always use parameterized queries or prepared statements. Never concatenate or interpolate user input into SQL strings. Use an ORM or query builder that handles escaping automatically.",
+      "code_example": "// Node.js with parameterized query\nconst result = await pool.query(\n  'SELECT * FROM users WHERE email = $1 AND status = $2',\n  [req.body.email, req.body.status]\n);\n\n# Python with parameterized query\ncursor.execute('SELECT * FROM users WHERE email = %s', (email,))",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "https://cwe.mitre.org/data/definitions/89.html"
+      ]
+    },
+    "standards": ["CWE-89"],
+    "ai_specific": false,
+    "frameworks": ["postgresql", "mysql", "sqlite", "mssql", "pg", "mysql2", "knex", "sequelize"]
+  },
+  {
+    "id": "DB-AUTH-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.0,
+    "category": "database",
+    "subcategory": "authentication",
+    "title": "Database Connection Using Default or Hardcoded Credentials",
+    "description": "Database connection strings contain default, well-known, or hardcoded credentials. Attackers can use these credentials to gain full access to the database if the service is exposed or the source code is leaked.",
+    "detect": {
+      "patterns": [
+        "mongodb://(localhost|127\\.0\\.0\\.1)(:\\d+)?/\\w+",
+        "postgres://(postgres|admin|root):(postgres|admin|root|password|123456)@",
+        "mysql://(root|admin):(root|admin|password|123456)?@",
+        "(root|admin):(root|admin|password|123456|toor)@(localhost|127\\.0\\.0\\.1)",
+        "MONGO_URI\\s*=\\s*['\"]mongodb://(localhost|127\\.0\\.0\\.1)",
+        "DATABASE_URL\\s*=\\s*['\"]postgres://(postgres|root):(postgres|root|password)@",
+        "password\\s*[=:]\\s*['\"]?(root|admin|password|123456|default)['\"]?"
+      ],
+      "negative_patterns": [
+        "\\.env",
+        "process\\.env\\.",
+        "os\\.environ",
+        "config\\.(get|load)",
+        "example\\.env",
+        "CHANGEME",
+        "your_password_here"
+      ],
+      "file_types": ["*.js", "*.ts", "*.py", "*.yaml", "*.yml", "*.json", "*.toml", "*.ini", "*.conf", "*.cfg", "*.env.example"],
+      "exclude": ["node_modules", "dist", "build", "test", "__tests__", "__pycache__", "*.example"]
+    },
+    "remediation": {
+      "description": "Store database credentials in environment variables or a secrets manager (AWS Secrets Manager, HashiCorp Vault, etc.). Never hardcode credentials in source code. Use strong, unique passwords and rotate them regularly.",
+      "code_example": "// Load credentials from environment variables\nconst client = new MongoClient(process.env.MONGO_URI, {\n  auth: {\n    username: process.env.MONGO_USER,\n    password: process.env.MONGO_PASS\n  }\n});",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html",
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ]
+    },
+    "standards": ["CWE-798"],
+    "ai_specific": false,
+    "frameworks": ["mongodb", "mongoose", "postgresql", "mysql", "redis", "mariadb"]
+  },
+  {
+    "id": "DB-AUTH-002",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "database",
+    "subcategory": "authentication",
+    "title": "Database Authentication Mechanism Disabled",
+    "description": "The database server is configured to run without authentication, allowing any client with network access to connect and perform operations without providing credentials.",
+    "detect": {
+      "patterns": [
+        "--noauth",
+        "--auth\\s*=\\s*false",
+        "authorization\\s*:\\s*['\"]?disabled['\"]?",
+        "security\\.authorization\\s*:\\s*['\"]?disabled['\"]?",
+        "requirepass\\s+\\\"\\\"",
+        "protected-mode\\s+(no|off)",
+        "skip-grant-tables",
+        "auth\\s*=\\s*(off|false|no|disabled)",
+        "authentication_method\\s*=\\s*['\"]?trust['\"]?"
+      ],
+      "negative_patterns": [
+        "#\\s*--noauth",
+        "#\\s*skip-grant-tables",
+        "//.*--noauth",
+        "test.*noauth"
+      ],
+      "file_types": ["*.conf", "*.cfg", "*.yaml", "*.yml", "*.ini", "*.toml", "*.sh", "*.bash", "*.dockerfile", "Dockerfile", "docker-compose.yml"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Always enable authentication on database servers. Configure role-based access control (RBAC) and enforce the principle of least privilege. Use SCRAM-SHA-256 or x.509 certificate authentication for MongoDB, and md5/scram-sha-256 for PostgreSQL.",
+      "code_example": "# MongoDB mongod.conf\nsecurity:\n  authorization: enabled\n\n# PostgreSQL pg_hba.conf\nhost all all 0.0.0.0/0 scram-sha-256\n\n# Redis redis.conf\nrequirepass your_strong_password_here\nprotected-mode yes",
+      "references": [
+        "https://www.mongodb.com/docs/manual/core/authentication/",
+        "https://cwe.mitre.org/data/definitions/306.html"
+      ]
+    },
+    "standards": ["CWE-306"],
+    "ai_specific": false,
+    "frameworks": ["mongodb", "redis", "mysql", "postgresql", "mariadb"]
+  },
+  {
+    "id": "DB-ENCRYPT-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "database",
+    "subcategory": "encryption",
+    "title": "Database Encryption at Rest or in Transit Disabled",
+    "description": "The database is configured with encryption disabled, leaving data vulnerable to interception during transit or unauthorized access on disk. This includes disabled TLS/SSL connections and disabled storage encryption.",
+    "detect": {
+      "patterns": [
+        "enableEncryption\\s*:\\s*false",
+        "--enableEncryption\\s+false",
+        "ssl\\s*:\\s*false",
+        "ssl_mode\\s*[=:]\\s*['\"]?disable[d]?['\"]?",
+        "sslmode\\s*=\\s*disable",
+        "tls\\s*:\\s*false",
+        "net\\.tls\\.mode\\s*:\\s*['\"]?disabled['\"]?",
+        "require_ssl\\s*=\\s*(off|false|0|no)",
+        "ssl-mode\\s*=\\s*DISABLED"
+      ],
+      "negative_patterns": [
+        "#.*ssl.*false",
+        "//.*ssl.*false",
+        "test.*ssl.*disable",
+        "sslmode=prefer",
+        "sslmode=require"
+      ],
+      "file_types": ["*.conf", "*.cfg", "*.yaml", "*.yml", "*.ini", "*.toml", "*.js", "*.ts", "*.py", "*.json"],
+      "exclude": ["node_modules", "dist", "build", "test", "__tests__", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Enable TLS/SSL for all database connections. Enable encryption at rest using the database's built-in encryption or filesystem-level encryption. Use strong cipher suites and valid certificates.",
+      "code_example": "// MongoDB connection with TLS\nconst client = new MongoClient(uri, {\n  tls: true,\n  tlsCertificateKeyFile: '/path/to/client.pem',\n  tlsCAFile: '/path/to/ca.pem'\n});\n\n# PostgreSQL connection with SSL\npsql \"sslmode=verify-full sslrootcert=ca.pem host=db.example.com dbname=mydb\"",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html#transport-layer-protection",
+        "https://cwe.mitre.org/data/definitions/311.html"
+      ]
+    },
+    "standards": ["CWE-311"],
+    "ai_specific": false,
+    "frameworks": ["mongodb", "postgresql", "mysql", "redis", "mariadb", "mssql"]
+  },
+  {
+    "id": "DB-ACCESS-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "database",
+    "subcategory": "access-control",
+    "title": "Overly Permissive Database Grants and Privileges",
+    "description": "Database permissions are configured with excessive privileges such as GRANT ALL ON *.* or WITH GRANT OPTION, violating the principle of least privilege. Compromised accounts with these permissions can read, modify, or destroy all data across all databases.",
+    "detect": {
+      "patterns": [
+        "GRANT\\s+ALL\\s+(PRIVILEGES\\s+)?ON\\s+\\*\\.\\*",
+        "GRANT\\s+.*TO\\s+.*WITH\\s+GRANT\\s+OPTION",
+        "GRANT\\s+ALL\\s+(PRIVILEGES\\s+)?ON\\s+\\w+\\.\\*\\s+TO\\s+['\"]?\\w+['\"]?@['\"]?%['\"]?",
+        "GRANT\\s+(SUPER|PROCESS|FILE|RELOAD|SHUTDOWN)",
+        "db\\.grantRolesToUser\\s*\\(.*['\"]root['\"]",
+        "createUser.*roles.*:\\s*\\[\\s*['\"]root['\"]"
+      ],
+      "negative_patterns": [
+        "--\\s*GRANT",
+        "#\\s*GRANT",
+        "REVOKE\\s+ALL",
+        "test_user",
+        "example"
+      ],
+      "file_types": ["*.sql", "*.js", "*.ts", "*.py", "*.sh", "*.yaml", "*.yml"],
+      "exclude": ["node_modules", "dist", "build", "test", "__tests__", "__pycache__", "migrations"]
+    },
+    "remediation": {
+      "description": "Follow the principle of least privilege. Grant only the specific permissions needed for each application role. Avoid GRANT ALL and WITH GRANT OPTION. Use separate database accounts for different services and operations (read-only, read-write, admin).",
+      "code_example": "-- Grant only necessary permissions\nGRANT SELECT, INSERT, UPDATE ON mydb.users TO 'app_user'@'10.0.0.%';\nGRANT SELECT ON mydb.products TO 'readonly_user'@'10.0.0.%';\n\n-- MongoDB: grant specific roles\ndb.createUser({\n  user: 'appUser',\n  pwd: passwordPrompt(),\n  roles: [{ role: 'readWrite', db: 'myapp' }]\n});",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html#privilege-management",
+        "https://cwe.mitre.org/data/definitions/269.html"
+      ]
+    },
+    "standards": ["CWE-269"],
+    "ai_specific": false,
+    "frameworks": ["mysql", "postgresql", "mariadb", "mongodb", "mssql"]
+  },
+  {
+    "id": "DB-EXPOSE-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.4,
+    "category": "database",
+    "subcategory": "network-exposure",
+    "title": "Database Exposed on All Network Interfaces",
+    "description": "The database is configured to listen on 0.0.0.0 or all interfaces, making it accessible from any network including the public internet. Combined with weak authentication, this allows remote attackers to connect directly to the database.",
+    "detect": {
+      "patterns": [
+        "bind_ip\\s*:\\s*0\\.0\\.0\\.0",
+        "bindIp\\s*:\\s*0\\.0\\.0\\.0",
+        "bind-address\\s*=\\s*0\\.0\\.0\\.0",
+        "listen_addresses\\s*=\\s*['\"]\\*['\"]",
+        "bind\\s+0\\.0\\.0\\.0",
+        "--bind_ip\\s+0\\.0\\.0\\.0",
+        "net\\.bindIp\\s*:\\s*['\"]?0\\.0\\.0\\.0",
+        "host\\s+all\\s+all\\s+0\\.0\\.0\\.0/0"
+      ],
+      "negative_patterns": [
+        "#.*bind.*0\\.0\\.0\\.0",
+        "//.*bind.*0\\.0\\.0\\.0",
+        "localhost",
+        "127\\.0\\.0\\.1",
+        "firewall",
+        "vpn_only"
+      ],
+      "file_types": ["*.conf", "*.cfg", "*.yaml", "*.yml", "*.ini", "*.toml", "docker-compose.yml", "Dockerfile"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Bind database services to specific internal interfaces (127.0.0.1 or private network IPs). Use firewall rules to restrict access to authorized hosts only. Place databases in private subnets with no direct internet access. Use SSH tunnels or VPN for remote administration.",
+      "code_example": "# MongoDB mongod.conf — bind to localhost only\nnet:\n  bindIp: 127.0.0.1\n\n# PostgreSQL postgresql.conf\nlisten_addresses = '127.0.0.1'\n\n# Redis redis.conf\nbind 127.0.0.1 ::1",
+      "references": [
+        "https://www.mongodb.com/docs/manual/core/security-hardening/",
+        "https://cwe.mitre.org/data/definitions/668.html"
+      ]
+    },
+    "standards": ["CWE-668"],
+    "ai_specific": false,
+    "frameworks": ["mongodb", "postgresql", "mysql", "redis", "mariadb"]
+  },
+  {
+    "id": "DB-BACKUP-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.5,
+    "category": "database",
+    "subcategory": "backup",
+    "title": "Unencrypted Database Backup Operations",
+    "description": "Database backup commands are executed without encryption flags, producing unencrypted dump files that may contain sensitive data. If these backups are stored on shared storage, transmitted over unencrypted channels, or left on compromised systems, the data is fully exposed.",
+    "detect": {
+      "patterns": [
+        "mongodump\\s+(?!.*--ssl)(?!.*--tls)",
+        "mongodump\\s+(?!.*--archive=.*\\.enc)",
+        "pg_dump\\s+(?!.*--format=custom)(?!.*\\|\\s*(gpg|openssl|age))",
+        "pg_dumpall\\s+(?!.*\\|\\s*(gpg|openssl|age))",
+        "mysqldump\\s+(?!.*\\|\\s*(gpg|openssl|age))",
+        "xtrabackup\\s+(?!.*--encrypt)",
+        "redis-cli.*--rdb\\s+(?!.*gpg)"
+      ],
+      "negative_patterns": [
+        "encrypt",
+        "gpg",
+        "openssl\\s+enc",
+        "age\\s+-r",
+        "--ssl",
+        "--tls",
+        "kms"
+      ],
+      "file_types": ["*.sh", "*.bash", "*.yaml", "*.yml", "*.py", "*.js", "*.ts", "Makefile", "Dockerfile"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Encrypt all database backups using GPG, OpenSSL, or cloud-native encryption (AWS KMS, GCP CMEK). Use TLS for backup transfers. Store backups in encrypted storage with restricted access. Implement backup retention policies and verify backup integrity regularly.",
+      "code_example": "# Encrypted MongoDB backup\nmongodump --uri=\"$MONGO_URI\" --tls --archive | gpg --encrypt --recipient backup@company.com > backup.archive.gpg\n\n# Encrypted PostgreSQL backup\npg_dump --format=custom \"$DATABASE_URL\" | gpg --symmetric --cipher-algo AES256 > backup.dump.gpg\n\n# Encrypted MySQL backup\nmysqldump -u \"$DB_USER\" -p\"$DB_PASS\" --all-databases | openssl enc -aes-256-cbc -salt -out backup.sql.enc",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html",
+        "https://cwe.mitre.org/data/definitions/312.html"
+      ]
+    },
+    "standards": ["CWE-312"],
+    "ai_specific": false,
+    "frameworks": ["mongodb", "postgresql", "mysql", "redis", "mariadb"]
+  }
+]

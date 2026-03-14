@@ -1,0 +1,62 @@
+[
+  {
+    "id": "DOCKER-ROOT-001",
+    "type": "root-user",
+    "title": "Container running as root user",
+    "pattern": "^USER\\s+root\\s*$",
+    "negative_pattern": "^USER\\s+(?!root)\\S+",
+    "severity": "HIGH",
+    "file_types": ["Dockerfile", "*.dockerfile"],
+    "description": "Dockerfile explicitly sets USER root or never changes from root. Containers running as root have unnecessary privileges that facilitate host escape and lateral movement.",
+    "cwe": "CWE-250",
+    "remediation": "Add a non-root USER instruction before ENTRYPOINT/CMD: RUN addgroup -S appgroup && adduser -S appuser -G appgroup && USER appuser"
+  },
+  {
+    "id": "DOCKER-SECRETS-ARG-001",
+    "type": "secrets-in-arg",
+    "title": "Secrets passed via build ARG instruction",
+    "pattern": "ARG\\s+\\w*(PASSWORD|PASSWD|SECRET|TOKEN|API_KEY|APIKEY|PRIVATE_KEY|ACCESS_KEY|CREDENTIALS)\\w*",
+    "negative_pattern": "^\\s*#.*ARG",
+    "severity": "MEDIUM",
+    "file_types": ["Dockerfile", "*.dockerfile"],
+    "description": "Build arguments containing sensitive values are persisted in image layer metadata and can be extracted with `docker history --no-trunc`. Use BuildKit secret mounts instead.",
+    "cwe": "CWE-214",
+    "remediation": "Use BuildKit secret mounts: RUN --mount=type=secret,id=mysecret cat /run/secrets/mysecret. Build with: docker build --secret id=mysecret,src=secret.txt ."
+  },
+  {
+    "id": "DOCKER-LATEST-001",
+    "type": "latest-tag",
+    "title": "Base image uses :latest or no tag",
+    "pattern": "^FROM\\s+(\\S+:latest|[a-zA-Z][a-zA-Z0-9._-]*(/[a-zA-Z0-9._-]+)*)\\s*$",
+    "negative_pattern": "^FROM\\s+\\S+@sha256:",
+    "severity": "MEDIUM",
+    "file_types": ["Dockerfile", "*.dockerfile"],
+    "description": "Using :latest or omitting a tag makes builds non-reproducible. Upstream changes or supply-chain compromises will silently propagate. Pin to a specific version or SHA256 digest.",
+    "cwe": "CWE-1104",
+    "remediation": "Pin base images to a specific version: FROM node:20.11.1-alpine3.19. For maximum immutability, pin by digest: FROM node@sha256:abc123..."
+  },
+  {
+    "id": "DOCKER-PRIVPORT-001",
+    "type": "privileged-port",
+    "title": "Exposing privileged port in container",
+    "pattern": "EXPOSE\\s+(1|2|3|4|5|6|7|8|9|[1-9]\\d|[1-9]\\d{2}|10[01]\\d|102[0-3])\\b",
+    "negative_pattern": "^\\s*#.*EXPOSE",
+    "severity": "MEDIUM",
+    "file_types": ["Dockerfile", "*.dockerfile"],
+    "description": "Exposing privileged ports (below 1024) typically requires root privileges. This often forces running the container as root, which is a security risk. Use ports above 1024 and remap if needed.",
+    "cwe": "CWE-250",
+    "remediation": "Use non-privileged ports (e.g., 8080 instead of 80, 8443 instead of 443) and remap at deployment: docker run -p 80:8080 myapp"
+  },
+  {
+    "id": "DOCKER-ADD-001",
+    "type": "add-vs-copy",
+    "title": "ADD used instead of COPY for local files",
+    "pattern": "^ADD\\s+(?!https?://)\\S+\\s+\\S+",
+    "negative_pattern": "^ADD\\s+https?://",
+    "severity": "LOW",
+    "file_types": ["Dockerfile", "*.dockerfile"],
+    "description": "ADD has implicit tar extraction and remote URL fetch capabilities that can introduce unexpected behavior or security risks. Use COPY for local files as it has transparent, predictable semantics.",
+    "cwe": "CWE-829",
+    "remediation": "Replace ADD with COPY for local files: COPY ./src /app/src. Only use ADD when tar auto-extraction is explicitly needed."
+  }
+]

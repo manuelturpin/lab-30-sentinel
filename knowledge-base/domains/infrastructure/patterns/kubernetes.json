@@ -1,0 +1,62 @@
+[
+  {
+    "id": "K8S-PRIVILEGED-001",
+    "type": "privileged-container",
+    "title": "Privileged container in Kubernetes",
+    "pattern": "privileged:\\s*true",
+    "negative_pattern": "privileged:\\s*false",
+    "severity": "CRITICAL",
+    "file_types": ["*.yaml", "*.yml"],
+    "description": "Setting privileged: true in a container securityContext disables all kernel security features (AppArmor, seccomp, capabilities). The container has nearly full host access, making escape trivial.",
+    "cwe": "CWE-250",
+    "remediation": "Set privileged: false and drop all capabilities: securityContext: { privileged: false, allowPrivilegeEscalation: false, capabilities: { drop: [ALL] } }"
+  },
+  {
+    "id": "K8S-HOSTNET-001",
+    "type": "host-network",
+    "title": "hostNetwork enabled on pod",
+    "pattern": "hostNetwork:\\s*true",
+    "negative_pattern": "^\\s*#.*hostNetwork",
+    "severity": "HIGH",
+    "file_types": ["*.yaml", "*.yml"],
+    "description": "Pods with hostNetwork: true share the node's network namespace, bypassing NetworkPolicies and enabling traffic sniffing of co-located pods. Only CNI plugins and system components should use this.",
+    "cwe": "CWE-668",
+    "remediation": "Remove hostNetwork: true or set to false. Use Kubernetes Services and Ingress for network exposure. Enforce via PodSecurityAdmission restricted profile."
+  },
+  {
+    "id": "K8S-NOLIMITS-001",
+    "type": "no-resource-limits",
+    "title": "Container without resource limits",
+    "pattern": "containers:\\s*\\n\\s+- name:",
+    "negative_pattern": "resources:\\s*\\n\\s+limits:",
+    "severity": "MEDIUM",
+    "file_types": ["*.yaml", "*.yml"],
+    "description": "Containers without CPU and memory limits can consume unbounded node resources, enabling denial-of-service against co-located workloads or crypto-mining abuse.",
+    "cwe": "CWE-770",
+    "remediation": "Set resource requests and limits on every container: resources: { requests: { memory: 128Mi, cpu: 250m }, limits: { memory: 512Mi, cpu: 1000m } }. Use LimitRange for namespace defaults."
+  },
+  {
+    "id": "K8S-AUTOMOUNT-001",
+    "type": "sa-token-automount",
+    "title": "Service account token auto-mounted",
+    "pattern": "automountServiceAccountToken:\\s*true",
+    "negative_pattern": "automountServiceAccountToken:\\s*false",
+    "severity": "MEDIUM",
+    "file_types": ["*.yaml", "*.yml"],
+    "description": "Automatically mounting the service account token gives every container access to the Kubernetes API. If the pod is compromised, the attacker can use the token for lateral movement within the cluster.",
+    "cwe": "CWE-269",
+    "remediation": "Set automountServiceAccountToken: false on pods and service accounts that do not need API access. For pods that do need it, use a dedicated SA with minimal RBAC permissions."
+  },
+  {
+    "id": "K8S-DEFAULTNS-001",
+    "type": "default-namespace",
+    "title": "Workload deployed in default namespace",
+    "pattern": "namespace:\\s*['\"]?default['\"]?",
+    "negative_pattern": "^\\s*#.*namespace",
+    "severity": "LOW",
+    "file_types": ["*.yaml", "*.yml"],
+    "description": "Deploying workloads to the default namespace bypasses namespace-level security controls (NetworkPolicies, ResourceQuotas, RBAC, PodSecurityAdmission). It also increases the risk of accidental resource conflicts.",
+    "cwe": "CWE-284",
+    "remediation": "Create dedicated namespaces per application or team and apply appropriate NetworkPolicies, ResourceQuotas, and PodSecurityAdmission labels to each namespace."
+  }
+]

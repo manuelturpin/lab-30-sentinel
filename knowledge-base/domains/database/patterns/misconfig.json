@@ -1,0 +1,50 @@
+[
+  {
+    "id": "MISCONFIG-CRED-001",
+    "type": "default-credentials",
+    "title": "Database Using Default or Well-Known Credentials",
+    "pattern": "(mongodb|postgres|mysql|redis)://(root|admin|postgres|sa):(root|admin|postgres|password|123456|changeme|default)?@",
+    "negative_pattern": "process\\.env|os\\.environ|\\$\\{|\\$\\(|vault|secrets-manager|\\.env|CHANGEME|<password>|your_password",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts", "*.py", "*.yaml", "*.yml", "*.json", "*.toml", "*.conf", "*.cfg"],
+    "description": "Database connection strings contain default or commonly known credentials (root:root, postgres:postgres, admin:admin). These credentials are widely known and are the first attempted by automated scanning tools and attackers.",
+    "cwe": "CWE-798",
+    "remediation": "Replace hardcoded credentials with environment variable references. Use a secrets manager (AWS Secrets Manager, HashiCorp Vault, GCP Secret Manager) for production deployments. Enforce strong, unique passwords generated with a cryptographic random generator."
+  },
+  {
+    "id": "MISCONFIG-BIND-001",
+    "type": "network-exposure",
+    "title": "Database Bound to All Network Interfaces (0.0.0.0)",
+    "pattern": "(bind_ip|bindIp|bind-address|bind)\\s*[=:]\\s*['\"]?0\\.0\\.0\\.0['\"]?|listen_addresses\\s*=\\s*['\"]\\*['\"]",
+    "negative_pattern": "#.*bind.*0\\.0\\.0\\.0|//.*bind.*0\\.0\\.0\\.0|firewall_rule|security_group|network_policy",
+    "severity": "HIGH",
+    "file_types": ["*.conf", "*.cfg", "*.yaml", "*.yml", "*.ini", "*.toml"],
+    "description": "The database is configured to listen on all network interfaces (0.0.0.0 or *), making it accessible from any network including potentially the public internet. Without proper firewall rules, this exposes the database to unauthorized connection attempts.",
+    "cwe": "CWE-668",
+    "remediation": "Bind the database to 127.0.0.1 (localhost) or a specific private network interface. Use firewall rules or security groups to restrict access to authorized application servers only. Place databases in private subnets without public IP addresses."
+  },
+  {
+    "id": "MISCONFIG-TLS-001",
+    "type": "tls-disabled",
+    "title": "Database TLS/SSL Encryption Disabled",
+    "pattern": "ssl\\s*[=:]\\s*(false|off|disabled|0)|sslmode\\s*=\\s*disable|tls\\s*[=:]\\s*(false|off|disabled)|net\\.tls\\.mode\\s*:\\s*['\"]?disabled['\"]?|require_ssl\\s*=\\s*(off|false|0)",
+    "negative_pattern": "#.*ssl.*false|//.*ssl.*false|ssl.*=.*true|tls.*=.*true|sslmode.*=.*(require|verify)",
+    "severity": "HIGH",
+    "file_types": ["*.conf", "*.cfg", "*.yaml", "*.yml", "*.ini", "*.toml", "*.js", "*.ts", "*.py", "*.json"],
+    "description": "TLS/SSL is explicitly disabled for database connections, allowing data to be transmitted in plaintext. Attackers on the same network can intercept credentials, query results, and sensitive data through passive network sniffing or man-in-the-middle attacks.",
+    "cwe": "CWE-319",
+    "remediation": "Enable TLS for all database connections. Use sslmode=verify-full for PostgreSQL, --tls with certificate verification for MongoDB, and require_secure_transport=ON for MySQL. Deploy valid certificates signed by a trusted CA."
+  },
+  {
+    "id": "MISCONFIG-AUTH-001",
+    "type": "auth-disabled",
+    "title": "Database Authentication Mechanism Disabled or Bypassed",
+    "pattern": "--noauth|--auth\\s*=\\s*false|authorization\\s*:\\s*['\"]?disabled['\"]?|skip-grant-tables|protected-mode\\s+(no|off)|requirepass\\s+\\\"\\\"|trust\\s+all",
+    "negative_pattern": "#.*noauth|#.*skip-grant|//.*noauth|authorization.*enabled|auth.*=.*true",
+    "severity": "CRITICAL",
+    "file_types": ["*.conf", "*.cfg", "*.yaml", "*.yml", "*.ini", "*.sh", "*.bash", "Dockerfile", "docker-compose.yml"],
+    "description": "Database authentication is explicitly disabled or bypassed, allowing any client to connect and perform operations without credentials. This is common in development environments but catastrophic in production, as it provides unrestricted access to all data.",
+    "cwe": "CWE-306",
+    "remediation": "Enable authentication on all database instances. For MongoDB, set security.authorization to 'enabled'. For MySQL, remove skip-grant-tables. For Redis, set a strong requirepass and enable protected-mode. Never disable authentication, even in development environments."
+  }
+]

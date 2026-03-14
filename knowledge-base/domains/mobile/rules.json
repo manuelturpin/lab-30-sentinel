@@ -1,1 +1,458 @@
-[]
+[
+  {
+    "id": "MOB-CRED-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.1,
+    "category": "mobile",
+    "subcategory": "credential-storage",
+    "title": "Hardcoded credentials in mobile code",
+    "description": "Detects API keys, passwords, secrets, and tokens hardcoded directly in mobile application source code. Hardcoded credentials can be extracted through reverse engineering or static analysis of the application binary, leading to unauthorized access to backend services and data breaches.",
+    "detect": {
+      "patterns": [
+        "(api[_-]?key|apikey|api[_-]?secret)\\s*[:=]\\s*[\"'][A-Za-z0-9_\\-]{16,}[\"']",
+        "(password|passwd|pwd|secret)\\s*[:=]\\s*[\"'][^\"']{8,}[\"']",
+        "Bearer\\s+[A-Za-z0-9\\-._~+/]+=*",
+        "AWS[A-Z0-9]{10,}",
+        "(sk|pk)_(live|test)_[A-Za-z0-9]{20,}",
+        "private[_-]?key\\s*[:=]\\s*[\"'][^\"']+[\"']"
+      ],
+      "negative_patterns": [
+        "\\$\\{.*\\}",
+        "process\\.env\\.",
+        "Environment\\.",
+        "BuildConfig\\.",
+        "\\bplaceholder\\b",
+        "\\bexample\\b",
+        "\\bTODO\\b",
+        "\\bXXXX+\\b"
+      ],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts", "*.tsx", "*.jsx"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Move all credentials to secure platform-specific storage. On iOS, use Keychain Services. On Android, use EncryptedSharedPreferences or the Android Keystore system. For React Native, use react-native-keychain. For Flutter, use flutter_secure_storage. Credentials should be provisioned at runtime via secure configuration management.",
+      "code_example": "// Android - EncryptedSharedPreferences\nval masterKey = MasterKey.Builder(context)\n    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)\n    .build()\nval securePrefs = EncryptedSharedPreferences.create(\n    context, \"secure_prefs\", masterKey,\n    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,\n    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM\n)\n\n// iOS - Keychain\nlet query: [String: Any] = [\n    kSecClass as String: kSecClassGenericPassword,\n    kSecAttrAccount as String: \"apiKey\",\n    kSecValueData as String: apiKey.data(using: .utf8)!\n]\nSecItemAdd(query as CFDictionary, nil)",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m1-improper-credential-usage",
+        "https://cwe.mitre.org/data/definitions/798.html",
+        "https://developer.android.com/topic/security/data",
+        "https://developer.apple.com/documentation/security/keychain_services"
+      ]
+    },
+    "standards": ["CWE-798", "OWASP-M01:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-CRED-002",
+    "severity": "HIGH",
+    "cvss_v4": 8.2,
+    "category": "mobile",
+    "subcategory": "credential-storage",
+    "title": "Credentials in plaintext storage (SharedPreferences/NSUserDefaults)",
+    "description": "Detects storage of sensitive credentials in Android SharedPreferences or iOS NSUserDefaults without encryption. These storage mechanisms store data in plaintext XML or plist files that can be accessed on rooted/jailbroken devices or through device backups.",
+    "detect": {
+      "patterns": [
+        "getSharedPreferences\\(.*\\)\\.edit\\(\\)\\.(putString|putInt)\\(\\s*[\"'](token|password|secret|key|credential|auth|session)",
+        "SharedPreferences\\.Editor.*put(String|Int).*[\"'](password|token|secret|api.?key|auth.?token)",
+        "UserDefaults\\.standard\\.set\\(.*(?:password|token|secret|key|credential|auth)",
+        "NSUserDefaults.*set(Object|Value).*(?:password|token|secret|key|credential)",
+        "SharedPreferences\\.getInstance\\(\\).*set(String|Int).*(?:password|token|secret|key)"
+      ],
+      "negative_patterns": [
+        "EncryptedSharedPreferences",
+        "KeychainWrapper",
+        "flutter_secure_storage",
+        "react-native-keychain",
+        "SecItemAdd"
+      ],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Replace SharedPreferences with EncryptedSharedPreferences on Android and NSUserDefaults with Keychain on iOS. These platform-provided secure storage mechanisms encrypt data at rest and protect against unauthorized access.",
+      "code_example": "// Android - Use EncryptedSharedPreferences instead\nval masterKey = MasterKey.Builder(context)\n    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()\nval securePrefs = EncryptedSharedPreferences.create(\n    context, \"secure_prefs\", masterKey,\n    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,\n    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM\n)\nsecurePrefs.edit().putString(\"token\", value).apply()\n\n// iOS - Use Keychain instead of UserDefaults\nlet keychainQuery: [String: Any] = [\n    kSecClass as String: kSecClassGenericPassword,\n    kSecAttrAccount as String: \"authToken\",\n    kSecValueData as String: token.data(using: .utf8)!\n]\nSecItemAdd(keychainQuery as CFDictionary, nil)",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m1-improper-credential-usage",
+        "https://cwe.mitre.org/data/definitions/312.html",
+        "https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences"
+      ]
+    },
+    "standards": ["CWE-312", "OWASP-M01:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-SUPPLY-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "mobile",
+    "subcategory": "supply-chain",
+    "title": "Unverified third-party SDK usage",
+    "description": "Detects inclusion of third-party SDKs and dependencies without integrity verification, version pinning, or checksum validation. Malicious or compromised SDKs can exfiltrate data, inject advertisements, or introduce backdoors into the mobile application.",
+    "detect": {
+      "patterns": [
+        "pod\\s+['\"][^'\"]+['\"]\\s*$",
+        "implementation\\s+['\"][^'\"]+:[^'\"]+:\\+['\"]",
+        "implementation\\s+['\"][^'\"]+:LATEST['\"]",
+        "npm\\s+install\\s+(?!--save-exact)",
+        "dependencies:\\s*\\n\\s+\\w+:\\s*\\^",
+        "git:\\s*https?://(?!github\\.com/(google|apple|facebook|microsoft|flutter)/)"
+      ],
+      "negative_patterns": [
+        "integrity\\s*:",
+        "sha256",
+        "checksum",
+        "resolved\\s+\"https://registry"
+      ],
+      "file_types": ["Podfile", "*.gradle", "*.gradle.kts", "package.json", "pubspec.yaml", "*.podspec"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Pin all dependency versions to exact versions. Enable integrity checks and verify checksums for all third-party SDKs. Use lockfiles (Podfile.lock, package-lock.json, pubspec.lock) and commit them to version control. Audit dependencies regularly with tools like npm audit, bundler-audit, or safety.",
+      "code_example": "// Gradle - Pin exact version\nimplementation 'com.squareup.okhttp3:okhttp:4.12.0'\n\n// Podfile - Pin exact version\npod 'Alamofire', '5.9.1'\n\n// package.json - Use exact versions\n\"dependencies\": {\n  \"react-native\": \"0.73.4\"\n}\n\n// pubspec.yaml - Pin version\ndependencies:\n  http: 1.2.1",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m2-inadequate-supply-chain-security",
+        "https://cwe.mitre.org/data/definitions/1357.html"
+      ]
+    },
+    "standards": ["CWE-1357", "OWASP-M02:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-AUTH-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "mobile",
+    "subcategory": "authentication",
+    "title": "Insecure biometric authentication implementation",
+    "description": "Detects insecure implementation of biometric authentication, such as using event-based biometric checks without cryptographic binding, allowing fallback to weak authentication, or not tying biometric auth to a server-side session.",
+    "detect": {
+      "patterns": [
+        "LAContext\\(\\).*evaluatePolicy.*\\.deviceOwnerAuthentication(?!WithBiometrics)",
+        "BiometricPrompt.*setNegativeButtonText.*[\"']Cancel[\"']",
+        "canEvaluatePolicy.*\\.deviceOwnerAuthentication\\b",
+        "setDeviceCredentialAllowed\\(true\\)",
+        "authenticate\\(.*biometricOnly:\\s*false",
+        "TouchID|FaceID.*(?:success|result)\\s*(?:=>|->)\\s*(?:true|navigat|unlock)"
+      ],
+      "negative_patterns": [
+        "CryptoObject",
+        "setUserAuthenticationRequired\\(true\\)",
+        "kSecAccessControlBiometryCurrentSet",
+        "SecAccessControlCreateWithFlags"
+      ],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Bind biometric authentication to cryptographic operations using platform keystores. On Android, use BiometricPrompt with CryptoObject backed by a key in AndroidKeyStore with setUserAuthenticationRequired(true). On iOS, use LAContext with Keychain access control flags (kSecAccessControlBiometryCurrentSet). Never use biometric result as a simple boolean gate.",
+      "code_example": "// Android - Crypto-bound biometric\nval keyGenerator = KeyGenerator.getInstance(\"AES\", \"AndroidKeyStore\")\nval keyGenSpec = KeyGenParameterSpec.Builder(\"biometric_key\",\n    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)\n    .setUserAuthenticationRequired(true)\n    .setInvalidatedByBiometricEnrollment(true)\n    .build()\nkeyGenerator.init(keyGenSpec)\nval cipher = Cipher.getInstance(\"AES/GCM/NoPadding\")\ncipher.init(Cipher.ENCRYPT_MODE, keyGenerator.generateKey())\nbiometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))\n\n// iOS - Keychain with biometric protection\nlet access = SecAccessControlCreateWithFlags(\n    nil, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,\n    .biometryCurrentSet, nil)!",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m3-insecure-authentication-authorization",
+        "https://cwe.mitre.org/data/definitions/287.html",
+        "https://developer.android.com/training/sign-in/biometric-auth"
+      ]
+    },
+    "standards": ["CWE-287", "OWASP-M03:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-VALID-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.6,
+    "category": "mobile",
+    "subcategory": "input-validation",
+    "title": "Missing input validation on deep links",
+    "description": "Detects deep link and universal link handlers that process URL parameters without proper input validation or sanitization. Attackers can craft malicious deep links to trigger unintended application behavior, navigate to arbitrary screens, or inject data.",
+    "detect": {
+      "patterns": [
+        "func\\s+application.*open\\s+url:.*options:.*->\\s*Bool\\s*\\{(?!.*validate|.*sanitize|.*whitelist|.*allowlist)",
+        "intent\\.data\\.getQueryParameter\\(",
+        "Linking\\.addEventListener.*url.*(?:split|match|replace)",
+        "onGenerateRoute.*Uri\\.parse",
+        "DeepLinkHandler.*params\\[",
+        "<intent-filter>.*<data.*android:scheme=",
+        "navController\\.navigate\\(.*intent\\.data"
+      ],
+      "negative_patterns": [
+        "validateUrl",
+        "sanitizeInput",
+        "allowedHosts",
+        "whitelistedPaths",
+        "URLComponents.*queryItems.*filter"
+      ],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts", "*.xml"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Validate and sanitize all deep link parameters before processing. Implement an allowlist of valid deep link paths and parameter values. Use URL parsing libraries to safely extract components. Never pass deep link data directly to WebViews, navigation, or database queries without validation.",
+      "code_example": "// Swift - Validate deep link\nfunc application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {\n    guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),\n          let host = components.host,\n          allowedHosts.contains(host) else {\n        return false\n    }\n    let sanitizedParams = components.queryItems?.reduce(into: [String: String]()) { result, item in\n        if let value = item.value?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {\n            result[item.name] = value\n        }\n    }\n    return handleValidatedDeepLink(host: host, params: sanitizedParams ?? [:])\n}\n\n// Kotlin - Validate deep link\nfun handleDeepLink(intent: Intent) {\n    val uri = intent.data ?: return\n    if (uri.host !in allowedHosts) return\n    val sanitizedPath = uri.path?.takeIf { it.matches(validPathRegex) } ?: return\n}",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m4-insufficient-input-output-validation",
+        "https://cwe.mitre.org/data/definitions/20.html"
+      ]
+    },
+    "standards": ["CWE-20", "OWASP-M04:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-COMM-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "mobile",
+    "subcategory": "network-communication",
+    "title": "Insecure network communication without certificate pinning",
+    "description": "Detects network communication configurations that disable TLS verification, allow all certificates, or fail to implement certificate pinning. Without certificate pinning, the application is vulnerable to man-in-the-middle attacks even over HTTPS.",
+    "detect": {
+      "patterns": [
+        "NSAllowsArbitraryLoads.*true",
+        "NSExceptionAllowsInsecureHTTPLoads.*true",
+        "setHostnameVerifier\\(.*ALLOW_ALL",
+        "TrustManager.*checkServerTrusted.*\\{\\s*\\}",
+        "SSLContext.*TrustAllCerts",
+        "SecTrustEvaluate.*kSecTrustResultUnspecified",
+        "http://(?!localhost|127\\.0\\.0\\.1|10\\.|192\\.168\\.)",
+        "okHttpClient.*hostnameVerifier.*true",
+        "BadCertificateCallback.*=>\\s*true",
+        "rejectUnauthorized:\\s*false"
+      ],
+      "negative_patterns": [
+        "certificatePinner",
+        "TrustKit",
+        "ssl-pinning",
+        "pinning.*sha256",
+        "CertificatePinner\\.Builder"
+      ],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts", "*.plist", "*.xml"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Implement certificate pinning using platform-native or well-maintained libraries. On Android, use OkHttp CertificatePinner or Network Security Config. On iOS, use TrustKit or URLSession delegate with pinned certificates. Never disable TLS verification or hostname checking in production code.",
+      "code_example": "// Android - OkHttp Certificate Pinning\nval certificatePinner = CertificatePinner.Builder()\n    .add(\"api.example.com\", \"sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\")\n    .build()\nval client = OkHttpClient.Builder()\n    .certificatePinner(certificatePinner)\n    .build()\n\n// iOS - URLSession with pinning\nfunc urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge,\n    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {\n    guard let serverTrust = challenge.protectionSpace.serverTrust,\n          let certificate = SecTrustGetCertificateAtIndex(serverTrust, 0) else {\n        completionHandler(.cancelAuthenticationChallenge, nil)\n        return\n    }\n    let serverCertData = SecCertificateCopyData(certificate) as Data\n    if pinnedCertificates.contains(serverCertData) {\n        completionHandler(.useCredential, URLCredential(trust: serverTrust))\n    } else {\n        completionHandler(.cancelAuthenticationChallenge, nil)\n    }\n}",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m5-insecure-communication",
+        "https://cwe.mitre.org/data/definitions/295.html",
+        "https://developer.android.com/training/articles/security-ssl"
+      ]
+    },
+    "standards": ["CWE-295", "OWASP-M05:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-PRIV-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.2,
+    "category": "mobile",
+    "subcategory": "privacy",
+    "title": "Privacy violation through excessive data collection",
+    "description": "Detects collection of device identifiers, location data, contacts, or other personal information without clear necessity or user consent mechanisms. Excessive data collection violates privacy regulations (GDPR, CCPA) and erodes user trust.",
+    "detect": {
+      "patterns": [
+        "advertisingIdentifier|IDFA|GAID",
+        "CLLocationManager\\(\\).*startUpdatingLocation",
+        "requestAlwaysAuthorization",
+        "ACCESS_FINE_LOCATION.*ACCESS_BACKGROUND_LOCATION",
+        "CNContactStore|ABAddressBook|ContactsContract",
+        "UIDevice\\.current\\.identifierForVendor",
+        "TelephonyManager.*getDeviceId|getImei|getSubscriberId",
+        "getInstalledPackages|queryIntentActivities"
+      ],
+      "negative_patterns": [
+        "ATTrackingManager\\.requestTrackingAuthorization",
+        "NSLocationWhenInUseUsageDescription",
+        "consent",
+        "privacyPolicy",
+        "gdprConsent"
+      ],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts", "*.xml", "*.plist"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Minimize data collection to only what is strictly necessary for app functionality. Implement clear consent dialogs before collecting personal data. Use ATTrackingManager on iOS for tracking transparency. Provide a privacy dashboard where users can review and delete their data. Document all data collection in your privacy policy.",
+      "code_example": "// iOS - Request tracking permission first\nimport AppTrackingTransparency\nATTrackingManager.requestTrackingAuthorization { status in\n    switch status {\n    case .authorized:\n        // Only now access IDFA\n        let idfa = ASIdentifierManager.shared().advertisingIdentifier\n    default:\n        // Use privacy-preserving alternatives\n        break\n    }\n}\n\n// Android - Request minimal permissions\n<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />\n<!-- NOT ACCESS_FINE_LOCATION unless truly needed -->",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m6-inadequate-privacy-controls",
+        "https://cwe.mitre.org/data/definitions/359.html",
+        "https://developer.apple.com/documentation/apptrackingtransparency"
+      ]
+    },
+    "standards": ["CWE-359", "OWASP-M06:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-BIN-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.8,
+    "category": "mobile",
+    "subcategory": "binary-protection",
+    "title": "Missing binary protections (no obfuscation/anti-tampering)",
+    "description": "Detects absence of code obfuscation, anti-tampering checks, root/jailbreak detection, and debugger detection in release builds. Without binary protections, attackers can easily reverse-engineer the application, modify its behavior, or extract sensitive logic.",
+    "detect": {
+      "patterns": [
+        "minifyEnabled\\s+false",
+        "shrinkResources\\s+false",
+        "proguardFiles.*\\(\\)\\s*$",
+        "debuggable\\s+(true|1)",
+        "isDebuggable.*=.*true",
+        "android:debuggable=\"true\""
+      ],
+      "negative_patterns": [
+        "minifyEnabled\\s+true",
+        "R8",
+        "proguard-rules",
+        "DexGuard",
+        "isJailbroken",
+        "isRooted",
+        "ptrace.*PT_DENY_ATTACH"
+      ],
+      "file_types": ["*.gradle", "*.gradle.kts", "*.xml", "*.swift", "*.kt", "*.java", "*.plist"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Enable code obfuscation (ProGuard/R8 on Android, bitcode on iOS) for release builds. Implement root/jailbreak detection, debugger detection, and integrity verification. Use commercial solutions like DexGuard or iXGuard for advanced protection. Ensure minifyEnabled and shrinkResources are true for release builds.",
+      "code_example": "// Android build.gradle - Enable protections\nbuildTypes {\n    release {\n        minifyEnabled true\n        shrinkResources true\n        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),\n            'proguard-rules.pro'\n        debuggable false\n    }\n}\n\n// iOS - Jailbreak detection\nfunc isJailbroken() -> Bool {\n    #if targetEnvironment(simulator)\n    return false\n    #else\n    let paths = [\"/Applications/Cydia.app\", \"/usr/sbin/sshd\",\n                 \"/bin/bash\", \"/etc/apt\"]\n    return paths.contains { FileManager.default.fileExists(atPath: $0) }\n    #endif\n}",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m7-insufficient-binary-protections",
+        "https://cwe.mitre.org/data/definitions/693.html",
+        "https://developer.android.com/build/shrink-code"
+      ]
+    },
+    "standards": ["CWE-693", "OWASP-M07:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-CONF-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.4,
+    "category": "mobile",
+    "subcategory": "security-configuration",
+    "title": "Insecure security configuration (debug mode, backup enabled)",
+    "description": "Detects insecure application configurations such as debug mode enabled in production, allowing cleartext traffic, enabling app data backup, or exposing internal components. These misconfigurations increase the attack surface and can leak sensitive data.",
+    "detect": {
+      "patterns": [
+        "android:allowBackup=\"true\"",
+        "android:usesCleartextTraffic=\"true\"",
+        "android:debuggable=\"true\"",
+        "android:exported=\"true\"(?!.*intent-filter)",
+        "NSAppTransportSecurity.*NSAllowsArbitraryLoads.*true",
+        "DEBUG\\s*=\\s*true|isDebug\\s*=\\s*true",
+        "__DEV__(?!.*&&.*false)",
+        "kReleaseMode\\s*==\\s*false|kDebugMode\\s*==\\s*true"
+      ],
+      "negative_patterns": [
+        "android:allowBackup=\"false\"",
+        "android:usesCleartextTraffic=\"false\"",
+        "networkSecurityConfig",
+        "#if\\s+DEBUG",
+        "BuildConfig\\.DEBUG"
+      ],
+      "file_types": ["*.xml", "*.plist", "*.swift", "*.kt", "*.java", "*.gradle", "*.js", "*.ts", "*.dart"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Disable debug mode and verbose logging in release builds. Set android:allowBackup to false or use android:fullBackupContent to specify backup rules. Disable cleartext traffic and configure a network security policy. Minimize exported components and protect them with permissions.",
+      "code_example": "<!-- AndroidManifest.xml - Secure configuration -->\n<application\n    android:allowBackup=\"false\"\n    android:usesCleartextTraffic=\"false\"\n    android:debuggable=\"false\"\n    android:networkSecurityConfig=\"@xml/network_security_config\">\n\n<!-- network_security_config.xml -->\n<network-security-config>\n    <base-config cleartextTrafficPermitted=\"false\">\n        <trust-anchors>\n            <certificates src=\"system\" />\n        </trust-anchors>\n    </base-config>\n</network-security-config>\n\n// iOS - Info.plist\n<key>NSAppTransportSecurity</key>\n<dict>\n    <key>NSAllowsArbitraryLoads</key>\n    <false/>\n</dict>",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m8-security-misconfiguration",
+        "https://cwe.mitre.org/data/definitions/16.html",
+        "https://developer.android.com/guide/topics/manifest/application-element"
+      ]
+    },
+    "standards": ["CWE-16", "OWASP-M08:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-STORE-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.0,
+    "category": "mobile",
+    "subcategory": "data-storage",
+    "title": "Insecure data storage in external/unencrypted locations",
+    "description": "Detects storage of sensitive data in world-readable locations such as Android external storage, unencrypted SQLite databases, application cache, or temporary files without proper access controls. Data stored insecurely can be accessed by other applications or extracted from the device.",
+    "detect": {
+      "patterns": [
+        "getExternalStorageDirectory|getExternalFilesDir|Environment\\.DIRECTORY_",
+        "openFileOutput.*MODE_WORLD_READABLE|MODE_WORLD_WRITEABLE",
+        "SQLiteDatabase\\.openOrCreateDatabase(?!.*SQLCipher)",
+        "openDatabase.*(?:password|key):\\s*(?:null|nil|\"\"|'')",
+        "FileManager.*cachesDirectory.*write",
+        "NSTemporaryDirectory\\(\\).*write",
+        "writeToFile.*atomically.*(?:password|token|secret|credit)",
+        "File\\.createTempFile.*(?:password|token|secret|key)"
+      ],
+      "negative_patterns": [
+        "SQLCipher",
+        "EncryptedFile",
+        "NSFileProtectionComplete",
+        "FileProtectionType\\.complete",
+        "setStorageEncryption"
+      ],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Store sensitive data only in internal storage with the most restrictive file permissions. Encrypt databases using SQLCipher. On iOS, use NSFileProtectionComplete for files containing sensitive data. On Android, use EncryptedFile from the Jetpack Security library. Never store sensitive data on external storage or in cache directories.",
+      "code_example": "// Android - EncryptedFile\nval masterKey = MasterKey.Builder(context)\n    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()\nval encryptedFile = EncryptedFile.Builder(\n    context, File(context.filesDir, \"sensitive.dat\"), masterKey,\n    EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB\n).build()\nencryptedFile.openFileOutput().use { it.write(data) }\n\n// iOS - File protection\ntry data.write(to: fileURL, options: [.completeFileProtection])\n\n// SQLCipher\nval db = SQLiteDatabase.openOrCreateDatabase(dbFile, password, null)",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m9-insecure-data-storage",
+        "https://cwe.mitre.org/data/definitions/311.html",
+        "https://developer.android.com/topic/security/data"
+      ]
+    },
+    "standards": ["CWE-311", "CWE-276", "OWASP-M09:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  },
+  {
+    "id": "MOB-CRYPTO-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.4,
+    "category": "mobile",
+    "subcategory": "cryptography",
+    "title": "Use of weak or deprecated cryptographic algorithms",
+    "description": "Detects usage of weak, broken, or deprecated cryptographic algorithms such as MD5, SHA1 for security purposes, DES, 3DES, RC4, or ECB mode encryption. These algorithms have known vulnerabilities and do not provide adequate security for protecting sensitive data.",
+    "detect": {
+      "patterns": [
+        "MessageDigest\\.getInstance\\([\"']MD5[\"']\\)",
+        "MessageDigest\\.getInstance\\([\"']SHA-1[\"']\\)",
+        "CC_MD5\\(|CC_SHA1\\(",
+        "Cipher\\.getInstance\\([\"']DES",
+        "Cipher\\.getInstance\\([\"'].*ECB",
+        "Cipher\\.getInstance\\([\"']RC4[\"']\\)",
+        "DESKeySpec|DESedeKeySpec",
+        "kCCAlgorithmDES|kCCAlgorithm3DES",
+        "CryptoJS\\.MD5|CryptoJS\\.SHA1|CryptoJS\\.DES|CryptoJS\\.RC4",
+        "md5\\(|sha1\\((?!.*hmac)"
+      ],
+      "negative_patterns": [
+        "SHA-256|SHA-384|SHA-512",
+        "AES/GCM|AES/CBC/PKCS",
+        "kCCAlgorithmAES",
+        "PBKDF2",
+        "argon2"
+      ],
+      "file_types": ["*.swift", "*.kt", "*.java", "*.dart", "*.js", "*.ts"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Replace weak algorithms with modern alternatives: use SHA-256 or SHA-3 instead of MD5/SHA1 for hashing, AES-256-GCM instead of DES/3DES/RC4 for encryption, and PBKDF2/Argon2 for key derivation. Always use authenticated encryption modes (GCM, CCM) instead of ECB or plain CBC.",
+      "code_example": "// Android - Use AES-GCM\nval cipher = Cipher.getInstance(\"AES/GCM/NoPadding\")\nval keyGenerator = KeyGenerator.getInstance(\"AES\")\nkeyGenerator.init(256)\nval secretKey = keyGenerator.generateKey()\nval iv = ByteArray(12)\nSecureRandom().nextBytes(iv)\ncipher.init(Cipher.ENCRYPT_MODE, secretKey, GCMParameterSpec(128, iv))\n\n// iOS - Use CryptoKit\nimport CryptoKit\nlet key = SymmetricKey(size: .bits256)\nlet sealedBox = try AES.GCM.seal(plaintext, using: key)\n\n// Hashing - Use SHA-256\nval digest = MessageDigest.getInstance(\"SHA-256\")\nlet hash = SHA256.hash(data: data)",
+      "references": [
+        "https://owasp.org/www-project-mobile-top-10/2024-risks/m10-insufficient-cryptography",
+        "https://cwe.mitre.org/data/definitions/327.html",
+        "https://developer.apple.com/documentation/cryptokit"
+      ]
+    },
+    "standards": ["CWE-327", "CWE-328", "OWASP-M10:2024"],
+    "ai_specific": false,
+    "frameworks": ["react-native", "flutter", "swift", "kotlin"]
+  }
+]

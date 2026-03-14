@@ -1,0 +1,62 @@
+[
+  {
+    "id": "PII-EMAIL-LOG-001",
+    "type": "pii-in-logs",
+    "title": "Email address written to application logs",
+    "pattern": "(console|logger|log|logging)\\.(log|info|warn|error|debug)\\s*\\(.*['\"]?[^'\"]*@[^'\"]*\\.[a-z]{2,}|\\b(email|e-mail|mail_address|emailAddress)\\b",
+    "negative_pattern": "mask|redact|\\*{3,}|\\[REDACTED\\]|sanitize|obfuscate",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go", "*.rb"],
+    "description": "Detects logging statements that include email addresses either as literal strings or via variables named email/mail. Emails are PII under GDPR and must be masked before logging.",
+    "cwe": "CWE-532",
+    "remediation": "Use a masking function to redact email addresses before logging: maskEmail('user@example.com') => 'us***@***.com'. Configure your logging framework to apply automatic PII filters."
+  },
+  {
+    "id": "PII-PHONE-SSN-001",
+    "type": "pii-in-code",
+    "title": "Phone number or SSN pattern in source code",
+    "pattern": "(\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b)|(\\b\\d{3}[-]\\d{2}[-]\\d{4}\\b)|(phone|ssn|social_security|socialSecurity|phoneNumber|phone_number)\\s*[:=]\\s*['\"]\\d",
+    "negative_pattern": "test|mock|fake|example|placeholder|555[-.]?\\d{3}|000[-]00",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go", "*.rb", "*.json"],
+    "description": "Detects hardcoded phone numbers (xxx-xxx-xxxx) or SSN patterns (xxx-xx-xxxx) in source code. These are sensitive PII that should never be stored in code or configuration files.",
+    "cwe": "CWE-532",
+    "remediation": "Remove hardcoded PII from source code. Store sensitive identifiers in encrypted databases with access controls. Use environment variables or secrets management for test values."
+  },
+  {
+    "id": "PII-URL-PARAMS-001",
+    "type": "pii-in-urls",
+    "title": "PII passed in URL query parameters",
+    "pattern": "(href|url|redirect|location|window\\.location|fetch|axios\\.get|http\\.get).*\\?(.*&)?(email|ssn|phone|name|address|dob|birth_date|password)=",
+    "negative_pattern": "encodeURIComponent|encrypt|hash|POST|body",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx", "*.py", "*.html"],
+    "description": "Detects PII fields (email, SSN, phone, name, address) passed as URL query parameters. Query strings are logged in server access logs, browser history, and intermediary proxies, creating multiple exposure vectors.",
+    "cwe": "CWE-598",
+    "remediation": "Never pass PII in URL query parameters. Use POST request bodies for sensitive data. If URLs must contain identifiers, use opaque tokens or UUIDs that map to PII server-side."
+  },
+  {
+    "id": "PII-API-RESPONSE-001",
+    "type": "pii-in-api",
+    "title": "Unmasked PII fields in API response objects",
+    "pattern": "res\\.(json|send)\\s*\\(\\s*\\{[^}]*(password|ssn|social_security|creditCard|credit_card|cardNumber|card_number|dateOfBirth|date_of_birth)",
+    "negative_pattern": "mask|redact|undefined|null|\\*{3,}|toDTO|serialize|sanitize|omit|pick|select",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.py", "*.java"],
+    "description": "Detects API response objects that include raw sensitive fields such as password, SSN, credit card number, or date of birth without masking or exclusion. These fields should never appear in client-facing responses.",
+    "cwe": "CWE-200",
+    "remediation": "Use DTOs or serializers to explicitly whitelist fields returned in API responses. Apply field-level masking for any sensitive data that must be partially shown (e.g., last 4 digits of SSN)."
+  },
+  {
+    "id": "PII-HTTP-HEADER-001",
+    "type": "pii-in-headers",
+    "title": "PII transmitted in custom HTTP headers",
+    "pattern": "(setHeader|set|header|headers)\\s*\\(\\s*['\"]X-[^'\"]*['\"]\\s*,\\s*[^)]*\\b(email|ssn|phone|password|user\\.name|user\\.email|firstName|lastName)\\b",
+    "negative_pattern": "encrypt|hash|hmac|token|Bearer|Authorization",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go"],
+    "description": "Detects PII values set in custom HTTP headers. Headers are logged by web servers, proxies, CDNs, and WAFs, creating uncontrolled copies of personal data across infrastructure.",
+    "cwe": "CWE-200",
+    "remediation": "Never transmit raw PII in HTTP headers. Use encrypted request/response bodies for personal data. If identifiers are needed in headers, use opaque session tokens or encrypted references."
+  }
+]

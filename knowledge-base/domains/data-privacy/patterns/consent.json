@@ -1,0 +1,50 @@
+[
+  {
+    "id": "CONSENT-GTAG-001",
+    "type": "tracking-before-consent",
+    "title": "Google Analytics / gtag loaded before consent",
+    "pattern": "<script[^>]*(gtag\\(|google-analytics\\.com|googletagmanager\\.com|ga\\s*\\(\\s*['\"]create|gtag\\s*\\(\\s*['\"]config)[^<]*</script>",
+    "negative_pattern": "type=['\"]text/plain['\"]|data-consent|consent|CookieConsent|onConsentGranted|data-category",
+    "severity": "HIGH",
+    "file_types": ["*.html", "*.htm", "*.ejs", "*.hbs", "*.pug", "*.jsx", "*.tsx", "*.vue"],
+    "description": "Detects Google Analytics or Google Tag Manager scripts loaded directly in HTML without consent gating. Under GDPR and ePrivacy Directive, analytics scripts require prior user consent before activation.",
+    "cwe": "CWE-359",
+    "remediation": "Set script type to 'text/plain' and add a data-consent attribute. Only change the type to 'text/javascript' after the user grants consent via your CMP. Alternatively, use Google Consent Mode v2 with default denied state."
+  },
+  {
+    "id": "CONSENT-FBQ-001",
+    "type": "tracking-before-consent",
+    "title": "Meta / Facebook Pixel loaded without consent gate",
+    "pattern": "<script[^>]*(fbq\\s*\\(|connect\\.facebook\\.net|facebook\\.com/tr)[^<]*</script>",
+    "negative_pattern": "type=['\"]text/plain['\"]|data-consent|consent|CookieConsent|onConsentGranted|data-category",
+    "severity": "HIGH",
+    "file_types": ["*.html", "*.htm", "*.ejs", "*.hbs", "*.jsx", "*.tsx", "*.vue"],
+    "description": "Detects the Meta (Facebook) tracking pixel loaded in page markup without consent verification. The pixel sets third-party cookies and transmits browsing data to Meta servers, requiring explicit user consent under GDPR.",
+    "cwe": "CWE-359",
+    "remediation": "Wrap the Facebook Pixel in a consent-gated loader. Do not include the script tag directly in HTML. Load it dynamically only after the user accepts marketing cookies via your consent management platform."
+  },
+  {
+    "id": "CONSENT-COOKIE-SET-001",
+    "type": "cookie-without-consent",
+    "title": "document.cookie set without consent check",
+    "pattern": "document\\.cookie\\s*=\\s*['\"`](?!.*(?:essential|necessary|strictly))",
+    "negative_pattern": "consent|hasConsent|cookieConsent|gdpr|isAccepted|checkConsent|consentGranted|getCookiePreference",
+    "severity": "MEDIUM",
+    "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx", "*.vue"],
+    "description": "Detects direct assignment to document.cookie without any consent verification in the surrounding code. Non-essential cookies must not be set until the user has actively consented.",
+    "cwe": "CWE-359",
+    "remediation": "Implement a consent manager and check consent status before setting any non-essential cookie. Use a cookie abstraction layer that enforces consent checks: consentManager.setCookie('analytics', name, value)."
+  },
+  {
+    "id": "CONSENT-SDK-INIT-001",
+    "type": "tracking-sdk-autoload",
+    "title": "Tracking SDK initialized at page load without consent",
+    "pattern": "(Hotjar\\.init|mixpanel\\.init|amplitude\\.init|posthog\\.init|heap\\.load|FullStory\\.init|LogRocket\\.init|Sentry\\.init.*tracesSampleRate|analytics\\.load)\\s*\\(",
+    "negative_pattern": "consent|hasConsent|cookieConsent|gdpr|isAccepted|onConsentGranted|afterConsent|consentCallback",
+    "severity": "HIGH",
+    "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx", "*.vue"],
+    "description": "Detects third-party tracking SDKs (Hotjar, Mixpanel, Amplitude, PostHog, Heap, FullStory, LogRocket) initialized at page load without consent verification. These SDKs collect behavioral data and must only be activated after user consent.",
+    "cwe": "CWE-359",
+    "remediation": "Move SDK initialization behind a consent gate. Initialize the SDK only after the user grants consent for the relevant cookie category. Provide a wrapper function that queues events until consent is obtained."
+  }
+]

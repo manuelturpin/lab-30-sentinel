@@ -1,1 +1,341 @@
-[]
+[
+  {
+    "id": "INFRA-DOCKER-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "infrastructure",
+    "subcategory": "docker",
+    "title": "Container running as root user",
+    "description": "The Dockerfile does not specify a non-root USER or explicitly sets USER root. Running containers as root grants full host-level privileges if an attacker escapes the container, dramatically increasing the blast radius of any compromise.",
+    "detect": {
+      "patterns": [
+        "^USER\\s+root\\s*$",
+        "^(?!.*USER\\s+\\S).*FROM\\s+\\S+"
+      ],
+      "negative_patterns": [
+        "^USER\\s+(?!root)\\S+"
+      ],
+      "file_types": ["Dockerfile", "*.dockerfile"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Create a dedicated non-root user and switch to it before the ENTRYPOINT/CMD instruction. Use numeric UID for consistency across environments.",
+      "code_example": "RUN groupadd -r appuser && useradd -r -g appuser -s /sbin/nologin appuser\nUSER appuser:appuser",
+      "references": [
+        "https://docs.docker.com/engine/reference/builder/#user",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html"
+      ]
+    },
+    "standards": ["CWE-250"],
+    "ai_specific": false,
+    "frameworks": ["docker", "podman"]
+  },
+  {
+    "id": "INFRA-DOCKER-002",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "infrastructure",
+    "subcategory": "docker",
+    "title": "Secrets passed via ARG instruction",
+    "description": "Build-time ARG values containing passwords, secrets, keys, or tokens are persisted in image layer history. Anyone with access to the image can extract these values using `docker history` or `docker inspect`.",
+    "detect": {
+      "patterns": [
+        "ARG\\s+\\w*(password|passwd|secret|token|api_key|apikey|private_key|access_key)\\w*",
+        "ARG\\s+\\w*(PASSWORD|PASSWD|SECRET|TOKEN|API_KEY|APIKEY|PRIVATE_KEY|ACCESS_KEY)\\w*"
+      ],
+      "negative_patterns": [
+        "^\\s*#.*ARG"
+      ],
+      "file_types": ["Dockerfile", "*.dockerfile"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Use Docker BuildKit secrets mount instead of ARG for sensitive values. Secrets are only available during the build step that mounts them and are never persisted in image layers.",
+      "code_example": "# syntax=docker/dockerfile:1\nRUN --mount=type=secret,id=my_secret cat /run/secrets/my_secret\n# Build with: docker build --secret id=my_secret,src=secret.txt .",
+      "references": [
+        "https://docs.docker.com/build/building/secrets/",
+        "https://docs.docker.com/engine/reference/builder/#arg"
+      ]
+    },
+    "standards": ["CWE-214"],
+    "ai_specific": false,
+    "frameworks": ["docker", "podman"]
+  },
+  {
+    "id": "INFRA-DOCKER-003",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.5,
+    "category": "infrastructure",
+    "subcategory": "docker",
+    "title": "Using latest or untagged base image",
+    "description": "Using the :latest tag or omitting a tag entirely in FROM instructions means the base image is non-deterministic. Builds can break unexpectedly, and a compromised upstream image would silently propagate to all derived containers.",
+    "detect": {
+      "patterns": [
+        "^FROM\\s+\\S+:latest\\s*",
+        "^FROM\\s+[a-zA-Z][a-zA-Z0-9_.-]*(/[a-zA-Z0-9_.-]+)*\\s*$"
+      ],
+      "negative_patterns": [
+        "^FROM\\s+\\S+:[a-zA-Z0-9][a-zA-Z0-9._-]+\\s",
+        "^FROM\\s+\\S+@sha256:"
+      ],
+      "file_types": ["Dockerfile", "*.dockerfile"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Pin base images to a specific version tag or, ideally, a SHA256 digest for full immutability. Use automated tools like Renovate or Dependabot to keep pinned versions up to date.",
+      "code_example": "# Good: pinned version\nFROM node:20.11.1-alpine3.19\n# Best: pinned digest\nFROM node@sha256:abcdef1234567890...",
+      "references": [
+        "https://docs.docker.com/engine/reference/builder/#from",
+        "https://sysdig.com/blog/dockerfile-best-practices/"
+      ]
+    },
+    "standards": ["CWE-1104"],
+    "ai_specific": false,
+    "frameworks": ["docker", "podman"]
+  },
+  {
+    "id": "INFRA-K8S-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.0,
+    "category": "infrastructure",
+    "subcategory": "kubernetes",
+    "title": "Privileged container in Kubernetes",
+    "description": "Setting `privileged: true` in a container securityContext disables virtually all Linux kernel security mechanisms (AppArmor, seccomp, capability restrictions). A privileged container has full access to the host, making container escape trivial.",
+    "detect": {
+      "patterns": [
+        "privileged:\\s*true",
+        "\"privileged\":\\s*true"
+      ],
+      "negative_patterns": [
+        "^\\s*#.*privileged",
+        "privileged:\\s*false"
+      ],
+      "file_types": ["*.yaml", "*.yml", "*.json"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Never use privileged mode. If the workload requires specific host capabilities, grant only the minimum set needed via securityContext.capabilities.add. Enforce with PodSecurityAdmission or OPA Gatekeeper.",
+      "code_example": "securityContext:\n  privileged: false\n  allowPrivilegeEscalation: false\n  capabilities:\n    drop:\n      - ALL\n    add:\n      - NET_BIND_SERVICE  # only if needed",
+      "references": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Kubernetes_Security_Cheat_Sheet.html"
+      ]
+    },
+    "standards": ["CWE-250"],
+    "ai_specific": false,
+    "frameworks": ["kubernetes", "openshift", "eks", "gke", "aks"]
+  },
+  {
+    "id": "INFRA-K8S-002",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "infrastructure",
+    "subcategory": "kubernetes",
+    "title": "hostNetwork enabled on pod",
+    "description": "Setting `hostNetwork: true` allows the pod to use the node's network namespace directly. This exposes all host network interfaces and services to the pod, enables sniffing of traffic from other pods on the same node, and bypasses NetworkPolicy enforcement.",
+    "detect": {
+      "patterns": [
+        "hostNetwork:\\s*true",
+        "\"hostNetwork\":\\s*true"
+      ],
+      "negative_patterns": [
+        "^\\s*#.*hostNetwork"
+      ],
+      "file_types": ["*.yaml", "*.yml", "*.json"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Avoid hostNetwork unless absolutely required (e.g., CNI plugins, kube-proxy). Use Kubernetes Services and Ingress controllers for network exposure. Enforce restrictions via PodSecurityAdmission baseline/restricted profiles.",
+      "code_example": "spec:\n  hostNetwork: false  # default, but explicit is better\n  containers:\n    - name: app\n      ports:\n        - containerPort: 8080  # use containerPort, not hostPort",
+      "references": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+        "https://kubernetes.io/docs/concepts/services-networking/"
+      ]
+    },
+    "standards": ["CWE-668"],
+    "ai_specific": false,
+    "frameworks": ["kubernetes", "openshift", "eks", "gke", "aks"]
+  },
+  {
+    "id": "INFRA-K8S-003",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.5,
+    "category": "infrastructure",
+    "subcategory": "kubernetes",
+    "title": "No resource limits defined on container",
+    "description": "Containers without CPU and memory limits can consume unbounded resources on the node, enabling denial-of-service against co-located workloads. A single runaway process or crypto-miner can starve the entire node.",
+    "detect": {
+      "patterns": [
+        "containers:\\s*\\n(\\s+- (?!.*limits:)[\\s\\S]*?)(?=\\n\\s+- name:|\\n[a-zA-Z]|$)",
+        "image:\\s+\\S+(?!\\n\\s+resources:)"
+      ],
+      "negative_patterns": [
+        "resources:\\s*\\n\\s+limits:"
+      ],
+      "file_types": ["*.yaml", "*.yml"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Always set resource requests and limits for CPU and memory on every container. Use LimitRange objects to enforce default limits at the namespace level.",
+      "code_example": "containers:\n  - name: app\n    image: myapp:1.0.0\n    resources:\n      requests:\n        memory: \"128Mi\"\n        cpu: \"250m\"\n      limits:\n        memory: \"512Mi\"\n        cpu: \"1000m\"",
+      "references": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+        "https://kubernetes.io/docs/concepts/policy/limit-range/"
+      ]
+    },
+    "standards": ["CWE-770"],
+    "ai_specific": false,
+    "frameworks": ["kubernetes", "openshift", "eks", "gke", "aks"]
+  },
+  {
+    "id": "INFRA-TLS-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.2,
+    "category": "infrastructure",
+    "subcategory": "tls",
+    "title": "TLS certificate verification disabled",
+    "description": "Disabling TLS certificate verification allows man-in-the-middle attacks. The application will accept any certificate, including self-signed or expired ones, making it trivial for an attacker on the network to intercept and modify traffic.",
+    "detect": {
+      "patterns": [
+        "verify\\s*=\\s*False",
+        "rejectUnauthorized\\s*[:=]\\s*false",
+        "InsecureSkipVerify\\s*[:=]\\s*true",
+        "NODE_TLS_REJECT_UNAUTHORIZED\\s*=\\s*['\"]?0['\"]?",
+        "CURLOPT_SSL_VERIFYPEER\\s*,\\s*false",
+        "ssl_verify\\s*[:=]\\s*false",
+        "-k\\s+https://",
+        "--insecure\\s+https://"
+      ],
+      "negative_patterns": [
+        "^\\s*#.*verify",
+        "^\\s*//.*verify",
+        "test.*verify\\s*=\\s*False"
+      ],
+      "file_types": ["*.py", "*.js", "*.ts", "*.go", "*.rb", "*.java", "*.yaml", "*.yml", "*.sh", "*.env"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__", "*.test.*", "*.spec.*"]
+    },
+    "remediation": {
+      "description": "Always enable TLS certificate verification in production. Use proper CA bundles or specify custom certificates if connecting to internal services. For development/testing, use mkcert to generate locally-trusted certificates.",
+      "code_example": "# Python\nrequests.get('https://api.example.com', verify=True)\n\n# Node.js\nconst agent = new https.Agent({ rejectUnauthorized: true });\n\n# Go\ntlsConfig := &tls.Config{InsecureSkipVerify: false}",
+      "references": [
+        "https://owasp.org/www-community/controls/Certificate_and_Public_Key_Pinning",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"
+      ]
+    },
+    "standards": ["CWE-295"],
+    "ai_specific": false,
+    "frameworks": ["requests", "axios", "node-fetch", "net/http", "okhttp"]
+  },
+  {
+    "id": "INFRA-SECRET-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.2,
+    "category": "infrastructure",
+    "subcategory": "secrets",
+    "title": "Secrets hardcoded in environment variables",
+    "description": "Secrets defined directly in docker-compose, Kubernetes manifests, or CI/CD configuration as plaintext environment variables are visible to anyone with read access to the repository, image layers, or the running container's environment.",
+    "detect": {
+      "patterns": [
+        "-\\s+\\w*(SECRET|PASSWORD|PASSWD|API_KEY|TOKEN|PRIVATE_KEY|ACCESS_KEY)\\w*=\\S+",
+        "value:\\s*['\"]?[A-Za-z0-9+/=]{16,}['\"]?",
+        "env:\\s*\\n(\\s+-\\s+\\w+=\\S+\\n)*\\s+-\\s+\\w*(SECRET|PASSWORD|TOKEN|KEY)\\w*=[^$]\\S+",
+        "\"(password|secret|token|api_key)\":\\s*\"[^${}][^\"]{4,}\""
+      ],
+      "negative_patterns": [
+        "\\$\\{.*\\}",
+        "valueFrom:",
+        "secretKeyRef:",
+        "^\\s*#"
+      ],
+      "file_types": ["*.yaml", "*.yml", "*.json", "docker-compose*", ".env*"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Use a secrets manager (Vault, AWS Secrets Manager, GCP Secret Manager, Azure Key Vault) or Kubernetes Secrets with external-secrets-operator. Never commit plaintext secrets to source control.",
+      "code_example": "# Kubernetes: reference secret from external store\nenv:\n  - name: DB_PASSWORD\n    valueFrom:\n      secretKeyRef:\n        name: db-credentials\n        key: password\n\n# Docker Compose: use Docker secrets\nservices:\n  app:\n    secrets:\n      - db_password\nsecrets:\n  db_password:\n    external: true",
+      "references": [
+        "https://kubernetes.io/docs/concepts/configuration/secret/",
+        "https://docs.docker.com/compose/how-tos/use-secrets/",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+      ]
+    },
+    "standards": ["CWE-798"],
+    "ai_specific": false,
+    "frameworks": ["docker", "kubernetes", "docker-compose", "github-actions", "gitlab-ci"]
+  },
+  {
+    "id": "INFRA-IAM-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.4,
+    "category": "infrastructure",
+    "subcategory": "iam",
+    "title": "Overly permissive IAM policy",
+    "description": "IAM policies using wildcard (*) for Action or Resource grant unrestricted access. An attacker compromising any principal with this policy gains full control over all resources in the account, violating the principle of least privilege.",
+    "detect": {
+      "patterns": [
+        "\"Action\"\\s*:\\s*\"\\*\"",
+        "\"Action\"\\s*:\\s*\\[\\s*\"\\*\"\\s*\\]",
+        "\"Resource\"\\s*:\\s*\"\\*\"",
+        "\"Effect\"\\s*:\\s*\"Allow\"[\\s\\S]*?\"Action\"\\s*:\\s*\"\\*\"",
+        "Action:\\s*-?\\s*['\"]?\\*['\"]?",
+        "- \"\\*\"\\s*$"
+      ],
+      "negative_patterns": [
+        "\"Effect\"\\s*:\\s*\"Deny\"",
+        "^\\s*#.*Action",
+        "Condition"
+      ],
+      "file_types": ["*.json", "*.yaml", "*.yml", "*.tf", "*.hcl"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__", "package.json", "package-lock.json", "tsconfig.json"]
+    },
+    "remediation": {
+      "description": "Follow least-privilege principles: specify exact actions and resources required. Use AWS Access Analyzer or GCP IAM Recommender to right-size policies. Separate read and write permissions into distinct roles.",
+      "code_example": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:GetObject\",\n        \"s3:PutObject\"\n      ],\n      \"Resource\": \"arn:aws:s3:::my-bucket/*\"\n    }\n  ]\n}",
+      "references": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-getting-started.html"
+      ]
+    },
+    "standards": ["CWE-269"],
+    "ai_specific": false,
+    "frameworks": ["aws", "gcp", "azure", "terraform"]
+  },
+  {
+    "id": "INFRA-NET-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.4,
+    "category": "infrastructure",
+    "subcategory": "network",
+    "title": "Unrestricted network ingress (0.0.0.0/0)",
+    "description": "Security group or firewall rules allowing inbound traffic from 0.0.0.0/0 (any IPv4) or ::/0 (any IPv6) expose services to the entire internet. Combined with a vulnerable service, this enables direct exploitation from any attacker worldwide.",
+    "detect": {
+      "patterns": [
+        "CidrIp\\s*[:=]\\s*['\"]?0\\.0\\.0\\.0/0['\"]?",
+        "cidr_blocks\\s*=\\s*\\[\\s*\"0\\.0\\.0\\.0/0\"\\s*\\]",
+        "source_ranges\\s*=\\s*\\[\\s*\"0\\.0\\.0\\.0/0\"\\s*\\]",
+        "0\\.0\\.0\\.0/0",
+        "::/0",
+        "from_port\\s*=\\s*0[\\s\\S]*?to_port\\s*=\\s*65535",
+        "ingress\\s*\\{[\\s\\S]*?0\\.0\\.0\\.0/0"
+      ],
+      "negative_patterns": [
+        "^\\s*#.*0\\.0\\.0\\.0",
+        "egress",
+        "outbound"
+      ],
+      "file_types": ["*.tf", "*.hcl", "*.json", "*.yaml", "*.yml", "*.template"],
+      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+    },
+    "remediation": {
+      "description": "Restrict ingress to known IP ranges or CIDR blocks. Use VPN, bastion hosts, or AWS PrivateLink for internal services. For public services, use a load balancer with WAF in front rather than exposing instances directly.",
+      "code_example": "# Terraform: restrict to corporate VPN\nresource \"aws_security_group_rule\" \"allow_ssh\" {\n  type              = \"ingress\"\n  from_port         = 22\n  to_port           = 22\n  protocol          = \"tcp\"\n  cidr_blocks       = [\"10.0.0.0/8\"]  # internal only\n  security_group_id = aws_security_group.main.id\n}",
+      "references": [
+        "https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html",
+        "https://www.cisecurity.org/benchmark/amazon_web_services"
+      ]
+    },
+    "standards": ["CWE-284"],
+    "ai_specific": false,
+    "frameworks": ["aws", "gcp", "azure", "terraform", "cloudformation"]
+  }
+]

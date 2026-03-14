@@ -1,0 +1,50 @@
+[
+  {
+    "id": "NOSQL-OP-001",
+    "type": "operator-injection",
+    "title": "MongoDB Query Operator Injection from User Input",
+    "pattern": "\\.(find|findOne|findOneAndUpdate|findOneAndDelete|updateOne|updateMany|deleteOne|deleteMany)\\s*\\(\\s*\\{[^}]*\\$(gt|gte|lt|lte|ne|in|nin|exists|not)\\s*:.*req\\.(body|query|params)",
+    "negative_pattern": "mongo-sanitize|express-mongo-sanitize|sanitize\\(",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "MongoDB query operators ($gt, $lt, $ne, $in, etc.) are constructed from unsanitized user input, allowing attackers to manipulate query logic. For example, sending {\"$ne\": null} as a password field bypasses authentication by matching any non-null password.",
+    "cwe": "CWE-943",
+    "remediation": "Use express-mongo-sanitize middleware to strip $ operators from user input. Explicitly extract and validate expected fields from req.body instead of passing the entire object. Cast inputs to expected types with String(), Number(), etc."
+  },
+  {
+    "id": "NOSQL-OP-002",
+    "type": "where-injection",
+    "title": "MongoDB $where Clause with User-Controlled JavaScript",
+    "pattern": "\\$where\\s*:\\s*['\"`].*\\+\\s*(req\\.|user|input|param)|\\$where\\s*:\\s*`[^`]*\\$\\{\\s*(req\\.|user|input)|\\$where\\s*:\\s*(req\\.|user|input)",
+    "negative_pattern": "sanitize|escape|validator\\.is|allowedFields",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "The $where operator in MongoDB evaluates JavaScript server-side. When user input is concatenated into a $where clause, attackers can inject arbitrary JavaScript that executes on the database server, leading to data exfiltration, denial of service, or remote code execution.",
+    "cwe": "CWE-943",
+    "remediation": "Avoid $where entirely. Replace $where queries with standard query operators ($eq, $gt, $regex, etc.) or aggregation pipelines. If $where is unavoidable, never include user input in the expression string."
+  },
+  {
+    "id": "NOSQL-OP-003",
+    "type": "regex-injection",
+    "title": "MongoDB $regex Operator from Unsanitized User Input",
+    "pattern": "\\$regex\\s*:\\s*(req\\.(body|query|params)|new\\s+RegExp\\s*\\(\\s*req\\.(body|query|params))|RegExp\\s*\\(\\s*req\\.(body|query|params)",
+    "negative_pattern": "escapeRegex|escape-string-regexp|lodash\\.escapeRegExp|validator\\.escape",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "User input is passed directly into a MongoDB $regex operator or JavaScript RegExp constructor without escaping special characters. Attackers can craft malicious regular expressions to cause ReDoS (Regular Expression Denial of Service) or bypass input filters.",
+    "cwe": "CWE-943",
+    "remediation": "Escape all special regex characters from user input before using it in $regex. Use a library like escape-string-regexp. Consider using $text search with text indexes instead of $regex for user-facing search features."
+  },
+  {
+    "id": "NOSQL-OP-004",
+    "type": "pipeline-injection",
+    "title": "MongoDB Aggregation Pipeline Injection from User Input",
+    "pattern": "\\.(aggregate)\\s*\\(\\s*req\\.(body|query|params)|\\.(aggregate)\\s*\\(\\s*\\[\\s*req\\.(body|query|params)|\\$(lookup|graphLookup|merge|out)\\s*:.*req\\.(body|query|params)",
+    "negative_pattern": "allowedStages|whitelist|validatePipeline|sanitize",
+    "severity": "CRITICAL",
+    "file_types": ["*.js", "*.ts"],
+    "description": "User-controlled input is used to construct MongoDB aggregation pipeline stages. Attackers can inject stages like $lookup to access other collections, $merge or $out to write data to arbitrary collections, or $graphLookup to traverse relationships and exfiltrate data.",
+    "cwe": "CWE-943",
+    "remediation": "Never allow users to define aggregation pipeline stages directly. Build pipelines server-side using validated parameters. Whitelist allowed fields and operations. Validate that user input only provides values, not stage operators or collection names."
+  }
+]

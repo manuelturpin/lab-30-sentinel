@@ -1,0 +1,96 @@
+{
+  "standard": "OWASP Mobile Top 10 2024",
+  "version": "2024",
+  "mapping": [
+    {
+      "id": "M01:2024",
+      "name": "Improper Credential Usage",
+      "description": "Covers hardcoded credentials, insecure credential storage, and improper handling of authentication tokens in mobile applications. Attackers can extract credentials through reverse engineering, device backups, or filesystem access.",
+      "cwes": ["CWE-798", "CWE-312", "CWE-313"],
+      "sentinel_rules": ["MOB-CRED-001", "MOB-CRED-002"],
+      "prevalence": "HIGH",
+      "impact": "HIGH"
+    },
+    {
+      "id": "M02:2024",
+      "name": "Inadequate Supply Chain Security",
+      "description": "Addresses risks from third-party libraries, SDKs, and components integrated into mobile applications without proper vetting, integrity verification, or version pinning. Compromised dependencies can introduce malware, data exfiltration, or backdoors.",
+      "cwes": ["CWE-1357", "CWE-829"],
+      "sentinel_rules": ["MOB-SUPPLY-001"],
+      "prevalence": "HIGH",
+      "impact": "HIGH"
+    },
+    {
+      "id": "M03:2024",
+      "name": "Insecure Authentication/Authorization",
+      "description": "Covers weaknesses in authentication mechanisms including biometric implementation flaws, missing multi-factor authentication, and client-side authorization checks that can be bypassed.",
+      "cwes": ["CWE-287", "CWE-862", "CWE-306"],
+      "sentinel_rules": ["MOB-AUTH-001"],
+      "prevalence": "HIGH",
+      "impact": "HIGH"
+    },
+    {
+      "id": "M04:2024",
+      "name": "Insufficient Input/Output Validation",
+      "description": "Addresses lack of input validation on data received through deep links, IPC mechanisms, clipboard, and other input channels. Insufficient validation enables injection attacks, path traversal, and unintended application behavior.",
+      "cwes": ["CWE-20", "CWE-79", "CWE-89"],
+      "sentinel_rules": ["MOB-VALID-001"],
+      "prevalence": "MEDIUM",
+      "impact": "HIGH"
+    },
+    {
+      "id": "M05:2024",
+      "name": "Insecure Communication",
+      "description": "Covers network communication vulnerabilities including missing certificate pinning, disabled TLS verification, cleartext traffic, and improper hostname validation. These flaws enable man-in-the-middle attacks and traffic interception.",
+      "cwes": ["CWE-295", "CWE-319", "CWE-297"],
+      "sentinel_rules": ["MOB-COMM-001"],
+      "prevalence": "MEDIUM",
+      "impact": "HIGH"
+    },
+    {
+      "id": "M06:2024",
+      "name": "Inadequate Privacy Controls",
+      "description": "Addresses excessive collection of personal data, device identifiers, and location information without user consent or legitimate purpose. Includes lack of data minimization, missing consent mechanisms, and non-compliance with privacy regulations.",
+      "cwes": ["CWE-359", "CWE-200"],
+      "sentinel_rules": ["MOB-PRIV-001"],
+      "prevalence": "HIGH",
+      "impact": "MEDIUM"
+    },
+    {
+      "id": "M07:2024",
+      "name": "Insufficient Binary Protections",
+      "description": "Covers absence of code obfuscation, anti-tampering mechanisms, root/jailbreak detection, and debugger detection. Without these protections, attackers can reverse-engineer the application, understand its logic, and create modified versions.",
+      "cwes": ["CWE-693", "CWE-656"],
+      "sentinel_rules": ["MOB-BIN-001"],
+      "prevalence": "MEDIUM",
+      "impact": "MEDIUM"
+    },
+    {
+      "id": "M08:2024",
+      "name": "Security Misconfiguration",
+      "description": "Addresses insecure default configurations including debug mode in production, enabled backups, cleartext traffic permissions, exported components without protection, and overly permissive file permissions.",
+      "cwes": ["CWE-16", "CWE-276"],
+      "sentinel_rules": ["MOB-CONF-001"],
+      "prevalence": "HIGH",
+      "impact": "MEDIUM"
+    },
+    {
+      "id": "M09:2024",
+      "name": "Insecure Data Storage",
+      "description": "Covers storage of sensitive data in unprotected locations including external storage, unencrypted databases, cache directories, log files, and clipboard. Data stored insecurely can be accessed by other applications or extracted from the device.",
+      "cwes": ["CWE-311", "CWE-276", "CWE-532", "CWE-530", "CWE-200"],
+      "sentinel_rules": ["MOB-STORE-001"],
+      "prevalence": "HIGH",
+      "impact": "HIGH"
+    },
+    {
+      "id": "M10:2024",
+      "name": "Insufficient Cryptography",
+      "description": "Addresses use of weak, broken, or deprecated cryptographic algorithms (MD5, SHA1, DES, RC4, ECB mode), hardcoded encryption keys, insufficient key lengths, and improper implementation of cryptographic operations.",
+      "cwes": ["CWE-327", "CWE-328", "CWE-326"],
+      "sentinel_rules": ["MOB-CRYPTO-001"],
+      "prevalence": "MEDIUM",
+      "impact": "HIGH"
+    }
+  ]
+}
