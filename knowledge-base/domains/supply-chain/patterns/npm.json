@@ -1,0 +1,50 @@
+[
+  {
+    "id": "NPM-UNPIN-001",
+    "type": "unpinned-dependency",
+    "title": "Unpinned npm dependency using wildcard or latest",
+    "pattern": "\"[^\"]+\"\\s*:\\s*\"(?:\\*|latest|>=)\"",
+    "negative_pattern": null,
+    "severity": "MEDIUM",
+    "file_types": ["package.json"],
+    "description": "An npm dependency uses a wildcard (*), 'latest', or open-ended range (>=) instead of a pinned or caret-restricted version, allowing automatic installation of potentially compromised versions.",
+    "cwe": "CWE-494",
+    "remediation": "Pin to exact versions or use caret ranges (^). Use package-lock.json and npm ci in CI."
+  },
+  {
+    "id": "NPM-SCRIPT-001",
+    "type": "lifecycle-script",
+    "title": "Suspicious postinstall script in package.json",
+    "pattern": "\"(?:post|pre)install\"\\s*:\\s*\"(?!husky|node-gyp|ngcc|patch-package).*\"",
+    "negative_pattern": "husky install|node-gyp rebuild",
+    "severity": "HIGH",
+    "file_types": ["package.json"],
+    "description": "A package has a postinstall or preinstall lifecycle script that executes during npm install. Malicious packages use these scripts as an initial attack vector.",
+    "cwe": "CWE-94",
+    "remediation": "Review lifecycle scripts. Use npm install --ignore-scripts and selectively allow trusted scripts."
+  },
+  {
+    "id": "NPM-SCOPE-001",
+    "type": "suspicious-scope",
+    "title": "Dependency from unrecognized npm scope",
+    "pattern": "\"@[a-z0-9-]+/[a-z0-9-]+\"\\s*:\\s*\"",
+    "negative_pattern": "\"@(?:types|babel|testing-library|angular|nestjs|aws-sdk|azure|google-cloud|anthropic|openai|modelcontextprotocol)/",
+    "severity": "LOW",
+    "file_types": ["package.json"],
+    "description": "A scoped npm package is from an unrecognized organization. While often legitimate, this warrants verification to rule out namespace squatting.",
+    "cwe": "CWE-829",
+    "remediation": "Verify scope ownership via npm owner ls. Check package download stats and publish history."
+  },
+  {
+    "id": "NPM-CURL-001",
+    "type": "unsafe-install",
+    "title": "Package installed via curl pipe to shell",
+    "pattern": "curl.*\\|.*(?:sh|bash|node)",
+    "negative_pattern": null,
+    "severity": "HIGH",
+    "file_types": ["*.sh", "Makefile", "Dockerfile", "*.md"],
+    "description": "Software is installed by piping curl output to a shell, bypassing package manager integrity checks and enabling MITM attacks.",
+    "cwe": "CWE-494",
+    "remediation": "Download the script first, verify its content and checksum, then execute. Prefer package managers with integrity verification."
+  }
+]

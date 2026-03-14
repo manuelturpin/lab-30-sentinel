@@ -1,7 +1,7 @@
 # Sentinel Design Document
 
 **Date**: 2026-03-13
-**Status**: Session 1 Complete
+**Status**: Session 3 Complete
 
 ## Overview
 
@@ -41,6 +41,30 @@ Sentinel is a comprehensive AI-powered cybersecurity auditing system for Claude 
 
 **Totals**: 36 rules, 38 detection patterns, 2 OWASP mappings, 2 checklists
 
-## Next: Session 3 — Knowledge Base LLM/AI + Supply Chain
+## Session 3 Deliverables (Complete)
 
-Populate `knowledge-base/domains/llm-ai/` and `knowledge-base/domains/supply-chain/` with rules for OWASP LLM Top 10 2025, MITRE ATLAS, and supply chain attack patterns.
+- [x] LLM-AI rules.json — 16 rules covering all OWASP LLM Top 10 2025 categories
+- [x] Supply Chain rules.json — 11 rules covering npm, PyPI, lockfiles, typosquatting, AI skills
+- [x] Prompt injection patterns (7 patterns: direct, indirect, extraction, jailbreak, template)
+- [x] Model poisoning patterns (5 patterns: training data, RAG, embedding, unsafe deserialization, revision pinning)
+- [x] Excessive agency patterns (6 patterns: shell, filesystem, network, escalation, HITL, chaining)
+- [x] RAG poisoning patterns (5 patterns: ingestion, embedding, access control, tenant, source integrity)
+- [x] MCP tool poisoning patterns (5 patterns: exfiltration, hidden instructions, permissions, untrusted, shadow)
+- [x] npm supply chain patterns (4 patterns: unpinned, lifecycle scripts, scopes, curl-pipe)
+- [x] PyPI supply chain patterns (3 patterns: setup.py execution, namespace confusion, hash verification)
+- [x] Skills/plugins patterns (5 patterns: exfiltration, override, malicious MCP, hidden text, persistence)
+- [x] Typosquatting patterns (3 patterns: npm transpositions, PyPI transpositions, prefix/suffix)
+- [x] OWASP LLM Top 10 2025 full mapping (owasp-llm-top10-2025.json)
+- [x] MITRE ATLAS full technique tree (13 techniques, 12 tactics)
+- [x] LLM-AI checklist with 16 rule references
+- [x] Supply Chain checklist with 11 rule references
+- [x] Updated standards/owasp-llm-2025.json with sentinel_rules mappings
+- [x] Updated standards/mitre-atlas.json with complete techniques and sentinel_rules
+
+**Totals**: 27 rules, 43 detection patterns, 1 OWASP mapping, 1 MITRE mapping, 2 checklists
+
+**Cumulative (Sessions 1-3)**: 63 rules, 81 detection patterns, 3 OWASP mappings, 1 MITRE mapping, 4 checklists
+
+## Next: Session 4 — Knowledge Base Mobile + Infra + DB + Privacy
+
+Populate remaining KB domains: mobile/, infrastructure/, database/, data-privacy/ with rules covering OWASP Mobile Top 10 2024, infrastructure hardening, database security, and privacy regulations.

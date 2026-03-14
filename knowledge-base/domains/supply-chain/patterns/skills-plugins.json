@@ -1,0 +1,62 @@
+[
+  {
+    "id": "SKILL-EXFIL-001",
+    "type": "data-exfiltration",
+    "title": "SKILL.md or CLAUDE.md with data exfiltration instructions",
+    "pattern": "(?:send|post|fetch|upload|curl).*(?:secret|key|token|password|credential|env|config)",
+    "negative_pattern": null,
+    "severity": "CRITICAL",
+    "file_types": ["*.md", "*.txt", "*.yaml", "*.yml"],
+    "description": "An agent configuration file (SKILL.md, CLAUDE.md) contains instructions that direct the AI to exfiltrate sensitive data such as API keys, tokens, or environment variables.",
+    "cwe": "CWE-200",
+    "remediation": "Audit all SKILL.md and CLAUDE.md files in cloned repositories. Scan for exfiltration patterns before allowing agent access."
+  },
+  {
+    "id": "SKILL-OVERRIDE-001",
+    "type": "instruction-override",
+    "title": "Agent config file attempting to override safety guardrails",
+    "pattern": "(?:ignore|disregard|forget|override).*(?:previous|prior|safety|security|instruction|rule|guardrail)",
+    "negative_pattern": null,
+    "severity": "CRITICAL",
+    "file_types": ["*.md", "*.txt"],
+    "description": "A configuration file attempts to override the AI agent's safety instructions using social engineering patterns like 'ignore previous instructions'.",
+    "cwe": "CWE-94",
+    "remediation": "Reject configuration files containing instruction override patterns. Implement config file integrity checks."
+  },
+  {
+    "id": "SKILL-MCP-001",
+    "type": "malicious-mcp-tool",
+    "title": "MCP server with tools that access sensitive resources",
+    "pattern": "(?:readFile|writeFile|exec|spawn|fetch).*(?:description|tool).*(?:all|any|unrestricted)",
+    "negative_pattern": "restricted_paths|allowed_operations|sandboxed",
+    "severity": "HIGH",
+    "file_types": ["*.ts", "*.js", "*.py", "*.json"],
+    "description": "An MCP server exposes tools that access filesystem, network, or process execution with overly broad permissions described as unrestricted.",
+    "cwe": "CWE-250",
+    "remediation": "Review MCP tool implementations. Ensure tools have minimal permissions. Sandbox tool execution environments."
+  },
+  {
+    "id": "SKILL-HIDDEN-001",
+    "type": "hidden-instructions",
+    "title": "Hidden text or zero-width characters in agent config",
+    "pattern": "[\\u200b\\u200c\\u200d\\u2060\\ufeff]|<!--.*(?:instruction|ignore|override).*-->",
+    "negative_pattern": null,
+    "severity": "CRITICAL",
+    "file_types": ["*.md", "*.txt", "*.html"],
+    "description": "Agent configuration files contain zero-width characters or HTML comments with hidden instructions that are invisible to human reviewers but processed by the AI agent.",
+    "cwe": "CWE-116",
+    "remediation": "Strip zero-width characters and HTML comments from config files. Use binary diff tools to detect hidden content."
+  },
+  {
+    "id": "SKILL-PERSIST-001",
+    "type": "persistence-mechanism",
+    "title": "Skill or plugin that modifies other config files",
+    "pattern": "(?:write|append|modify).*(?:CLAUDE\\.md|cursorrules|\\.env|config|bashrc|zshrc|profile)",
+    "negative_pattern": null,
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js", "*.sh"],
+    "description": "A skill or plugin modifies agent configuration files, shell profiles, or environment files to establish persistence or inject instructions into future sessions.",
+    "cwe": "CWE-829",
+    "remediation": "Skills should never modify other configuration files. Implement write restrictions on agent config files. Monitor config file integrity."
+  }
+]

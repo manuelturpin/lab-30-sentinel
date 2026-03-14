@@ -1,0 +1,62 @@
+[
+  {
+    "id": "MP-DATA-001",
+    "type": "training-data-poisoning",
+    "title": "Training data loaded from unvalidated external source",
+    "pattern": "load_dataset\\(.*(?:url|http|remote|path)\\)|fine_tune.*upload",
+    "negative_pattern": "validate_dataset\\(|checksum_verify\\(",
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "Training or fine-tuning data is loaded from external sources without integrity validation. Poisoned data can embed backdoors into the model.",
+    "cwe": "CWE-345",
+    "remediation": "Validate data provenance with checksums. Use curated datasets from trusted sources. Implement data quality gates before training."
+  },
+  {
+    "id": "MP-RAG-001",
+    "type": "rag-data-integrity",
+    "title": "RAG corpus updated without content validation",
+    "pattern": "(?:add_documents|upsert|insert)\\(.*(?:raw|unfiltered|new_docs)",
+    "negative_pattern": "content_review\\(|quality_check\\(",
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "New documents are added to the RAG corpus without content validation or review. An attacker can inject poisoned documents to manipulate query results.",
+    "cwe": "CWE-494",
+    "remediation": "Implement document review pipeline before ingestion. Validate content quality and check for adversarial patterns."
+  },
+  {
+    "id": "MP-EMBED-001",
+    "type": "embedding-manipulation",
+    "title": "Embedding pipeline without input validation",
+    "pattern": "embed(?:ding)?(?:_model|s)?\\.(?:encode|embed)\\(.*(?:raw|user|input)",
+    "negative_pattern": "validate_text\\(|length_check\\(",
+    "severity": "MEDIUM",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "Text is passed to the embedding model without validation. Crafted inputs can manipulate embedding space to produce adversarial nearest-neighbor results.",
+    "cwe": "CWE-20",
+    "remediation": "Validate and sanitize input text before embedding. Implement length limits and character filtering."
+  },
+  {
+    "id": "MP-MODEL-001",
+    "type": "model-integrity",
+    "title": "Model loaded with pickle deserialization",
+    "pattern": "(?:torch|pickle|joblib)\\.load\\(",
+    "negative_pattern": "safetensors|weights_only\\s*=\\s*True",
+    "severity": "CRITICAL",
+    "file_types": ["*.py"],
+    "description": "Model weights are loaded using pickle-based deserialization which can execute arbitrary code. Malicious model files can achieve RCE during loading.",
+    "cwe": "CWE-502",
+    "remediation": "Use safetensors format instead of pickle. If pickle is required, use torch.load(weights_only=True)."
+  },
+  {
+    "id": "MP-MODEL-002",
+    "type": "model-integrity",
+    "title": "Pre-trained model without revision pinning",
+    "pattern": "from_pretrained\\(['\"][^'\"]+['\"]\\s*\\)",
+    "negative_pattern": "revision\\s*=",
+    "severity": "MEDIUM",
+    "file_types": ["*.py"],
+    "description": "A pre-trained model is loaded without pinning to a specific revision hash. The model could be updated with a compromised version.",
+    "cwe": "CWE-494",
+    "remediation": "Pin models to specific revision hashes: from_pretrained('model', revision='abc123')"
+  }
+]

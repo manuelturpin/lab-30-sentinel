@@ -1,0 +1,62 @@
+[
+  {
+    "id": "RAG-INGEST-001",
+    "type": "unsanitized-ingestion",
+    "title": "Document ingested into RAG without content sanitization",
+    "pattern": "(?:DirectoryLoader|WebBaseLoader|PyPDFLoader|TextLoader)\\(",
+    "negative_pattern": "sanitize_content\\(|content_filter\\(|validate_document\\(",
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "Documents are loaded into the RAG pipeline without sanitization. Malicious documents can contain embedded instructions that poison the retrieval context.",
+    "cwe": "CWE-74",
+    "remediation": "Sanitize document content before embedding. Strip potential instruction patterns. Validate document sources."
+  },
+  {
+    "id": "RAG-EMBED-001",
+    "type": "embedding-validation",
+    "title": "Embeddings stored without quality validation",
+    "pattern": "vectorstore\\.(?:add_documents|add_texts|upsert)\\(",
+    "negative_pattern": "embedding_quality_check\\(|validate_embedding\\(",
+    "severity": "MEDIUM",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "Embeddings are stored in the vector database without quality validation. Adversarial inputs can produce embeddings that manipulate similarity search results.",
+    "cwe": "CWE-20",
+    "remediation": "Validate embedding quality before storage. Check for anomalous embedding vectors. Implement outlier detection on new embeddings."
+  },
+  {
+    "id": "RAG-ACCESS-001",
+    "type": "access-control",
+    "title": "Vector database without authentication or authorization",
+    "pattern": "(?:Chroma|FAISS|Pinecone|Weaviate|Qdrant)\\((?!.*(?:api_key|auth|token))",
+    "negative_pattern": "api_key\\s*=|auth_token\\s*=|authenticate\\(",
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "Vector database is accessed without authentication. Unauthorized users can read, modify, or delete embeddings.",
+    "cwe": "CWE-306",
+    "remediation": "Require authentication for all vector database access. Use API keys or tokens. Implement RBAC for read/write operations."
+  },
+  {
+    "id": "RAG-TENANT-001",
+    "type": "cross-tenant-leakage",
+    "title": "Multi-tenant RAG without namespace isolation",
+    "pattern": "similarity_search\\(|as_retriever\\(",
+    "negative_pattern": "namespace\\s*=|filter.*(?:tenant|org|user)_id|metadata_filter",
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "RAG queries are executed without tenant-specific filtering. In multi-tenant applications, users can retrieve documents belonging to other tenants.",
+    "cwe": "CWE-200",
+    "remediation": "Implement namespace or metadata-based tenant isolation. Filter all queries by tenant/organization ID. Audit cross-tenant access patterns."
+  },
+  {
+    "id": "RAG-SOURCE-001",
+    "type": "source-integrity",
+    "title": "RAG data source without integrity verification",
+    "pattern": "(?:load|fetch|download).*(?:documents|corpus|data).*(?:url|http|remote)",
+    "negative_pattern": "verify_checksum\\(|integrity_check\\(|trusted_sources",
+    "severity": "MEDIUM",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "RAG corpus data is fetched from remote sources without integrity verification. An attacker who compromises the source can poison the entire knowledge base.",
+    "cwe": "CWE-494",
+    "remediation": "Verify checksums of downloaded data. Use signed URLs or authenticated sources. Implement content integrity monitoring."
+  }
+]

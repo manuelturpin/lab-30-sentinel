@@ -1,0 +1,38 @@
+[
+  {
+    "id": "TYPO-NPM-001",
+    "type": "character-transposition",
+    "title": "npm package name with common character transpositions",
+    "pattern": "\"(?:lod[as]{2}h|axio[s]?s|reqeusts?|expresss?|recat|angualr|collors?)\"",
+    "negative_pattern": null,
+    "severity": "HIGH",
+    "file_types": ["package.json"],
+    "description": "A package name contains common character transpositions of popular npm packages (lodash, axios, requests, express, react, angular, colors).",
+    "cwe": "CWE-829",
+    "remediation": "Verify package names against the official npm registry. Use npm info to check package metadata and download counts."
+  },
+  {
+    "id": "TYPO-PYPI-001",
+    "type": "character-transposition",
+    "title": "PyPI package name with common typosquatting patterns",
+    "pattern": "(?:reqeusts|requets|beautifulsoup[0-9]|numpyy|pandass|flaask|djnago)(?:==|>=|~=|\\s)",
+    "negative_pattern": null,
+    "severity": "HIGH",
+    "file_types": ["requirements.txt", "setup.py", "pyproject.toml", "setup.cfg"],
+    "description": "A Python package name resembles a popular PyPI package but with typos (requests, beautifulsoup4, numpy, pandas, flask, django).",
+    "cwe": "CWE-829",
+    "remediation": "Double-check package names. Use pip show to verify package metadata. Review new dependencies in code review."
+  },
+  {
+    "id": "TYPO-SIMILAR-001",
+    "type": "similar-name",
+    "title": "Package name similar to popular package with prefix/suffix",
+    "pattern": "\"(?:python-|node-|go-|lib-|my-)?(?:express|react|angular|django|flask|requests|lodash)(?:-js|-py|-go|-utils|-helper|-extra)?\"",
+    "negative_pattern": null,
+    "severity": "MEDIUM",
+    "file_types": ["package.json", "requirements.txt", "pyproject.toml", "go.mod"],
+    "description": "A package name uses a popular package name with added prefixes (python-, node-) or suffixes (-utils, -helper). This is a common typosquatting pattern.",
+    "cwe": "CWE-829",
+    "remediation": "Verify that prefixed/suffixed packages are from the same maintainer as the original. Check package provenance and download history."
+  }
+]

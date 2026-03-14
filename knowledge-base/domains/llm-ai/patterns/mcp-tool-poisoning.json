@@ -1,0 +1,62 @@
+[
+  {
+    "id": "MCP-EXFIL-001",
+    "type": "tool-description-exfiltration",
+    "title": "MCP tool with data exfiltration in description",
+    "pattern": "description.*(?:send|post|fetch|upload).*(?:data|content|file|secret|key|token)",
+    "negative_pattern": "audit_description\\(|review_tools\\(",
+    "severity": "CRITICAL",
+    "file_types": ["*.json", "*.yaml", "*.yml", "*.py", "*.ts"],
+    "description": "An MCP tool description contains instructions that direct the LLM to exfiltrate sensitive data. The LLM reads tool descriptions as instructions and may follow them automatically.",
+    "cwe": "CWE-200",
+    "remediation": "Audit all MCP tool descriptions before connecting. Implement automated scanning of tool descriptions for exfiltration patterns."
+  },
+  {
+    "id": "MCP-HIDDEN-001",
+    "type": "hidden-instructions",
+    "title": "Agent config file with hidden override instructions",
+    "pattern": "(?:EXTREMELY|VERY).?(?:IMPORTANT|CRITICAL)|ignore.*(?:previous|prior|above).*instruction|override.*(?:safety|security|guardrail)",
+    "negative_pattern": null,
+    "severity": "CRITICAL",
+    "file_types": ["*.md", "*.txt", "*.yaml", "*.yml"],
+    "description": "A CLAUDE.md, SKILL.md, or similar agent configuration file contains social engineering patterns designed to override the agent's safety guardrails.",
+    "cwe": "CWE-94",
+    "remediation": "Review all agent config files in repositories before use. Flag files with urgency markers or instruction override patterns."
+  },
+  {
+    "id": "MCP-PERM-001",
+    "type": "permission-escalation",
+    "title": "MCP tool requesting elevated permissions",
+    "pattern": "(?:permission|capability|access).*(?:admin|root|sudo|all|unrestricted)",
+    "negative_pattern": "least_privilege|minimal_permissions",
+    "severity": "HIGH",
+    "file_types": ["*.json", "*.yaml", "*.yml", "*.py", "*.ts"],
+    "description": "An MCP tool or server requests permissions beyond what is needed for its stated function, enabling privilege escalation.",
+    "cwe": "CWE-250",
+    "remediation": "Apply least privilege principle. Only grant minimum permissions needed. Review and restrict MCP server capabilities."
+  },
+  {
+    "id": "MCP-UNTRUSTED-001",
+    "type": "untrusted-server",
+    "title": "Connection to unverified MCP server",
+    "pattern": "mcpServers.*(?:npx|uvx|http|ssh).*(?:@|://)",
+    "negative_pattern": "verified_servers|trusted_registry|allowlist",
+    "severity": "HIGH",
+    "file_types": ["*.json", "*.yaml", "*.yml"],
+    "description": "An MCP server is connected via npx, uvx, or remote URL without verification. Untrusted servers can provide malicious tools.",
+    "cwe": "CWE-829",
+    "remediation": "Maintain a registry of verified MCP servers. Audit server source code before connecting. Use pinned versions for npx/uvx packages."
+  },
+  {
+    "id": "MCP-SHADOW-001",
+    "type": "shadow-tool",
+    "title": "MCP tool that shadows built-in tool names",
+    "pattern": "name.*(?:read_file|write_file|bash|shell|execute|run_command)",
+    "negative_pattern": "tool_namespace|unique_prefix",
+    "severity": "HIGH",
+    "file_types": ["*.json", "*.yaml", "*.yml", "*.py", "*.ts"],
+    "description": "An MCP tool uses a name that shadows built-in agent tools (e.g., read_file, bash). This can redirect the agent's actions through a malicious implementation.",
+    "cwe": "CWE-706",
+    "remediation": "Enforce unique tool naming with namespace prefixes. Detect and warn on tool name collisions. Built-in tools should take priority."
+  }
+]

@@ -1,1 +1,346 @@
-[]
+[
+  {
+    "id": "SC-VULN-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.6,
+    "category": "supply-chain",
+    "subcategory": "vulnerable-dependencies",
+    "title": "Known vulnerable dependency in use",
+    "description": "A project dependency has known CVEs in the installed version. Attackers can exploit published vulnerabilities to compromise the application.",
+    "detect": {
+      "patterns": [
+        "\"dependencies\"\\s*:",
+        "\"devDependencies\"\\s*:",
+        "install_requires\\s*=",
+        "\\[dependencies\\]"
+      ],
+      "negative_patterns": [
+        "npm audit",
+        "safety check",
+        "snyk test"
+      ],
+      "file_types": ["package.json", "requirements.txt", "setup.py", "Cargo.toml", "go.mod", "Gemfile"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Run dependency audit tools regularly (npm audit, pip-audit, cargo audit). Update vulnerable packages to patched versions. Use automated dependency update tools like Dependabot or Renovate.",
+      "code_example": "# npm\nnpm audit fix\n# Python\npip-audit\n# Rust\ncargo audit",
+      "references": [
+        "https://owasp.org/www-project-dependency-check/"
+      ]
+    },
+    "standards": ["CWE-1104", "OWASP-A06:2025"],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "SC-TYPO-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.2,
+    "category": "supply-chain",
+    "subcategory": "typosquatting",
+    "title": "Potential typosquatting package detected",
+    "description": "A dependency name closely resembles a popular package but with subtle differences (transposed characters, extra hyphens, alternative spellings). This is a common supply chain attack vector.",
+    "detect": {
+      "patterns": [
+        "\"(?:colurs|collors|reqeusts|requets|lodsah|loadsh|axois|axos)\"",
+        "(?:colurs|collors|reqeusts|requets|lodsah|loadsh|axois|axos)(?:==|>=|~=)"
+      ],
+      "negative_patterns": [],
+      "file_types": ["package.json", "requirements.txt", "setup.py", "setup.cfg", "pyproject.toml"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Verify package names against the official registry. Use lockfiles to pin exact versions. Review new dependencies before adding them. Use tools like socket.dev or npm/pip verify.",
+      "code_example": "# Verify package before installing\nnpm info <package-name>\npip show <package-name>",
+      "references": [
+        "https://snyk.io/blog/typosquatting-attacks/"
+      ]
+    },
+    "standards": ["CWE-829", "OWASP-LLM03:2025"],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "SC-LOCK-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.8,
+    "category": "supply-chain",
+    "subcategory": "lockfile-integrity",
+    "title": "Missing or outdated lockfile",
+    "description": "Project lacks a lockfile (package-lock.json, yarn.lock, poetry.lock, Cargo.lock) or the lockfile is not committed to version control. Without lockfiles, builds are non-reproducible and vulnerable to dependency confusion.",
+    "detect": {
+      "patterns": [
+        "\"dependencies\"\\s*:"
+      ],
+      "negative_patterns": [],
+      "file_types": ["package.json", "pyproject.toml", "Cargo.toml"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Generate and commit lockfiles. Use --frozen-lockfile in CI. Verify lockfile integrity on every build.",
+      "code_example": "# npm: ensure lockfile exists and is committed\nnpm install --package-lock-only\ngit add package-lock.json\n# CI: use frozen lockfile\nnpm ci",
+      "references": [
+        "https://docs.npmjs.com/cli/v10/configuring-npm/package-lock-json"
+      ]
+    },
+    "standards": ["CWE-345", "CWE-494"],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "SC-SCRIPT-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "supply-chain",
+    "subcategory": "lifecycle-scripts",
+    "title": "Dangerous lifecycle script in package",
+    "description": "A package uses postinstall, preinstall, or other lifecycle scripts that execute arbitrary code during installation. Malicious packages use these scripts for initial compromise.",
+    "detect": {
+      "patterns": [
+        "\"(?:pre|post)?install\"\\s*:",
+        "\"(?:pre|post)?build\"\\s*:",
+        "\"prepare\"\\s*:"
+      ],
+      "negative_patterns": [
+        "husky install",
+        "node-gyp rebuild",
+        "ngcc"
+      ],
+      "file_types": ["package.json"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Review lifecycle scripts in dependencies. Use --ignore-scripts during install and selectively allow trusted scripts. Use tools like socket.dev to detect suspicious install scripts.",
+      "code_example": "# Install without running scripts\nnpm install --ignore-scripts\n# Allow specific scripts\nnpm config set ignore-scripts true",
+      "references": [
+        "https://socket.dev/blog/when-everything-becomes-too-much"
+      ]
+    },
+    "standards": ["CWE-94", "CWE-829"],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "SC-PIN-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "supply-chain",
+    "subcategory": "version-pinning",
+    "title": "Unpinned dependency using wide version range",
+    "description": "A dependency uses a wide version range (*, latest, >=) instead of exact pinning. This allows automatically pulling in compromised new versions.",
+    "detect": {
+      "patterns": [
+        "\"\\*\"",
+        "\"latest\"",
+        "\">=\\d",
+        "\">[^=]"
+      ],
+      "negative_patterns": [],
+      "file_types": ["package.json", "requirements.txt", "pyproject.toml"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Pin dependencies to exact versions or use narrow ranges (^, ~). Use lockfiles for reproducible builds. Review and approve all version bumps.",
+      "code_example": "// Instead of: \"lodash\": \"*\"\n// Use: \"lodash\": \"^4.17.21\"\n// Or exact: \"lodash\": \"4.17.21\"",
+      "references": [
+        "https://docs.npmjs.com/about-semantic-versioning"
+      ]
+    },
+    "standards": ["CWE-494"],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "SC-CONFUSION-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "supply-chain",
+    "subcategory": "dependency-confusion",
+    "title": "Private package name not reserved on public registry",
+    "description": "A project uses private/internal package names that could be squatted on the public registry. An attacker can publish a higher-versioned package on the public registry to hijack installations.",
+    "detect": {
+      "patterns": [
+        "\"@(?!types/)(?!babel/)(?!testing-library/)\\w+/\\w+\"\\s*:",
+        "\"(?:internal-|private-)\\w+\"\\s*:"
+      ],
+      "negative_patterns": [
+        "registry.*(?:artifactory|nexus|verdaccio|localhost)",
+        "\"publishConfig\""
+      ],
+      "file_types": ["package.json", ".npmrc", "pip.conf", ".pypirc"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Reserve internal package names on public registries. Configure scoped registries for private packages. Use .npmrc or pip.conf to restrict package sources.",
+      "code_example": "# .npmrc — scope private packages to internal registry\n@mycompany:registry=https://npm.internal.company.com/\nalways-auth=true",
+      "references": [
+        "https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610"
+      ]
+    },
+    "standards": ["CWE-427", "CWE-829"],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "SC-AI-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.0,
+    "category": "supply-chain",
+    "subcategory": "ai-supply-chain",
+    "title": "Untrusted AI skill or plugin installed without review",
+    "description": "An AI skill, plugin, or MCP server is installed from an untrusted source without code review or integrity verification. These components have privileged access to the AI agent's capabilities.",
+    "detect": {
+      "patterns": [
+        "npx.*@(?!anthropic|modelcontextprotocol).*mcp",
+        "uvx.*mcp",
+        "pip install.*(?:skill|plugin|agent).*(?:git\\+|http)",
+        "mcpServers.*npx"
+      ],
+      "negative_patterns": [
+        "verified_plugins",
+        "plugin_allowlist",
+        "trusted_source"
+      ],
+      "file_types": ["*.json", "*.yaml", "*.yml", "*.sh", "*.md"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Review source code of all AI skills and plugins before installation. Only use plugins from verified publishers. Implement plugin sandboxing and permission restrictions.",
+      "code_example": "# Audit before installing MCP server\ngit clone <mcp-server-repo>\n# Review source code, especially tool descriptions\ngrep -r 'description' src/tools/\n# Only then add to config",
+      "references": [
+        "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks"
+      ]
+    },
+    "standards": ["CWE-829", "CWE-94", "OWASP-LLM03:2025", "AML.T0056"],
+    "ai_specific": true,
+    "frameworks": ["claude-code", "cursor", "langchain"]
+  },
+  {
+    "id": "SC-AI-002",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "supply-chain",
+    "subcategory": "ai-supply-chain",
+    "title": "AI model downloaded without hash verification",
+    "description": "A machine learning model is downloaded from a remote source without verifying its cryptographic hash. Compromised model files can contain backdoors or execute code via unsafe deserialization.",
+    "detect": {
+      "patterns": [
+        "download.*model.*(?:url|http)",
+        "wget.*(?:model|weights|checkpoint)",
+        "curl.*(?:model|weights|checkpoint)",
+        "hf_hub_download\\("
+      ],
+      "negative_patterns": [
+        "verify_hash\\(",
+        "sha256",
+        "checksum"
+      ],
+      "file_types": ["*.py", "*.sh", "*.ts", "*.js"],
+      "exclude": ["node_modules", "dist", "test"]
+    },
+    "remediation": {
+      "description": "Always verify model file checksums after download. Use safetensors format. Download from authenticated sources with pinned revisions.",
+      "code_example": "# Verify model hash after download\nimport hashlib\nexpected = 'sha256:abc123...'\nactual = hashlib.sha256(open('model.bin', 'rb').read()).hexdigest()\nassert f'sha256:{actual}' == expected",
+      "references": [
+        "https://huggingface.co/docs/hub/security"
+      ]
+    },
+    "standards": ["CWE-494", "CWE-345", "OWASP-LLM03:2025"],
+    "ai_specific": true,
+    "frameworks": ["langchain", "llamaindex"]
+  },
+  {
+    "id": "SC-SETUP-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.0,
+    "category": "supply-chain",
+    "subcategory": "build-execution",
+    "title": "Python setup.py with arbitrary code execution",
+    "description": "A Python package uses setup.py with code that executes during pip install. Malicious packages exploit this to run arbitrary code on the developer's machine.",
+    "detect": {
+      "patterns": [
+        "setup\\.py.*(?:os\\.system|subprocess|urllib|requests)",
+        "cmdclass.*install",
+        "__import__.*(?:os|subprocess|socket)"
+      ],
+      "negative_patterns": [],
+      "file_types": ["setup.py", "setup.cfg"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Prefer pyproject.toml over setup.py. Review setup.py of third-party packages before installing. Use pip install --no-build-isolation carefully. Scan for suspicious imports in setup.py.",
+      "code_example": "# Use pyproject.toml instead of setup.py\n[build-system]\nrequires = [\"setuptools>=68.0\"]\nbuild-backend = \"setuptools.backends._legacy:_Backend\"",
+      "references": [
+        "https://blog.phylum.io/pypi-malware-replaces-crypto-addresses/"
+      ]
+    },
+    "standards": ["CWE-94", "CWE-829"],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "SC-SCOPE-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.0,
+    "category": "supply-chain",
+    "subcategory": "namespace-squatting",
+    "title": "Dependency from suspicious or unverified npm scope",
+    "description": "A package is imported from an npm scope that is not a well-known organization. Attackers register scopes similar to popular organizations to distribute malicious packages.",
+    "detect": {
+      "patterns": [
+        "\"@(?!types|babel|testing-library|angular|nestjs|aws-sdk|azure|google-cloud|anthropic|openai|modelcontextprotocol)[a-z0-9-]+/[a-z0-9-]+\"\\s*:"
+      ],
+      "negative_patterns": [
+        "publishConfig",
+        "private.*true"
+      ],
+      "file_types": ["package.json"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Verify npm scope ownership before adding dependencies. Cross-reference scope names with official organization registries. Review package download counts and publish history.",
+      "code_example": "# Verify scope ownership\nnpm owner ls @scope/package\nnpm view @scope/package",
+      "references": [
+        "https://snyk.io/blog/detect-prevent-dependency-confusion-attacks-npm-supply-chain-security/"
+      ]
+    },
+    "standards": ["CWE-829"],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "SC-INTEGRITY-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.2,
+    "category": "supply-chain",
+    "subcategory": "integrity-verification",
+    "title": "Dependencies installed without integrity verification",
+    "description": "Packages are installed without subresource integrity (SRI) hashes or package signature verification. A compromised registry or MITM attack can deliver modified packages.",
+    "detect": {
+      "patterns": [
+        "npm install(?!.*--package-lock-only)",
+        "pip install(?!.*--require-hashes)",
+        "curl.*\\|.*(?:sh|bash|python)"
+      ],
+      "negative_patterns": [
+        "npm ci",
+        "--require-hashes",
+        "--check-hashes",
+        "integrity.*sha512"
+      ],
+      "file_types": ["*.sh", "Makefile", "Dockerfile", "*.yaml", "*.yml"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Use npm ci instead of npm install in CI. Use pip install --require-hashes. Never pipe curl output to shell. Verify package signatures when available.",
+      "code_example": "# CI: use frozen lockfile with integrity checks\nnpm ci\n# Python: require hashes\npip install --require-hashes -r requirements.txt",
+      "references": [
+        "https://docs.npmjs.com/cli/v10/commands/npm-ci"
+      ]
+    },
+    "standards": ["CWE-345", "CWE-494"],
+    "ai_specific": false,
+    "frameworks": []
+  }
+]

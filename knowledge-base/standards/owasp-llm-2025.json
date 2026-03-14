@@ -1,17 +1,78 @@
 {
   "standard": "OWASP Top 10 for LLM Applications 2025",
   "version": "2025",
+  "last_updated": "2025-11-15",
+  "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
   "categories": [
-    {"id": "LLM01:2025", "name": "Prompt Injection"},
-    {"id": "LLM02:2025", "name": "Sensitive Information Disclosure"},
-    {"id": "LLM03:2025", "name": "Supply Chain Vulnerabilities"},
-    {"id": "LLM04:2025", "name": "Data and Model Poisoning"},
-    {"id": "LLM05:2025", "name": "Improper Output Handling"},
-    {"id": "LLM06:2025", "name": "Excessive Agency"},
-    {"id": "LLM07:2025", "name": "System Prompt Leakage"},
-    {"id": "LLM08:2025", "name": "Vector and Embedding Weaknesses"},
-    {"id": "LLM09:2025", "name": "Misinformation"},
-    {"id": "LLM10:2025", "name": "Unbounded Consumption"}
-  ],
-  "note": "Placeholder — will be populated with full mappings in Session 3"
+    {
+      "id": "LLM01:2025",
+      "name": "Prompt Injection",
+      "cwes": ["CWE-77", "CWE-74", "CWE-94"],
+      "sentinel_rules": ["LLM-PROMPT-001", "LLM-PROMPT-002"],
+      "description": "Crafted inputs that manipulate LLM behavior by injecting instructions into prompts directly or via external content."
+    },
+    {
+      "id": "LLM02:2025",
+      "name": "Sensitive Information Disclosure",
+      "cwes": ["CWE-200", "CWE-532", "CWE-497"],
+      "sentinel_rules": ["LLM-INFO-001"],
+      "description": "LLM reveals confidential data including PII, credentials, or proprietary information through its responses."
+    },
+    {
+      "id": "LLM03:2025",
+      "name": "Supply Chain Vulnerabilities",
+      "cwes": ["CWE-494", "CWE-502", "CWE-829"],
+      "sentinel_rules": ["LLM-SUPPLY-001", "LLM-MCP-001", "LLM-MCP-002", "SC-AI-001", "SC-AI-002"],
+      "description": "Risks from third-party models, training data, plugins, MCP servers, and AI skills that may be compromised."
+    },
+    {
+      "id": "LLM04:2025",
+      "name": "Data and Model Poisoning",
+      "cwes": ["CWE-345", "CWE-494", "CWE-20"],
+      "sentinel_rules": ["LLM-POISON-001"],
+      "description": "Manipulation of training data or model weights to introduce backdoors, biases, or targeted vulnerabilities."
+    },
+    {
+      "id": "LLM05:2025",
+      "name": "Improper Output Handling",
+      "cwes": ["CWE-79", "CWE-94", "CWE-78"],
+      "sentinel_rules": ["LLM-OUTPUT-001", "LLM-OUTPUT-002"],
+      "description": "Failure to sanitize LLM output before rendering, executing, or passing to downstream systems."
+    },
+    {
+      "id": "LLM06:2025",
+      "name": "Excessive Agency",
+      "cwes": ["CWE-250", "CWE-269", "CWE-862"],
+      "sentinel_rules": ["LLM-AGENCY-001", "LLM-AGENCY-002"],
+      "description": "LLM agents granted excessive capabilities, permissions, or autonomy without proper guardrails."
+    },
+    {
+      "id": "LLM07:2025",
+      "name": "System Prompt Leakage",
+      "cwes": ["CWE-200", "CWE-497"],
+      "sentinel_rules": ["LLM-LEAK-001"],
+      "description": "Extraction of system prompts containing business logic, security rules, or proprietary instructions."
+    },
+    {
+      "id": "LLM08:2025",
+      "name": "Vector and Embedding Weaknesses",
+      "cwes": ["CWE-284", "CWE-862", "CWE-200"],
+      "sentinel_rules": ["LLM-EMBED-001", "LLM-EMBED-002"],
+      "description": "Vulnerabilities in vector databases and embedding pipelines including access control and tenant isolation issues."
+    },
+    {
+      "id": "LLM09:2025",
+      "name": "Misinformation",
+      "cwes": ["CWE-754"],
+      "sentinel_rules": ["LLM-MISINFO-001"],
+      "description": "LLM generating false or misleading content presented as factual, particularly in high-stakes domains."
+    },
+    {
+      "id": "LLM10:2025",
+      "name": "Unbounded Consumption",
+      "cwes": ["CWE-400", "CWE-770"],
+      "sentinel_rules": ["LLM-CONSUME-001"],
+      "description": "Excessive resource consumption through uncontrolled LLM API usage causing DoS or denial of wallet."
+    }
+  ]
 }

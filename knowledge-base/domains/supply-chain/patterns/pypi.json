@@ -1,0 +1,38 @@
+[
+  {
+    "id": "PYPI-SETUP-001",
+    "type": "setup-code-execution",
+    "title": "setup.py with suspicious imports or code execution",
+    "pattern": "(?:os\\.system|subprocess\\.|urllib\\.|requests\\.|socket\\.|__import__).*(?:install|setup)",
+    "negative_pattern": null,
+    "severity": "HIGH",
+    "file_types": ["setup.py"],
+    "description": "A setup.py file contains imports of os, subprocess, urllib, or socket modules which can execute arbitrary code during pip install.",
+    "cwe": "CWE-94",
+    "remediation": "Use pyproject.toml with declarative metadata instead of setup.py. Review setup.py of third-party packages before installing."
+  },
+  {
+    "id": "PYPI-NAMESPACE-001",
+    "type": "namespace-confusion",
+    "title": "Python package with potential namespace confusion",
+    "pattern": "(?:import|from)\\s+(?:internal_|private_|company_)\\w+",
+    "negative_pattern": "# internal package|--index-url.*(?:artifactory|nexus|devpi)",
+    "severity": "MEDIUM",
+    "file_types": ["*.py", "requirements.txt", "pyproject.toml"],
+    "description": "A Python import references what appears to be a private/internal package name. If not properly scoped to a private index, an attacker can register this name on PyPI.",
+    "cwe": "CWE-427",
+    "remediation": "Configure pip to use private index for internal packages. Reserve package names on PyPI. Use --index-url and --extra-index-url correctly."
+  },
+  {
+    "id": "PYPI-HASH-001",
+    "type": "missing-hash-verification",
+    "title": "pip install without hash verification",
+    "pattern": "pip install(?!.*--require-hashes)(?!.*--hash)",
+    "negative_pattern": "--require-hashes|--hash",
+    "severity": "MEDIUM",
+    "file_types": ["*.sh", "Makefile", "Dockerfile", "*.yaml", "*.yml"],
+    "description": "pip install is run without --require-hashes, meaning package integrity is not verified. A compromised PyPI mirror could serve modified packages.",
+    "cwe": "CWE-345",
+    "remediation": "Use pip install --require-hashes with hash-pinned requirements. Generate hashes with pip-compile --generate-hashes."
+  }
+]

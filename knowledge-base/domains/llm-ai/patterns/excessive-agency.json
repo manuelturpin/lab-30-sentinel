@@ -1,0 +1,74 @@
+[
+  {
+    "id": "EA-SHELL-001",
+    "type": "unrestricted-shell",
+    "title": "Agent with unrestricted shell command execution",
+    "pattern": "(?:BashTool|ShellTool|subprocess).*(?:shell\\s*=\\s*True|Popen|system\\()",
+    "negative_pattern": "allowed_commands\\s*=|command_allowlist|sandbox\\(",
+    "severity": "CRITICAL",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "An AI agent has access to shell execution without command restrictions. A compromised agent can execute arbitrary system commands.",
+    "cwe": "CWE-78",
+    "remediation": "Restrict to an allowlist of safe commands. Use sandboxed execution environments. Implement human approval for destructive operations."
+  },
+  {
+    "id": "EA-FS-001",
+    "type": "unrestricted-filesystem",
+    "title": "Agent with unrestricted filesystem write access",
+    "pattern": "(?:write_file|save_file|FileWriteTool)\\(|open\\(.*['\"]w['\"]",
+    "negative_pattern": "allowed_paths\\s*=|path_allowlist|sandbox_dir",
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "An AI agent can write to arbitrary filesystem paths without path restrictions. A compromised agent can overwrite critical files or plant malicious content.",
+    "cwe": "CWE-732",
+    "remediation": "Restrict write access to a sandboxed directory. Implement path allowlists. Require human approval for writes outside the sandbox."
+  },
+  {
+    "id": "EA-NET-001",
+    "type": "unrestricted-network",
+    "title": "Agent with unrestricted outbound network access",
+    "pattern": "(?:requests?|httpx|fetch|axios)\\.(?:get|post|put|delete)\\(.*(?:url|endpoint)",
+    "negative_pattern": "allowed_domains\\s*=|domain_allowlist|egress_filter",
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "An AI agent can make HTTP requests to arbitrary domains. This enables data exfiltration to attacker-controlled servers.",
+    "cwe": "CWE-918",
+    "remediation": "Implement domain allowlisting for all outbound requests. Log and audit all network activity. Block connections to private/internal networks."
+  },
+  {
+    "id": "EA-ESCALATION-001",
+    "type": "self-escalation",
+    "title": "Agent can modify its own permissions or tools",
+    "pattern": "(?:add_tool|register_tool|update_permissions|grant_access)\\(.*(?:self|agent)",
+    "negative_pattern": "admin_only|require_admin|human_approval",
+    "severity": "CRITICAL",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "An AI agent can dynamically add tools or modify its own permissions, enabling self-escalation of capabilities beyond intended scope.",
+    "cwe": "CWE-269",
+    "remediation": "Tool registration must require admin approval. Agent permissions should be immutable at runtime. Implement least privilege principle."
+  },
+  {
+    "id": "EA-HITL-001",
+    "type": "missing-human-in-the-loop",
+    "title": "Destructive agent action without human approval gate",
+    "pattern": "(?:delete|remove|drop|truncate|destroy).*(?:auto|direct|immediate)",
+    "negative_pattern": "human_(?:approval|confirm|review)|confirm_action|require_confirmation",
+    "severity": "HIGH",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "An AI agent can perform destructive operations (delete files, drop tables, send emails) without requiring human confirmation.",
+    "cwe": "CWE-862",
+    "remediation": "Implement mandatory human-in-the-loop for all destructive or irreversible actions. Use confirmation gates before execution."
+  },
+  {
+    "id": "EA-CHAIN-001",
+    "type": "unrestricted-chaining",
+    "title": "Agent tool chain without iteration limits",
+    "pattern": "(?:AgentExecutor|create_agent|run_agent)\\(",
+    "negative_pattern": "max_iterations\\s*=|max_steps\\s*=|iteration_limit",
+    "severity": "MEDIUM",
+    "file_types": ["*.py", "*.ts", "*.js"],
+    "description": "An AI agent can execute tool chains without iteration limits, potentially entering infinite loops that exhaust resources or accumulate unintended side effects.",
+    "cwe": "CWE-400",
+    "remediation": "Set max_iterations on all agent executors. Implement timeout limits. Add cost budgets for chained LLM calls."
+  }
+]

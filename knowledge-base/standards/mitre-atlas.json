@@ -1,12 +1,161 @@
 {
   "standard": "MITRE ATLAS — Adversarial Threat Landscape for AI Systems",
   "version": "4.0",
-  "techniques": [
-    {"id": "AML.T0043", "name": "Craft Adversarial Data", "tactic": "ML Attack Staging"},
-    {"id": "AML.T0051", "name": "LLM Prompt Injection", "tactic": "Initial Access"},
-    {"id": "AML.T0054", "name": "LLM Jailbreak", "tactic": "Defense Evasion"},
-    {"id": "AML.T0056", "name": "LLM Plugin Compromise", "tactic": "Persistence"},
-    {"id": "AML.T0057", "name": "MCP Tool Poisoning", "tactic": "Execution"}
+  "last_updated": "2024-12-01",
+  "url": "https://atlas.mitre.org/",
+  "tactics": [
+    {
+      "id": "AML.TA0000",
+      "name": "Reconnaissance",
+      "description": "Gathering information about the target AI system to plan an attack."
+    },
+    {
+      "id": "AML.TA0001",
+      "name": "Resource Development",
+      "description": "Establishing resources needed to support AI attack operations."
+    },
+    {
+      "id": "AML.TA0002",
+      "name": "Initial Access",
+      "description": "Gaining initial access to the target AI system."
+    },
+    {
+      "id": "AML.TA0003",
+      "name": "ML Attack Staging",
+      "description": "Preparing adversarial data or models for use against the target system."
+    },
+    {
+      "id": "AML.TA0004",
+      "name": "ML Model Access",
+      "description": "Gaining access to the target ML model for inference or manipulation."
+    },
+    {
+      "id": "AML.TA0005",
+      "name": "Execution",
+      "description": "Running adversarial techniques against the AI system."
+    },
+    {
+      "id": "AML.TA0006",
+      "name": "Persistence",
+      "description": "Maintaining access to the AI system across restarts or updates."
+    },
+    {
+      "id": "AML.TA0007",
+      "name": "Defense Evasion",
+      "description": "Avoiding detection by AI security controls and monitoring."
+    },
+    {
+      "id": "AML.TA0008",
+      "name": "Discovery",
+      "description": "Exploring the AI system to understand its capabilities and vulnerabilities."
+    },
+    {
+      "id": "AML.TA0009",
+      "name": "Collection",
+      "description": "Gathering data from the AI system for exfiltration or further attacks."
+    },
+    {
+      "id": "AML.TA0010",
+      "name": "Exfiltration",
+      "description": "Extracting data or model information from the AI system."
+    },
+    {
+      "id": "AML.TA0011",
+      "name": "Impact",
+      "description": "Manipulating, disrupting, or destroying the AI system or its outputs."
+    }
   ],
-  "note": "Placeholder — will be populated with full technique tree in Session 3"
+  "techniques": [
+    {
+      "id": "AML.T0015",
+      "name": "Evade ML Model",
+      "tactic": "Defense Evasion",
+      "description": "Crafting inputs that evade ML model detection while maintaining malicious intent.",
+      "sentinel_rules": []
+    },
+    {
+      "id": "AML.T0018",
+      "name": "Backdoor ML Model",
+      "tactic": "Persistence",
+      "description": "Inserting a backdoor into an ML model during training that activates on specific trigger inputs.",
+      "sentinel_rules": ["LLM-POISON-001", "LLM-SUPPLY-001"]
+    },
+    {
+      "id": "AML.T0019",
+      "name": "Publish Poisoned Datasets",
+      "tactic": "Resource Development",
+      "description": "Publishing manipulated datasets to poison downstream models that train on them.",
+      "sentinel_rules": ["LLM-POISON-001"]
+    },
+    {
+      "id": "AML.T0020",
+      "name": "Poison Training Data",
+      "tactic": "ML Attack Staging",
+      "description": "Injecting malicious samples into training data to influence model behavior.",
+      "sentinel_rules": ["LLM-POISON-001"]
+    },
+    {
+      "id": "AML.T0024",
+      "name": "Exfiltration via ML Inference API",
+      "tactic": "Exfiltration",
+      "description": "Extracting training data or model internals through carefully crafted inference queries.",
+      "sentinel_rules": ["LLM-INFO-001", "LLM-EMBED-002"]
+    },
+    {
+      "id": "AML.T0035",
+      "name": "ML Artifact Collection",
+      "tactic": "Collection",
+      "description": "Collecting ML artifacts (models, data, configs) from accessible storage.",
+      "sentinel_rules": ["LLM-EMBED-001"]
+    },
+    {
+      "id": "AML.T0040",
+      "name": "ML Model Inference API Access",
+      "tactic": "ML Model Access",
+      "description": "Gaining access to the ML model inference API to probe model behavior.",
+      "sentinel_rules": ["LLM-CONSUME-001"]
+    },
+    {
+      "id": "AML.T0043",
+      "name": "Craft Adversarial Data",
+      "tactic": "ML Attack Staging",
+      "description": "Creating adversarial examples designed to cause ML model misclassification.",
+      "sentinel_rules": ["LLM-POISON-001"]
+    },
+    {
+      "id": "AML.T0047",
+      "name": "ML-Enabled Product Abuse",
+      "tactic": "Impact",
+      "description": "Abusing ML-enabled product features for unintended malicious purposes.",
+      "sentinel_rules": ["LLM-AGENCY-001", "LLM-AGENCY-002"]
+    },
+    {
+      "id": "AML.T0051",
+      "name": "LLM Prompt Injection",
+      "tactic": "Initial Access",
+      "description": "Injecting adversarial instructions into LLM prompts to manipulate model behavior, bypass safety measures, or extract information.",
+      "sentinel_rules": ["LLM-PROMPT-001", "LLM-PROMPT-002"]
+    },
+    {
+      "id": "AML.T0054",
+      "name": "LLM Jailbreak",
+      "tactic": "Defense Evasion",
+      "description": "Bypassing LLM safety guardrails through role-play, encoding tricks, or multi-turn manipulation to elicit restricted outputs.",
+      "sentinel_rules": ["LLM-PROMPT-001"]
+    },
+    {
+      "id": "AML.T0056",
+      "name": "LLM Plugin Compromise",
+      "tactic": "Persistence",
+      "description": "Compromising LLM plugins, skills, or extensions to maintain persistent access and manipulate agent behavior across sessions.",
+      "sentinel_rules": ["LLM-MCP-002", "SC-AI-001"]
+    },
+    {
+      "id": "AML.T0057",
+      "name": "MCP Tool Poisoning",
+      "tactic": "Execution",
+      "description": "Embedding malicious instructions in MCP tool descriptions that are automatically processed by LLM agents, enabling data exfiltration or command execution.",
+      "sentinel_rules": ["LLM-MCP-001"]
+    }
+  ]
 }
