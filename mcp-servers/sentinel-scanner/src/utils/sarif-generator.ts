@@ -22,7 +22,31 @@ export interface SARIFRun {
       rules: SARIFRule[];
     };
   };
+  invocations?: SARIFInvocation[];
+  artifacts?: SARIFArtifact[];
   results: SARIFResult[];
+}
+
+export interface SARIFInvocation {
+  executionSuccessful: boolean;
+  commandLine?: string;
+  arguments?: string[];
+  startTimeUtc?: string;
+  endTimeUtc?: string;
+  exitCode?: number;
+}
+
+export interface SARIFArtifact {
+  location: { uri: string };
+  roles?: string[];
+  length?: number;
+}
+
+export interface SARIFGeneratorOptions {
+  startTime?: string;
+  endTime?: string;
+  args?: string[];
+  scannedFiles?: string[];
 }
 
 export interface SARIFRule {
@@ -55,7 +79,7 @@ export interface SARIFResult {
 /**
  * Convert Sentinel findings to SARIF 2.1.0 format.
  */
-export function generateSARIF(findings: Finding[]): SARIFReport {
+export function generateSARIF(findings: Finding[], options: SARIFGeneratorOptions = {}): SARIFReport {
   const rules: SARIFRule[] = [];
   const results: SARIFResult[] = [];
   const seenRules = new Set<string>();
@@ -107,6 +131,22 @@ export function generateSARIF(findings: Finding[]): SARIFReport {
     });
   }
 
+  // Build invocations
+  const invocations: SARIFInvocation[] = [{
+    executionSuccessful: true,
+    commandLine: "sentinel-scanner",
+    arguments: options.args,
+    startTimeUtc: options.startTime,
+    endTimeUtc: options.endTime,
+    exitCode: 0,
+  }];
+
+  // Build artifacts from scanned files
+  const artifacts: SARIFArtifact[] = (options.scannedFiles || []).map(f => ({
+    location: { uri: f },
+    roles: ["analysisTarget"],
+  }));
+
   return {
     $schema:
       "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
@@ -121,6 +161,8 @@ export function generateSARIF(findings: Finding[]): SARIFReport {
             rules,
           },
         },
+        invocations,
+        artifacts: artifacts.length > 0 ? artifacts : undefined,
         results,
       },
     ],

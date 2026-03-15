@@ -78,57 +78,24 @@ Wait for all agents to complete. For each agent result:
 3. **Calculate risk scores**:
    - **CVSS v4** base score from the finding (set by agent from KB enrichment)
    - **EPSS** probability if CVE is mapped (set by agent from KB enrichment)
-   - **Composite risk** = `cvss_v4 * (1 + epss)` (EPSS boosts score for actively exploited vulns)
+   - **Composite risk** = `cvss_v4 * (0.6 + 0.4 * epss)` — EPSS boosts score up to 40% max (see `risk-scorer.ts`)
 4. **Sort** findings by composite risk (highest first)
 
 ### Step 5: Generate Report
 
-Output a structured report with:
+Use the report renderer (`report-renderer.ts`) with the template at `reports/templates/full-report.md`:
 
-```markdown
-# Sentinel Security Report
-**Project**: {project_name}
-**Date**: {date}
-**Stack detected**: {stacks}
-**Agents dispatched**: {agent_count}
+1. Build a `ReportData` object from the aggregated findings, scan metadata (stacks, agents, depth, duration), and file paths
+2. Call `renderReport(data)` to produce the final Markdown report
+3. The renderer handles severity counts, composite scores, EPSS averages, and finding categorization automatically
 
-## Risk Summary
-| Severity | Count |
-|----------|-------|
-| CRITICAL | {n}   |
-| HIGH     | {n}   |
-| MEDIUM   | {n}   |
-| LOW      | {n}   |
-| INFO     | {n}   |
+### Step 6: Save Reports
 
-## Critical & High Findings
-{For each finding with severity >= HIGH:}
-### [{id}] {title}
-- **Severity**: {severity} (CVSS v4: {score})
-- **Location**: {file}:{line}
-- **Standard**: {CWE/OWASP ref}
-- **Description**: {description}
-- **Remediation**: {remediation}
-- **Code fix**:
-  ```diff
-  - {vulnerable_code}
-  + {fixed_code}
-  ```
+Save all 3 output files to `lab-30-sentinel/reports/archive/`:
 
-## Medium & Low Findings
-{Summary table}
-
-## Recommendations
-{Prioritized action items}
-
-## SARIF Output
-{Path to saved SARIF file}
-```
-
-### Step 6: Save Report
-
-Save the full SARIF report to `lab-30-sentinel/reports/archive/{project}_{date}.sarif.json`
-Save the markdown report to `lab-30-sentinel/reports/archive/{project}_{date}.md`
+1. `{project}_{date}.sarif.json` — SARIF 2.1.0 report (with `invocations` and `artifacts`)
+2. `{project}_{date}.sbom.json` — CycloneDX 1.5 SBOM (from `generate-sbom` tool)
+3. `{project}_{date}.md` — Rendered Markdown report
 
 ## Knowledge Base Integration
 

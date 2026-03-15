@@ -1,0 +1,184 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:5eef4690-ce29-4ac2-bc28-d746835b5bd4",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-03-15T02:06:23.545Z",
+    "tools": [
+      {
+        "vendor": "Sentinel",
+        "name": "sentinel-scanner",
+        "version": "0.1.0"
+      }
+    ],
+    "component": {
+      "type": "application",
+      "name": "vulnerable-test-app",
+      "version": "1.0.0"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "express",
+      "version": "4.17.1",
+      "purl": "pkg:npm/express@4.17.1"
+    },
+    {
+      "type": "library",
+      "name": "jsonwebtoken",
+      "version": "8.5.1",
+      "purl": "pkg:npm/jsonwebtoken@8.5.1"
+    },
+    {
+      "type": "library",
+      "name": "pg",
+      "version": "8.7.1",
+      "purl": "pkg:npm/pg@8.7.1"
+    },
+    {
+      "type": "library",
+      "name": "cors",
+      "version": "2.8.5",
+      "purl": "pkg:npm/cors@2.8.5"
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "id": "SECRETS-001",
+      "source": {
+        "name": "Sentinel",
+        "url": "https://github.com/bonsai974/sentinel"
+      },
+      "ratings": [
+        {
+          "score": 9.1,
+          "severity": "critical",
+          "method": "CVSSv4"
+        }
+      ],
+      "description": "API key found in source code",
+      "recommendation": "Move API keys to environment variables",
+      "affects": [
+        {
+          "ref": "src/server.js",
+          "versions": [
+            {
+              "version": "unknown",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SQLI-001",
+      "source": {
+        "name": "Sentinel",
+        "url": "https://github.com/bonsai974/sentinel"
+      },
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv4"
+        }
+      ],
+      "description": "User input directly concatenated into SQL query",
+      "recommendation": "Use parameterized queries",
+      "affects": [
+        {
+          "ref": "src/server.js",
+          "versions": [
+            {
+              "version": "unknown",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "XSS-001",
+      "source": {
+        "name": "Sentinel",
+        "url": "https://github.com/bonsai974/sentinel"
+      },
+      "ratings": [
+        {
+          "score": 7.5,
+          "severity": "high",
+          "method": "CVSSv4"
+        }
+      ],
+      "description": "User input rendered directly in HTML response",
+      "recommendation": "Sanitize and escape user input before rendering",
+      "affects": [
+        {
+          "ref": "src/server.js",
+          "versions": [
+            {
+              "version": "unknown",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CORS-001",
+      "source": {
+        "name": "Sentinel",
+        "url": "https://github.com/bonsai974/sentinel"
+      },
+      "ratings": [
+        {
+          "score": 5.3,
+          "severity": "medium",
+          "method": "CVSSv4"
+        }
+      ],
+      "description": "CORS allows all origins",
+      "recommendation": "Restrict CORS to specific trusted origins",
+      "affects": [
+        {
+          "ref": "src/server.js",
+          "versions": [
+            {
+              "version": "unknown",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "LOG-001",
+      "source": {
+        "name": "Sentinel",
+        "url": "https://github.com/bonsai974/sentinel"
+      },
+      "ratings": [
+        {
+          "score": 3,
+          "severity": "low",
+          "method": "CVSSv4"
+        }
+      ],
+      "description": "Password logged in plaintext",
+      "recommendation": "Never log sensitive data. Use structured logging with field redaction.",
+      "affects": [
+        {
+          "ref": "src/server.js",
+          "versions": [
+            {
+              "version": "unknown",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

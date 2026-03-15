@@ -8,6 +8,14 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { scanProject } from "./tools/scan-project.js";
+import { scanSecrets } from "./tools/scan-secrets.js";
+import { scanDependencies } from "./tools/scan-dependencies.js";
+import { scanHeaders } from "./tools/scan-headers.js";
+import { queryCVE } from "./tools/query-cve.js";
+import { queryKB } from "./tools/query-kb.js";
+import { generateSARIF } from "./utils/sarif-generator.js";
+import { generateSBOM } from "./utils/sbom-generator.js";
 
 const server = new McpServer({
   name: "sentinel-scanner",
@@ -26,19 +34,13 @@ server.tool(
       .describe("Scan depth: quick (5min), standard (15min), deep (30min+)"),
   },
   async ({ projectPath, depth }) => {
-    // Skeleton — will be implemented in Session 5
+    const result = await scanProject(projectPath, depth);
+    const sarif = generateSARIF(result.findings);
     return {
       content: [
         {
           type: "text" as const,
-          text: JSON.stringify(
-            {
-              status: "not_implemented",
-              message: `scan-project for ${projectPath} at depth ${depth} — implementation pending (Session 5)`,
-            },
-            null,
-            2
-          ),
+          text: JSON.stringify({ ...result, sarif }, null, 2),
         },
       ],
     };
@@ -57,14 +59,12 @@ server.tool(
       .describe("Package ecosystem to scan"),
   },
   async ({ projectPath, ecosystem }) => {
+    const result = await scanDependencies(projectPath, ecosystem);
     return {
       content: [
         {
           type: "text" as const,
-          text: JSON.stringify({
-            status: "not_implemented",
-            message: `scan-dependencies for ${projectPath} (${ecosystem}) — implementation pending (Session 5)`,
-          }),
+          text: JSON.stringify(result, null, 2),
         },
       ],
     };
@@ -83,14 +83,12 @@ server.tool(
       .describe("Also scan git history for leaked secrets"),
   },
   async ({ projectPath, includeGitHistory }) => {
+    const result = await scanSecrets(projectPath, includeGitHistory);
     return {
       content: [
         {
           type: "text" as const,
-          text: JSON.stringify({
-            status: "not_implemented",
-            message: `scan-secrets for ${projectPath} (git history: ${includeGitHistory}) — implementation pending (Session 5)`,
-          }),
+          text: JSON.stringify(result, null, 2),
         },
       ],
     };
@@ -105,14 +103,12 @@ server.tool(
     url: z.string().describe("URL to check headers for"),
   },
   async ({ url }) => {
+    const result = await scanHeaders(url);
     return {
       content: [
         {
           type: "text" as const,
-          text: JSON.stringify({
-            status: "not_implemented",
-            message: `scan-headers for ${url} — implementation pending (Session 5)`,
-          }),
+          text: JSON.stringify(result, null, 2),
         },
       ],
     };
@@ -132,14 +128,12 @@ server.tool(
       .describe("Package ecosystem"),
   },
   async ({ component, version, ecosystem }) => {
+    const result = await queryCVE(component, version, ecosystem);
     return {
       content: [
         {
           type: "text" as const,
-          text: JSON.stringify({
-            status: "not_implemented",
-            message: `query-cve for ${component}@${version || "latest"} (${ecosystem || "auto"}) — implementation pending (Session 5)`,
-          }),
+          text: JSON.stringify(result, null, 2),
         },
       ],
     };
@@ -174,14 +168,34 @@ server.tool(
       .describe("Maximum number of results to return"),
   },
   async ({ query, domain, limit }) => {
+    const result = await queryKB(query, domain, limit);
     return {
       content: [
         {
           type: "text" as const,
-          text: JSON.stringify({
-            status: "not_implemented",
-            message: `query-kb for "${query}" in domain ${domain} (limit: ${limit}) — implementation pending (Session 6)`,
-          }),
+          text: JSON.stringify(result, null, 2),
+        },
+      ],
+    };
+  }
+);
+
+// --- Tool: generate-sbom ---
+server.tool(
+  "generate-sbom",
+  "Generate a CycloneDX Software Bill of Materials (SBOM) for a project.",
+  {
+    projectPath: z.string().describe("Absolute path to the project"),
+    projectName: z.string().optional().describe("Project name (auto-detected from package.json if omitted)"),
+    projectVersion: z.string().optional().describe("Project version (auto-detected if omitted)"),
+  },
+  async ({ projectPath, projectName, projectVersion }) => {
+    const sbom = generateSBOM(projectPath, projectName, projectVersion);
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: JSON.stringify(sbom, null, 2),
         },
       ],
     };
