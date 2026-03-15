@@ -70,6 +70,11 @@ Wait for all agents to complete. For each agent result:
    - Log a warning: `"WARNING: Agent {agent_name} did not return valid Finding[] JSON — skipping"`
    - Continue with remaining agents — do NOT fail the entire audit
 4. **Tag findings**: Add the originating agent name to each finding for traceability
+5. **Track agent success**: Count successful vs failed agents for the report summary
+
+**Edge cases:**
+- **0 agents dispatched** (only defaults run): Proceed with `supply-chain-audit` and `data-privacy-audit` only. Add a note in the report: "No stack-specific agents detected — only default agents ran."
+- **All agents fail**: Generate a minimal error report with 0 findings, listing which agents failed and why. Do NOT return an empty response — always produce a report.
 
 ### Step 4: Aggregate & Score
 
@@ -86,8 +91,9 @@ Wait for all agents to complete. For each agent result:
 Use the report renderer (`report-renderer.ts`) with the template at `reports/templates/full-report.md`:
 
 1. Build a `ReportData` object from the aggregated findings, scan metadata (stacks, agents, depth, duration), and file paths
-2. Call `renderReport(data)` to produce the final Markdown report
-3. The renderer handles severity counts, composite scores, EPSS averages, and finding categorization automatically
+2. Include agent success summary: "X of Y agents completed successfully" in the report header
+3. Call `renderReport(data)` to produce the final Markdown report
+4. The renderer handles severity counts, composite scores, EPSS averages, and finding categorization automatically
 
 ### Step 6: Save Reports
 

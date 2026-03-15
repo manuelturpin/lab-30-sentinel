@@ -222,6 +222,7 @@ export async function scanSecrets(
   projectPath: string,
   includeGitHistory: boolean
 ): Promise<SecretScanResult> {
+  try {
   const files = walkProjectFiles(projectPath);
   const secrets: DetectedSecret[] = [];
 
@@ -273,4 +274,12 @@ export async function scanSecrets(
     secretsFound: secrets.length,
     secrets,
   };
+  } catch (err) {
+    return {
+      totalFilesScanned: 0,
+      secretsFound: 0,
+      secrets: [],
+      error: err instanceof Error ? err.message : String(err),
+    } as SecretScanResult & { error: string };
+  }
 }

@@ -230,6 +230,7 @@ export async function scanProject(
 ): Promise<ScanResult> {
   const startTime = Date.now();
 
+  try {
   // Step 1: Detect stack
   const stack = await detectStack(projectPath);
 
@@ -365,4 +366,18 @@ export async function scanProject(
     findings,
     summary,
   };
+  } catch (err) {
+    return {
+      projectPath,
+      timestamp: new Date().toISOString(),
+      stack: { stacks: [], agents: [], indicators: [] },
+      findings: [],
+      summary: {
+        total: 0, critical: 0, high: 0, medium: 0, low: 0, info: 0,
+        agentsDispatched: [],
+        duration_ms: Date.now() - startTime,
+        error: err instanceof Error ? err.message : String(err),
+      },
+    };
+  }
 }

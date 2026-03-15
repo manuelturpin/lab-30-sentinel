@@ -29,4 +29,5 @@ export interface ScanSummary {
   info: number;
   agentsDispatched: string[];
   duration_ms: number;
+  error?: string;
 }

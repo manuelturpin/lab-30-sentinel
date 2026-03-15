@@ -34,7 +34,7 @@ def _extract_domain(filepath: str) -> str:
 def _build_text(rule: dict) -> str:
     """Build searchable text from a rule or pattern entry."""
     parts = [
-        rule.get("title", ""),
+        rule.get("title", rule.get("name", "")),
         rule.get("description", ""),
     ]
     # Rules have remediation as dict, patterns have it as string
@@ -46,7 +46,73 @@ def _build_text(rule: dict) -> str:
     # Include subcategory/type for better search
     parts.append(rule.get("subcategory", ""))
     parts.append(rule.get("type", ""))
+    # NVD fields
+    cwes = rule.get("cwes", [])
+    if cwes:
+        parts.append(" ".join(cwes) if isinstance(cwes, list) else str(cwes))
+    if rule.get("source"):
+        parts.append(rule["source"])
+    epss = rule.get("epss")
+    if isinstance(epss, dict) and epss.get("score") is not None:
+        parts.append(f"EPSS:{epss['score']}")
     return " ".join(p for p in parts if p)
+
+
+def _flatten_nested(data, filepath: str) -> list[dict]:
+    """Flatten nested structures (NVD caches, standards) into indexable items."""
+    basename = os.path.basename(filepath)
+
+    # Skip non-indexable files
+    if basename == "sync-config.json":
+        return []
+
+    # Already a list — return as-is
+    if isinstance(data, list):
+        return data
+
+    if not isinstance(data, dict):
+        return []
+
+    items = []
+
+    # NVD/OSV cache: {"vulnerabilities": [...]}
+    if "vulnerabilities" in data:
+        for vuln in data["vulnerabilities"]:
+            if isinstance(vuln, dict) and "cve_id" in vuln:
+                item = dict(vuln)
+                item["id"] = item.pop("cve_id")
+                item.setdefault("title", item.get("description", "")[:120])
+                items.append(item)
+        return items
+
+    # GitHub advisories: {"advisories": [...]}
+    if "advisories" in data:
+        for adv in data["advisories"]:
+            if isinstance(adv, dict) and "id" in adv:
+                items.append(adv)
+        return items
+
+    # Standards files with nested lists (categories, tactics, techniques, etc.)
+    nested_keys = ("categories", "tactics", "techniques", "functions", "weaknesses")
+    for key in nested_keys:
+        if key in data and isinstance(data[key], list):
+            standard_name = data.get("standard", basename)
+            for entry in data[key]:
+                if isinstance(entry, dict) and "id" in entry:
+                    item = dict(entry)
+                    item.setdefault("title", item.get("name", ""))
+                    item.setdefault("description", item.get("description", ""))
+                    item["standard_source"] = standard_name
+                    items.append(item)
+
+    if items:
+        return items
+
+    # Single dict with id — wrap in list
+    if "id" in data:
+        return [data]
+
+    return []
 
 
 def collect_documents(config: dict) -> list[dict]:
@@ -61,7 +127,7 @@ def collect_documents(config: dict) -> list[dict]:
                 with open(filepath) as f:
                     data = json.load(f)
 
-                rules = data if isinstance(data, list) else [data]
+                rules = _flatten_nested(data, filepath)
                 domain = _extract_domain(filepath)
                 for rule in rules:
                     if isinstance(rule, dict) and "id" in rule:

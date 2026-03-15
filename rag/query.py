@@ -12,8 +12,12 @@ import json
 import os
 import sys
 
-import chromadb
-from sentence_transformers import SentenceTransformer
+try:
+    import chromadb
+    from sentence_transformers import SentenceTransformer
+except ImportError as _imp_err:
+    print(f"Missing dependency: {_imp_err}\nInstall with: pip install sentence-transformers chromadb", file=sys.stderr)
+    sys.exit(1)
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
 
@@ -27,6 +31,15 @@ def query_kb(query: str, domain: str = "all", limit: int = 10) -> dict:
     """Query ChromaDB and return results as a dict."""
     config = load_config()
     chromadb_path = os.path.join(os.path.dirname(__file__), config["chromadb_path"])
+
+    if not os.path.isdir(chromadb_path):
+        return {
+            "query": query,
+            "domain": domain,
+            "totalResults": 0,
+            "results": [],
+            "error": f"ChromaDB directory not found at {chromadb_path}. Run indexer.py first.",
+        }
 
     client = chromadb.PersistentClient(path=chromadb_path)
 

@@ -374,6 +374,7 @@ export async function scanDependencies(
   projectPath: string,
   ecosystem: string
 ): Promise<DependencyScanResult> {
+  try {
   // Detect ecosystem if auto
   let detectedEcosystem: Ecosystem | null;
   if (ecosystem === "auto") {
@@ -451,4 +452,13 @@ export async function scanDependencies(
     vulnerableDependencies: vulnerablePackages.size,
     vulnerabilities,
   };
+  } catch (err) {
+    return {
+      ecosystem: ecosystem === "auto" ? "unknown" : ecosystem,
+      totalDependencies: 0,
+      vulnerableDependencies: 0,
+      vulnerabilities: [],
+      error: err instanceof Error ? err.message : String(err),
+    } as DependencyScanResult & { error: string };
+  }
 }

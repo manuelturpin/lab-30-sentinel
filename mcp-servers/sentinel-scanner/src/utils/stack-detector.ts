@@ -106,7 +106,7 @@ const INDICATOR_RULES: IndicatorRule[] = [
 
   // Python
   {
-    patterns: ["requirements.txt", "pyproject.toml", "setup.py", "Pipfile"],
+    patterns: ["requirements.txt", "pyproject.toml", "setup.py", "Pipfile", "poetry.lock", "uv.lock"],
     stack: "python",
     category: "language",
     agents: ["supply-chain-audit"],
@@ -290,6 +290,14 @@ const INDICATOR_RULES: IndicatorRule[] = [
     stack: "netlify",
     category: "static-hosting",
     agents: ["static-site-audit"],
+  },
+
+  // API Spec files
+  {
+    patterns: ["openapi.yaml", "openapi.json", "swagger.json", "swagger.yaml"],
+    stack: "openapi",
+    category: "framework",
+    agents: ["api-audit", "cors-audit"],
   },
 
   // Secrets / Config
