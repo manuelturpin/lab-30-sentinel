@@ -1,1 +1,138 @@
-[]
+[
+  {
+    "id": "STATIC-HEADERS-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "static-sites",
+    "subcategory": "headers",
+    "title": "Missing security headers in static hosting configuration",
+    "description": "Static site hosting configuration lacks essential security headers (X-Content-Type-Options, X-Frame-Options, Content-Security-Policy). Attackers can exploit missing headers for clickjacking, MIME sniffing, and XSS attacks.",
+    "detect": {
+      "patterns": ["\\[\\[headers\\]\\]", "\"headers\"\\s*:", "headers\\s*="],
+      "negative_patterns": ["X-Content-Type-Options", "Content-Security-Policy", "X-Frame-Options"],
+      "file_types": ["netlify.toml", "vercel.json", "_headers", "*.toml"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Configure security headers in your hosting platform's configuration file.",
+      "code_example": "# netlify.toml\n[[headers]]\n  for = \"/*\"\n  [headers.values]\n    X-Frame-Options = \"DENY\"\n    X-Content-Type-Options = \"nosniff\"\n    Content-Security-Policy = \"default-src 'self'\"",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-693", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["netlify", "vercel", "cloudflare-pages"]
+  },
+  {
+    "id": "STATIC-CSP-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.1,
+    "category": "static-sites",
+    "subcategory": "csp",
+    "title": "Unsafe inline scripts allowed in Content-Security-Policy",
+    "description": "Content-Security-Policy allows 'unsafe-inline' for script-src, which defeats the purpose of CSP by allowing inline script execution, making XSS exploitation trivial.",
+    "detect": {
+      "patterns": ["script-src.*unsafe-inline", "default-src.*unsafe-inline"],
+      "file_types": ["netlify.toml", "vercel.json", "_headers", "*.html", "*.toml", "*.json"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Remove 'unsafe-inline' from CSP and use nonce-based or hash-based script loading instead.",
+      "code_example": "Content-Security-Policy: script-src 'self' 'nonce-{random}'; style-src 'self'",
+      "references": ["https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP"]
+    },
+    "standards": ["CWE-79", "OWASP-A03:2025"],
+    "ai_specific": false,
+    "frameworks": ["netlify", "vercel", "cloudflare-pages"]
+  },
+  {
+    "id": "STATIC-REDIRECT-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.4,
+    "category": "static-sites",
+    "subcategory": "redirect",
+    "title": "Open redirect in static site redirect rules",
+    "description": "Redirect rules use user-controlled path segments or wildcards that can redirect to external domains, enabling phishing attacks.",
+    "detect": {
+      "patterns": ["from\\s*=\\s*\"/:splat\"", "\"source\":\\s*\"/:path\\*\"", "redirects.*https?://"],
+      "negative_patterns": ["status\\s*=\\s*200", "force\\s*=\\s*true"],
+      "file_types": ["netlify.toml", "vercel.json", "_redirects", "*.toml"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Validate redirect destinations. Only redirect to known internal paths or explicitly allowlisted external domains.",
+      "references": ["https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html"]
+    },
+    "standards": ["CWE-601", "OWASP-A01:2025"],
+    "ai_specific": false,
+    "frameworks": ["netlify", "vercel", "cloudflare-pages"]
+  },
+  {
+    "id": "STATIC-EXPOSE-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "static-sites",
+    "subcategory": "exposure",
+    "title": "Sensitive files exposed in static site deployment",
+    "description": "Build or deployment configuration does not exclude sensitive files (.env, .git, source maps, config files), making them publicly accessible on the static hosting CDN.",
+    "detect": {
+      "patterns": ["\\.env", "\\.git", "\\.map", "source-map"],
+      "negative_patterns": ["exclude.*\\.env", "ignore.*\\.git", "headers.*X-Robots-Tag"],
+      "file_types": ["netlify.toml", "vercel.json", ".gitignore", "*.toml"],
+      "exclude": ["node_modules"]
+    },
+    "remediation": {
+      "description": "Add sensitive files and directories to your deployment ignore list. Remove source maps from production builds.",
+      "code_example": "# vercel.json\n{\n  \"cleanUrls\": true,\n  \"headers\": [{ \"source\": \"/.env\", \"headers\": [{ \"key\": \"X-Robots-Tag\", \"value\": \"noindex\" }] }]\n}",
+      "references": ["https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/04-Review_Old_Backup_and_Unreferenced_Files_for_Sensitive_Information"]
+    },
+    "standards": ["CWE-538", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["netlify", "vercel", "cloudflare-pages", "github-pages"]
+  },
+  {
+    "id": "STATIC-HTTPS-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.9,
+    "category": "static-sites",
+    "subcategory": "transport",
+    "title": "Missing HTTPS redirect or HSTS configuration",
+    "description": "Static site does not enforce HTTPS via redirect or HSTS header, allowing man-in-the-middle attacks on initial connection.",
+    "detect": {
+      "patterns": ["http://", "force_ssl\\s*=\\s*false"],
+      "negative_patterns": ["Strict-Transport-Security", "force_ssl\\s*=\\s*true", "https://"],
+      "file_types": ["netlify.toml", "vercel.json", "_headers", "*.toml", "*.html"],
+      "exclude": ["node_modules", "dist", "*.md"]
+    },
+    "remediation": {
+      "description": "Enable HTTPS enforcement and add Strict-Transport-Security header with a minimum max-age of 1 year.",
+      "code_example": "# netlify.toml\n[[headers]]\n  for = \"/*\"\n  [headers.values]\n    Strict-Transport-Security = \"max-age=31536000; includeSubDomains; preload\"",
+      "references": ["https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security"]
+    },
+    "standards": ["CWE-319", "OWASP-A02:2025"],
+    "ai_specific": false,
+    "frameworks": ["netlify", "vercel", "cloudflare-pages", "github-pages"]
+  },
+  {
+    "id": "STATIC-SRI-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.1,
+    "category": "static-sites",
+    "subcategory": "integrity",
+    "title": "External scripts loaded without Subresource Integrity (SRI)",
+    "description": "HTML pages load scripts or stylesheets from CDNs without integrity attributes. If the CDN is compromised, malicious code can be injected into the site.",
+    "detect": {
+      "patterns": ["<script\\s+src\\s*=\\s*['\"]https?://", "<link\\s+.*href\\s*=\\s*['\"]https?://.*stylesheet"],
+      "negative_patterns": ["integrity\\s*=", "crossorigin"],
+      "file_types": ["*.html", "*.htm", "*.ejs", "*.hbs"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Add integrity and crossorigin attributes to all external script and link tags.",
+      "code_example": "<script src=\"https://cdn.example.com/lib.js\" integrity=\"sha384-...\" crossorigin=\"anonymous\"></script>",
+      "references": ["https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity"]
+    },
+    "standards": ["CWE-353", "OWASP-A08:2025"],
+    "ai_specific": false,
+    "frameworks": ["netlify", "vercel", "github-pages"]
+  }
+]

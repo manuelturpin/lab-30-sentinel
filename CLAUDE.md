@@ -29,7 +29,7 @@ OWASP Top 10 Web 2025, API 2023, LLM 2025, Mobile 2024 | MITRE ATLAS | NIST AI R
 
 **Session 10 — Production-ready** (2026-03-15)
 
-- RAG indexe ~2600 documents (109 regles domaine + 2273 NVD CVE + 94 standards)
+- RAG indexe 2604 documents (115 regles domaine + 2273 NVD CVE + 94 standards)
 - Tests systeme : `bash scripts/test-sentinel.sh` — 31 checks
 - Tests E2E : `bash tests/e2e-session10.sh` — 27 checks
 - MCP tools : error handling structuré sur les 6 outils
@@ -49,11 +49,11 @@ OWASP Top 10 Web 2025, API 2023, LLM 2025, Mobile 2024 | MITRE ATLAS | NIST AI R
 ```
 skills/security/SKILL.md          — Skill orchestrateur
 skills/security/agents/*.md       — 12 agents specialises
-knowledge-base/domains/*/         — Regles par domaine (109 regles)
+knowledge-base/domains/*/         — Regles par domaine (115 regles)
 knowledge-base/cve-feed/          — Caches NVD/OSV/GitHub (2273 CVE)
 knowledge-base/standards/         — OWASP, MITRE, CWE, NIST (94 items)
 mcp-servers/sentinel-scanner/     — MCP Server TypeScript (6 tools)
-rag/                              — RAG ChromaDB (~2600 docs indexes)
+rag/                              — RAG ChromaDB (2604 docs indexes)
 crons/                            — Taches automatisees
 reports/                          — Templates et archives
 tests/                            — E2E tests, vulnerable-app

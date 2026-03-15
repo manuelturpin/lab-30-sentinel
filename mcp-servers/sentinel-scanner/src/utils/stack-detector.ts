@@ -454,6 +454,55 @@ export async function detectStack(
     }
   }
 
+  // Shallow recursion: check 1 level of subdirectories for indicator files
+  // This catches cases like mcp-servers/sentinel-scanner/package.json
+  try {
+    const entries = await fs.promises.readdir(projectPath, { withFileTypes: true });
+    const subdirs = entries
+      .filter((e) => e.isDirectory() && !e.name.startsWith(".") && e.name !== "node_modules" && e.name !== "dist")
+      .map((e) => e.name);
+
+    for (const subdir of subdirs) {
+      const subPath = path.join(projectPath, subdir);
+      // Recurse one more level into immediate children
+      let subEntries: fs.Dirent[];
+      try {
+        subEntries = await fs.promises.readdir(subPath, { withFileTypes: true });
+      } catch {
+        continue;
+      }
+      const nestedDirs = subEntries
+        .filter((e) => e.isDirectory() && !e.name.startsWith(".") && e.name !== "node_modules")
+        .map((e) => e.name);
+
+      const dirsToCheck = [subPath, ...nestedDirs.map((d) => path.join(subPath, d))];
+
+      for (const checkDir of dirsToCheck) {
+        for (const rule of INDICATOR_RULES) {
+          if (stacks.find((s) => s.name === rule.stack)) continue;
+          for (const pattern of rule.patterns) {
+            if (pattern.includes("/")) continue; // Skip path-based patterns for shallow scan
+            const fullPath = path.join(checkDir, pattern);
+            if (await fileOrDirExists(fullPath)) {
+              stacks.push({
+                name: rule.stack,
+                category: rule.category,
+                confidence: 0.7, // Lower confidence for subdirectory matches
+              });
+              for (const agent of rule.agents) {
+                agentSet.add(agent);
+              }
+              indicators.push({ file: path.relative(projectPath, fullPath), stack: rule.stack, exists: true });
+              break;
+            }
+          }
+        }
+      }
+    }
+  } catch {
+    // If we can't read subdirectories, skip shallow recursion silently
+  }
+
   return {
     stacks,
     agents: Array.from(agentSet).sort(),
