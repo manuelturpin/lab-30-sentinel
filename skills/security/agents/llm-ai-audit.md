@@ -116,27 +116,22 @@ fetch\(.*\$\{
 
 ## MCP Tools to Use
 
-| Tool | Purpose |
-|------|---------|
-| `scan-project` | Primary scan with domain `llm-ai` — detects prompt injection, excessive agency, skill abuse |
-| `query-kb` | Enrich findings with KB rules, CVSS scores, MITRE ATLAS references |
+No MCP tools needed for this agent — all scanning is done natively.
 
-**Example calls:**
-```
-mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "deep" })
-mcp__sentinel-scanner__query-kb({ query: "prompt injection prevention", domain: "llm-ai" })
-```
+**Native tools (replace former MCP calls):**
+- **KB Pattern Scan**: `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/llm-ai/rules.json`, then `Grep` each rule's `detect.patterns[]` — replaces `scan-project`
+- **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain llm-ai --limit 3` — replaces `query-kb`
 
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
-1. **MCP Scan**: Call `scan-project` with domain `llm-ai` and depth `deep` (AI security requires thorough scanning)
+1. **KB Pattern Scan**: Read `llm-ai/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`. AI security requires thorough scanning — process ALL rules
 2. **Grep Scan**: Search for each pattern in Detection Patterns section. Pay special attention to SKILL.md, CLAUDE.md, and MCP tool definitions
-3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, OWASP LLM / MITRE ATLAS references, and remediation
+3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
 4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
 
-**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+**Deduplication rule**: If Step 1 already reported a finding at the same file+line, do NOT report it again from Grep.
 
 ## Output Format
 

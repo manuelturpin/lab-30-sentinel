@@ -71,27 +71,30 @@ preinstall
 
 | Tool | Purpose |
 |------|---------|
-| `scan-dependencies` | Primary tool — analyze package manifests for known CVEs |
-| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
-| `query-cve` | Query CVE database for specific component/version pairs |
+| `scan-dependencies` | Analyze package manifests for known CVEs (calls external OSV API) |
 
-**Example calls:**
+**Example call:**
 ```
 mcp__sentinel-scanner__scan-dependencies({ projectPath: "{target_path}" })
-mcp__sentinel-scanner__query-cve({ component: "lodash", version: "4.17.15" })
-mcp__sentinel-scanner__query-kb({ query: "typosquatting npm", domain: "supply-chain" })
 ```
+
+**Native tools (replace former MCP calls):**
+- **KB Pattern Scan**: `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/supply-chain/rules.json`, then `Grep` each rule's `detect.patterns[]` — replaces `scan-project`
+- **CVE Lookup**: `Read` CVE cache files from `/Users/manuelturpin/.sentinel/knowledge-base/cve-feed/` and parse JSON — replaces `query-cve`
+- **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain supply-chain --limit 3` — replaces `query-kb`
 
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
-1. **MCP Scan**: Call `scan-dependencies` to analyze all package manifests. Call `query-cve` for any flagged components
-2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check for postinstall scripts, unpinned versions, and AI supply chain issues
-3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CVE references, and remediation
-4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
+1. **MCP Scan**: Call `scan-dependencies` to analyze all package manifests (external OSV API call)
+2. **KB Pattern Scan**: Read `supply-chain/rules.json`, Grep each rule's patterns, create Findings directly from rule fields
+3. **CVE Enrichment**: For flagged components, `Read` CVE cache files from `/Users/manuelturpin/.sentinel/knowledge-base/cve-feed/` — replaces `query-cve`
+4. **Grep Scan**: Search for each pattern in Detection Patterns section. Check for postinstall scripts, unpinned versions, and AI supply chain issues
+5. **KB Enrichment**: Steps 1-2 findings are already enriched. For Step 4 findings, use RAG via Bash or your own judgment
+6. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
 
-**Deduplication rule**: If `scan-dependencies` already reported a CVE for the same package, do NOT report it again from Grep.
+**Deduplication rule**: If `scan-dependencies` or KB Pattern Scan already reported a CVE for the same package, do NOT report it again from Grep.
 
 ## Output Format
 

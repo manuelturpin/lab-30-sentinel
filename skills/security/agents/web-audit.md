@@ -91,29 +91,29 @@ Use Grep to search for these vulnerability indicators in the project:
 
 | Tool | Purpose |
 |------|---------|
-| `scan-project` | Primary scan with domain `web-app` — detects OWASP Top 10 patterns |
-| `scan-secrets` | Detect hardcoded API keys, tokens, passwords in source code |
-| `scan-headers` | Check security headers (CSP, HSTS, X-Frame-Options, etc.) |
-| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
+| `scan-headers` | Check security headers (CSP, HSTS, X-Frame-Options, etc.) on live URLs |
 
-**Example calls:**
+**Example call:**
 ```
-mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
-mcp__sentinel-scanner__scan-secrets({ projectPath: "{target_path}" })
 mcp__sentinel-scanner__scan-headers({ url: "{target_url}" })
-mcp__sentinel-scanner__query-kb({ query: "XSS innerHTML", domain: "web-app" })
 ```
+
+**Native tools (replace former MCP calls):**
+- **KB Pattern Scan**: `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/web-app/rules.json`, then `Grep` each rule's `detect.patterns[]` — replaces `scan-project`
+- **Secret Detection**: `Grep` with secret patterns from Detection Patterns (password, api_key, token regexes) — replaces `scan-secrets`
+- **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings without a KB rule, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain web-app --limit 3` — replaces `query-kb`
 
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
-1. **MCP Scan**: Call `scan-project` with domain `web-app`, then `scan-secrets`, then `scan-headers` if a URL is available
-2. **Grep Scan**: Search for each pattern in Detection Patterns section. For each match, read context and check negative patterns before reporting
-3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CWE/OWASP references, and remediation
-4. **Deduplicate & Return**: Remove duplicates (same file + line + vuln type), sort by cvss_v4 desc, redact secrets, return JSON
+1. **KB Pattern Scan**: Read `web-app/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`
+2. **Grep Scan**: Search for each pattern in Detection Patterns section (including secret patterns). For each match, read context and check negative patterns before reporting
+3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
+4. **MCP Scan**: Call `scan-headers` if a URL is available (external HTTP call)
+5. **Deduplicate & Return**: Remove duplicates (same file + line + vuln type), sort by cvss_v4 desc, redact secrets, return JSON
 
-**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+**Deduplication rule**: If Step 1 already reported a finding at the same file+line, do NOT report it again from Grep.
 
 ## Output Format
 

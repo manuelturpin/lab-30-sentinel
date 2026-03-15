@@ -72,29 +72,23 @@ allowPrivilegeEscalation.*true
 
 ## MCP Tools to Use
 
-| Tool | Purpose |
-|------|---------|
-| `scan-project` | Primary scan with domain `infrastructure` — detects Docker, K8s, Terraform misconfigs |
-| `scan-secrets` | Detect hardcoded credentials in IaC files |
-| `query-kb` | Enrich findings with KB rules, CVSS scores, CIS references |
+No MCP tools needed for this agent — all scanning is done natively.
 
-**Example calls:**
-```
-mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
-mcp__sentinel-scanner__scan-secrets({ projectPath: "{target_path}" })
-mcp__sentinel-scanner__query-kb({ query: "Docker privileged container", domain: "infrastructure" })
-```
+**Native tools (replace former MCP calls):**
+- **KB Pattern Scan**: `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/infrastructure/rules.json`, then `Grep` each rule's `detect.patterns[]` — replaces `scan-project`
+- **Secret Detection**: `Grep` with secret patterns (aws_access_key, MYSQL_ROOT_PASSWORD, etc.) — replaces `scan-secrets`
+- **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain infrastructure --limit 3` — replaces `query-kb`
 
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
-1. **MCP Scan**: Call `scan-project` with domain `infrastructure`, then `scan-secrets`
-2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check Dockerfiles, K8s manifests, and Terraform files
-3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CIS benchmark references, and remediation
+1. **KB Pattern Scan**: Read `infrastructure/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`
+2. **Grep Scan**: Search for each pattern in Detection Patterns section (including secret patterns). Check Dockerfiles, K8s manifests, and Terraform files
+3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
 4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact secrets, return JSON
 
-**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+**Deduplication rule**: If Step 1 already reported a finding at the same file+line, do NOT report it again from Grep.
 
 ## Output Format
 

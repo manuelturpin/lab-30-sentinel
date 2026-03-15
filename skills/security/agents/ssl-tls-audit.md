@@ -74,25 +74,26 @@ tls\.min.*1\.[01]
 
 | Tool | Purpose |
 |------|---------|
-| `scan-headers` | Check HSTS and TLS-related security headers |
-| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
+| `scan-headers` | Check HSTS and TLS-related security headers on live URLs |
 
-**Example calls:**
+**Example call:**
 ```
 mcp__sentinel-scanner__scan-headers({ url: "{target_url}" })
-mcp__sentinel-scanner__query-kb({ query: "TLS weak cipher suite", domain: "all" })
 ```
+
+**Native tools (replace former MCP calls):**
+- **KB Pattern Scan**: `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/ssl-tls/rules.json`, then `Grep` each rule's `detect.patterns[]` — replaces `scan-project`
+- **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain ssl-tls --limit 3` — replaces `query-kb`
 
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
-1. **MCP Scan**: Call `scan-headers` if a URL is available (checks HSTS, TLS headers)
-2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check server configs (nginx.conf, apache.conf), Node.js TLS options, and certificate verification settings
-3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CWE references, and remediation
-4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
-
-**Note**: This agent does NOT use `scan-project` — it relies on `scan-headers` and manual Grep scanning of server configurations.
+1. **KB Pattern Scan**: Read `ssl-tls/rules.json`, Grep each rule's patterns, create Findings directly from rule fields
+2. **MCP Scan**: Call `scan-headers` if a URL is available (external HTTP call — checks HSTS, TLS headers)
+3. **Grep Scan**: Search for each pattern in Detection Patterns section. Check server configs (nginx.conf, apache.conf), Node.js TLS options, and certificate verification settings
+4. **KB Enrichment**: Step 1 findings are already enriched. For Steps 2-3 findings, use RAG via Bash or your own judgment
+5. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
 
 ## Output Format
 

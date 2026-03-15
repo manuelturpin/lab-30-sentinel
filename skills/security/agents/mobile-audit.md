@@ -88,29 +88,23 @@ print.*password
 
 ## MCP Tools to Use
 
-| Tool | Purpose |
-|------|---------|
-| `scan-project` | Primary scan with domain `mobile` — detects OWASP Mobile Top 10 patterns |
-| `scan-secrets` | Detect hardcoded credentials, API keys in mobile source |
-| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
+No MCP tools needed for this agent — all scanning is done natively.
 
-**Example calls:**
-```
-mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
-mcp__sentinel-scanner__scan-secrets({ projectPath: "{target_path}" })
-mcp__sentinel-scanner__query-kb({ query: "insecure storage AsyncStorage", domain: "mobile" })
-```
+**Native tools (replace former MCP calls):**
+- **KB Pattern Scan**: `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/mobile/rules.json`, then `Grep` each rule's `detect.patterns[]` — replaces `scan-project`
+- **Secret Detection**: `Grep` with secret patterns (password, api_key, token regexes) — replaces `scan-secrets`
+- **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain mobile --limit 3` — replaces `query-kb`
 
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
-1. **MCP Scan**: Call `scan-project` with domain `mobile`, then `scan-secrets`
-2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check for platform-specific issues (iOS vs Android)
-3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, OWASP Mobile references, and remediation
+1. **KB Pattern Scan**: Read `mobile/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`
+2. **Grep Scan**: Search for each pattern in Detection Patterns section (including secret patterns). Check for platform-specific issues (iOS vs Android)
+3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
 4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact secrets, return JSON
 
-**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+**Deduplication rule**: If Step 1 already reported a finding at the same file+line, do NOT report it again from Grep.
 
 ## Output Format
 

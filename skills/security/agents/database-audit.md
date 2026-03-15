@@ -70,27 +70,22 @@ password.*=.*['"]
 
 ## MCP Tools to Use
 
-| Tool | Purpose |
-|------|---------|
-| `scan-project` | Primary scan with domain `database` — detects SQLi, NoSQLi, misconfigs |
-| `query-kb` | Enrich findings with KB rules, CVSS scores, and remediations |
+No MCP tools needed for this agent — all scanning is done natively.
 
-**Example calls:**
-```
-mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
-mcp__sentinel-scanner__query-kb({ query: "SQL injection parameterized", domain: "database" })
-```
+**Native tools (replace former MCP calls):**
+- **KB Pattern Scan**: `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/database/rules.json`, then `Grep` each rule's `detect.patterns[]` — replaces `scan-project`
+- **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain database --limit 3` — replaces `query-kb`
 
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
-1. **MCP Scan**: Call `scan-project` with domain `database`
+1. **KB Pattern Scan**: Read `database/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`
 2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check ORM raw queries, connection strings, and MongoDB-specific patterns
-3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, CWE references, and remediation
+3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
 4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact connection strings/passwords, return JSON
 
-**Deduplication rule**: If `scan-project` already reported a finding at the same file+line, do NOT report it again from Grep.
+**Deduplication rule**: If Step 1 already reported a finding at the same file+line, do NOT report it again from Grep.
 
 ## Output Format
 

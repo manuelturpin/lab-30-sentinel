@@ -10,26 +10,6 @@ You are Sentinel, an AI-powered cybersecurity auditing system. When invoked, you
 
 ## Workflow
 
-### Step 0: Load Project Config
-
-If a `.sentinel.json` file exists in the project root, load it. This file allows per-project customization:
-
-```json
-{
-  "exclude_agents": ["mobile-audit"],
-  "exclude_paths": ["vendor/", "third-party/"],
-  "false_positives": [{"rule_id": "LLM-MCP-002", "file": "docs/**"}],
-  "severity_overrides": {"LLM-MCP-002": "INFO"}
-}
-```
-
-- **exclude_agents**: Skip these agents even if the stack detector selects them
-- **exclude_paths**: Ignore findings in these paths (glob patterns)
-- **false_positives**: Suppress specific rule+file combinations
-- **severity_overrides**: Override severity for specific rule IDs
-
-If no `.sentinel.json` exists, proceed with defaults (no exclusions).
-
 ### Step 1: Stack Detection
 
 Detect the project's technology stack by checking for the presence of indicator files:
@@ -63,27 +43,22 @@ Detect the project's technology stack by checking for the presence of indicator 
 
 ### Step 2: Agent Dispatch
 
-For each detected agent (excluding any listed in `.sentinel.json` `exclude_agents`), launch it in parallel using the Agent tool with the enriched prompt:
+For each detected agent, launch it in parallel using the Agent tool with the enriched prompt:
 
 ```
 For each agent in detected_agents:
   Launch Agent(
     subagent_type: "general-purpose",
     prompt: "You are a security audit agent. Follow these steps exactly:
-      1. Read your agent instructions at lab-30-sentinel/skills/security/agents/{agent}.md
-      2. Read the common execution protocol at lab-30-sentinel/skills/security/agents/_protocol.md
+      1. Read your agent instructions at /Users/manuelturpin/.claude/skills/security/agents/{agent}.md
+      2. Read the common execution protocol at /Users/manuelturpin/.claude/skills/security/agents/_protocol.md
       3. Audit the project at {target_path} following your Execution Protocol
-      4. Use the sentinel-scanner MCP tools listed in your 'MCP Tools to Use' section
-      5. Use Grep and Read tools for manual pattern detection as described in your Detection Patterns
+      4. Use Read + Grep + Bash for KB pattern scanning (read rules.json, grep patterns, enrich via RAG)
+      5. Only use MCP tools if your agent lists them (scan-dependencies for supply-chain, scan-headers for web/cors/ssl/static)
       6. Return ONLY a JSON code block containing a Finding[] array — no other text",
     run_in_background: true
   )
 ```
-
-**Timeout handling**: Each agent has a 180-second timeout. If an agent does not complete within this window:
-- Mark it as `TIMED_OUT` in the agent status tracker
-- Continue processing results from other agents
-- Include timed-out agents in the report summary
 
 ### Step 3: Collect & Parse Results
 
@@ -104,12 +79,8 @@ Wait for all agents to complete. For each agent result:
 ### Step 4: Aggregate & Score
 
 1. **Merge** all agent findings into a unified array
-2. **Apply `.sentinel.json` filters** (if loaded in Step 0):
-   - Remove findings matching `false_positives` entries (by `rule_id` + `file` glob)
-   - Remove findings in `exclude_paths`
-   - Apply `severity_overrides` to matching rule IDs
-3. **Deduplicate** findings by `location.file` + `location.line` + `id` — keep the finding with the higher `cvss_v4` score
-4. **Calculate risk scores**:
+2. **Deduplicate** findings by `location.file` + `location.line` + `id` — keep the finding with the higher `cvss_v4` score
+3. **Calculate risk scores**:
    - **CVSS v4** base score from the finding (set by agent from KB enrichment)
    - **EPSS** probability if CVE is mapped (set by agent from KB enrichment)
    - **Composite risk** = `cvss_v4 * (0.6 + 0.4 * epss)` — EPSS boosts score up to 40% max (see `risk-scorer.ts`)
@@ -117,33 +88,16 @@ Wait for all agents to complete. For each agent result:
 
 ### Step 5: Generate Report
 
-Use the report renderer (`report-renderer.ts`) with the template at `reports/templates/full-report.md`:
+Use the report renderer (`report-renderer.ts`) with the template at `/Users/manuelturpin/.sentinel/reports/templates/full-report.md`:
 
 1. Build a `ReportData` object from the aggregated findings, scan metadata (stacks, agents, depth, duration), and file paths
 2. Include agent success summary: "X of Y agents completed successfully" in the report header
 3. Call `renderReport(data)` to produce the final Markdown report
 4. The renderer handles severity counts, composite scores, EPSS averages, and finding categorization automatically
 
-**Enriched report content** — include in the Markdown report:
-- **Scan duration**: Total wall-clock time from start of Step 1 to end of Step 5
-- **Agent summary**: "X/Y agents OK (Z timed out, W parse errors)"
-- **Top 5 findings**: List the 5 highest composite-risk findings in a summary table at the top
-
-### Step 5b: Delta Report
-
-Compare current findings with the previous scan of the same project:
-
-1. Look for the most recent SARIF file in `reports/archive/` matching the same project name
-2. If found, diff findings by `ruleId` + `location.file` + `location.line`:
-   - **New**: findings present now but not in the previous scan
-   - **Resolved**: findings in the previous scan but not present now
-   - **Unchanged**: findings present in both scans
-3. Add a "Delta" section to the Markdown report with counts and lists of new/resolved findings
-4. If no previous scan exists, skip this step and note "No previous scan found for delta comparison"
-
 ### Step 6: Save Reports
 
-Save all 3 output files to `lab-30-sentinel/reports/archive/`:
+Save all 3 output files to `/Users/manuelturpin/.sentinel/reports/archive/`:
 
 1. `{project}_{date}.sarif.json` — SARIF 2.1.0 report (with `invocations` and `artifacts`)
 2. `{project}_{date}.sbom.json` — CycloneDX 1.5 SBOM (from `generate-sbom` tool)
@@ -151,11 +105,18 @@ Save all 3 output files to `lab-30-sentinel/reports/archive/`:
 
 ## Knowledge Base Integration
 
-When analyzing findings, consult the Knowledge Base:
-1. Read rules from `knowledge-base/domains/{domain}/rules.json` matching the detected stack
-2. Cross-reference with `knowledge-base/standards/` for standard mappings
-3. Check `knowledge-base/cve-feed/` for known CVEs in detected dependencies
-4. Use remediation info from each rule's `remediation` field for fix suggestions
+Agents now read the Knowledge Base directly using native tools (Read, Grep, Bash) instead of MCP calls. This eliminates MCP serialization overhead for local operations.
+
+**Direct KB access paths:**
+- **Rules**: `/Users/manuelturpin/.sentinel/knowledge-base/domains/{domain}/rules.json` — agents Read these directly and Grep each rule's `detect.patterns[]` against the project
+- **Standards**: `/Users/manuelturpin/.sentinel/knowledge-base/standards/` — cross-reference for standard mappings
+- **CVE Feed**: `/Users/manuelturpin/.sentinel/knowledge-base/cve-feed/` — agents Read CVE cache JSON files directly (replaces `query-cve` MCP call)
+- **RAG Enrichment**: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{query}" --domain {domain} --limit 3` — agents call via Bash (replaces `query-kb` MCP call)
+- **Remediation**: Each rule's `remediation` field provides fix suggestions directly
+
+**MCP tools retained** (external network calls only):
+- `scan-dependencies` — calls OSV API for dependency CVE analysis
+- `scan-headers` — makes HTTP GET to check security headers on live URLs
 
 ## Important Notes
 

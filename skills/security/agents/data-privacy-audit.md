@@ -79,31 +79,25 @@ credit.card
 
 ## MCP Tools to Use
 
-| Tool | Purpose |
-|------|---------|
-| `scan-project` | Primary scan with domain `data-privacy` — detects PII exposure, GDPR issues |
-| `scan-secrets` | Detect hardcoded secrets, API keys, private keys |
-| `query-kb` | Enrich findings with KB rules, CVSS scores, GDPR references |
+No MCP tools needed for this agent — all scanning is done natively.
 
-**Example calls:**
-```
-mcp__sentinel-scanner__scan-project({ projectPath: "{target_path}", depth: "standard" })
-mcp__sentinel-scanner__scan-secrets({ projectPath: "{target_path}", includeGitHistory: false })
-mcp__sentinel-scanner__query-kb({ query: "PII logging GDPR", domain: "data-privacy" })
-```
+**Native tools (replace former MCP calls):**
+- **KB Pattern Scan**: `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/data-privacy/rules.json`, then `Grep` each rule's `detect.patterns[]` — replaces `scan-project`
+- **Secret Detection**: `Grep` with secret patterns from Detection Patterns (password, api_key, token, PRIVATE KEY regexes) — replaces `scan-secrets`
+- **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain data-privacy --limit 3` — replaces `query-kb`
 
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
-1. **MCP Scan**: Call `scan-project` with domain `data-privacy`, then `scan-secrets`
-2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check for PII in logs, hardcoded secrets, and .env exposure
-3. **KB Enrichment**: Call `query-kb` for each finding to get CVSS score, GDPR article references, and remediation
+1. **KB Pattern Scan**: Read `data-privacy/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`
+2. **Grep Scan**: Search for each pattern in Detection Patterns section (including secret patterns). Check for PII in logs, hardcoded secrets, and .env exposure
+3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
 4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, REDACT ALL SECRET VALUES, return JSON
 
 **Critical**: This agent handles the most sensitive data. ALWAYS redact actual secret values with `[REDACTED]` in findings.
 
-**Deduplication rule**: If `scan-project` or `scan-secrets` already reported a finding at the same file+line, do NOT report it again from Grep.
+**Deduplication rule**: If Step 1 already reported a finding at the same file+line, do NOT report it again from Grep.
 
 ## Output Format
 

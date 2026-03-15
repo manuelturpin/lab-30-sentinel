@@ -28,25 +28,32 @@ interface Finding {
 
 ## Execution Steps
 
-### Step 1: MCP Scan (Automated Pattern Matching)
+### Step 1: KB Pattern Scan (Direct)
 
-Call the appropriate MCP tools for your domain. These tools scan the project using KB pattern matching and return automated findings.
+For your domain ({domain}), load rules and apply them directly using native tools — **do NOT call `scan-project`, `scan-secrets`, `query-kb`, or `query-cve` via MCP**.
 
-**Available MCP tools** (use only those listed in your `## MCP Tools to Use` section):
+1. **Read** `/Users/manuelturpin/.sentinel/knowledge-base/domains/{domain}/rules.json`
+2. For each rule in the file:
+   - Use **Grep** with each `detect.patterns[]` on the project files
+     - Filter by `detect.file_types[]` via the `glob` parameter of Grep
+     - Exclude directories in `detect.exclude[]`
+   - For each Grep match:
+     - **Read** 5-10 lines of context around the match
+     - Check `negative_patterns[]` — if any match in the context, it's a false positive, skip it
+     - Create a Finding using the rule's fields: `id`, `severity`, `cvss_v4`, `standards` (map to `cwe`, `owasp`), `remediation`
+3. This replaces `scan-project` — you are doing exactly the same pattern matching natively, without MCP serialization overhead.
+
+**Available MCP tools** (use ONLY for external network calls):
 
 | Tool | Purpose | When to Use |
 |------|---------|-------------|
-| `scan-project` | Full security scan with KB pattern matching | Most agents — primary scanning tool |
-| `scan-secrets` | Detect hardcoded API keys, tokens, credentials | Agents handling secrets/credentials |
-| `scan-dependencies` | Analyze dependencies for known CVEs | Supply chain agent |
-| `scan-headers` | Check HTTP security headers | Web, CORS, SSL/TLS, static-site agents |
-| `query-kb` | Semantic search the Knowledge Base | All agents — for enrichment |
-| `query-cve` | Query CVE database by component/version | Supply chain agent |
+| `scan-dependencies` | Analyze dependencies for known CVEs (calls OSV API) | Supply chain agent only |
+| `scan-headers` | HTTP GET to check security headers on live URLs | Web, CORS, SSL/TLS, static-site agents |
 
-**How to call MCP tools**: Use the sentinel-scanner MCP tools directly. Example:
+**How to call MCP tools** (only the two above):
 ```
-mcp__sentinel-scanner__scan-project({ projectPath: "/path/to/project", depth: "standard" })
-mcp__sentinel-scanner__query-kb({ query: "SQL injection prevention", domain: "web-app" })
+mcp__sentinel-scanner__scan-dependencies({ projectPath: "/path/to/project" })
+mcp__sentinel-scanner__scan-headers({ url: "https://example.com" })
 ```
 
 ### Step 2: Manual Grep Scan (Domain-Specific Patterns)
@@ -58,18 +65,18 @@ For each pattern match:
 2. Check against negative patterns to filter false positives
 3. If the match is a true positive, create a Finding
 
-**Important**: Do NOT report a finding from Grep if `scan-project` already reported the same issue (same file + same line range + same vulnerability type). This avoids duplicates.
+**Important**: Do NOT report a finding from Grep if Step 1 (KB Pattern Scan) already reported the same issue (same file + same line range + same vulnerability type). This avoids duplicates.
 
-### Step 3: KB Enrichment
+### Step 3: KB Enrichment (Direct)
 
-For each finding (from both Step 1 and Step 2), call `query-kb` to enrich it:
-- Match the finding to a KB rule ID for consistent identification
-- Get the CVSS v4 score from the KB rule
-- Get standard references (CWE, OWASP) from the KB rule
-- Get remediation description and code examples from the KB rule
-- Get EPSS score if a CVE is mapped
+For findings from Step 1, enrichment is already done — the rule's `cvss_v4`, `standards`, and `remediation` fields were used directly when creating the Finding.
 
-If `query-kb` returns no match, use your own judgment for severity and remediation but keep scores conservative.
+For findings from Step 2 (manual Grep) that don't have a KB rule match, enrich them:
+1. **Bash**: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{finding.title}" --domain {domain} --limit 3`
+2. Parse the JSON output to get CVSS score, CWE/OWASP references, and remediation
+3. If the RAG returns no match, use your own judgment for severity and remediation but keep scores conservative.
+
+**Do NOT call `query-kb` via MCP** — the Bash call above does the same thing without MCP serialization overhead.
 
 ### Step 4: Deduplicate and Return
 
@@ -110,4 +117,3 @@ If no vulnerabilities are found, return an empty array: `[]`
 4. **No false positives**: If you're not confident a pattern match is a real vulnerability (>70% confidence), do not report it.
 5. **Location accuracy**: Always include the file path. Include line number when you can determine it precisely.
 6. **Standard references**: Always include at least one of `standard`, `owasp`, or `cwe` when applicable.
-7. **Execution time**: Aim to complete your audit in under 2 minutes. Prioritize the most impactful scans first. If you are running long, skip low-priority enrichment queries and return what you have.
