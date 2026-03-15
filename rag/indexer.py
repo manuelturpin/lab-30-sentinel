@@ -78,11 +78,16 @@ def _flatten_nested(data, filepath: str) -> list[dict]:
     # NVD/OSV cache: {"vulnerabilities": [...]}
     if "vulnerabilities" in data:
         for vuln in data["vulnerabilities"]:
-            if isinstance(vuln, dict) and "cve_id" in vuln:
-                item = dict(vuln)
+            if not isinstance(vuln, dict):
+                continue
+            item = dict(vuln)
+            # NVD uses "cve_id", OSV uses "id"
+            if "cve_id" in item and "id" not in item:
                 item["id"] = item.pop("cve_id")
-                item.setdefault("title", item.get("description", "")[:120])
-                items.append(item)
+            if "id" not in item:
+                continue
+            item.setdefault("title", item.get("summary", item.get("description", ""))[:120])
+            items.append(item)
         return items
 
     # GitHub advisories: {"advisories": [...]}
@@ -134,16 +139,21 @@ def collect_documents(config: dict) -> list[dict]:
                         if rule["id"] in seen_ids:
                             continue
                         seen_ids.add(rule["id"])
+                        # Sanitize metadata — ChromaDB requires str/int/float/bool
+                        severity = rule.get("severity", "UNKNOWN")
+                        category = rule.get("subcategory", rule.get("type", ""))
+                        title = rule.get("title", "")
+                        standards = rule.get("standards", rule.get("cwe", []))
                         documents.append({
                             "id": rule["id"],
                             "text": _build_text(rule),
                             "metadata": {
                                 "source": filepath,
-                                "domain": rule.get("category", domain),
-                                "severity": rule.get("severity", "UNKNOWN"),
-                                "category": rule.get("subcategory", rule.get("type", "")),
-                                "title": rule.get("title", ""),
-                                "standards": json.dumps(rule.get("standards", rule.get("cwe", []))),
+                                "domain": str(rule.get("category", domain) or domain),
+                                "severity": str(severity) if severity else "UNKNOWN",
+                                "category": str(category) if category else "",
+                                "title": str(title) if title else "",
+                                "standards": json.dumps(standards) if standards else "[]",
                             },
                         })
             except (json.JSONDecodeError, KeyError) as e:

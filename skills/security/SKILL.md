@@ -10,6 +10,26 @@ You are Sentinel, an AI-powered cybersecurity auditing system. When invoked, you
 
 ## Workflow
 
+### Step 0: Load Project Config
+
+If a `.sentinel.json` file exists in the project root, load it. This file allows per-project customization:
+
+```json
+{
+  "exclude_agents": ["mobile-audit"],
+  "exclude_paths": ["vendor/", "third-party/"],
+  "false_positives": [{"rule_id": "LLM-MCP-002", "file": "docs/**"}],
+  "severity_overrides": {"LLM-MCP-002": "INFO"}
+}
+```
+
+- **exclude_agents**: Skip these agents even if the stack detector selects them
+- **exclude_paths**: Ignore findings in these paths (glob patterns)
+- **false_positives**: Suppress specific rule+file combinations
+- **severity_overrides**: Override severity for specific rule IDs
+
+If no `.sentinel.json` exists, proceed with defaults (no exclusions).
+
 ### Step 1: Stack Detection
 
 Detect the project's technology stack by checking for the presence of indicator files:
@@ -43,7 +63,7 @@ Detect the project's technology stack by checking for the presence of indicator 
 
 ### Step 2: Agent Dispatch
 
-For each detected agent, launch it in parallel using the Agent tool with the enriched prompt:
+For each detected agent (excluding any listed in `.sentinel.json` `exclude_agents`), launch it in parallel using the Agent tool with the enriched prompt:
 
 ```
 For each agent in detected_agents:
@@ -59,6 +79,11 @@ For each agent in detected_agents:
     run_in_background: true
   )
 ```
+
+**Timeout handling**: Each agent has a 180-second timeout. If an agent does not complete within this window:
+- Mark it as `TIMED_OUT` in the agent status tracker
+- Continue processing results from other agents
+- Include timed-out agents in the report summary
 
 ### Step 3: Collect & Parse Results
 
@@ -79,8 +104,12 @@ Wait for all agents to complete. For each agent result:
 ### Step 4: Aggregate & Score
 
 1. **Merge** all agent findings into a unified array
-2. **Deduplicate** findings by `location.file` + `location.line` + `id` — keep the finding with the higher `cvss_v4` score
-3. **Calculate risk scores**:
+2. **Apply `.sentinel.json` filters** (if loaded in Step 0):
+   - Remove findings matching `false_positives` entries (by `rule_id` + `file` glob)
+   - Remove findings in `exclude_paths`
+   - Apply `severity_overrides` to matching rule IDs
+3. **Deduplicate** findings by `location.file` + `location.line` + `id` — keep the finding with the higher `cvss_v4` score
+4. **Calculate risk scores**:
    - **CVSS v4** base score from the finding (set by agent from KB enrichment)
    - **EPSS** probability if CVE is mapped (set by agent from KB enrichment)
    - **Composite risk** = `cvss_v4 * (0.6 + 0.4 * epss)` — EPSS boosts score up to 40% max (see `risk-scorer.ts`)
@@ -94,6 +123,23 @@ Use the report renderer (`report-renderer.ts`) with the template at `reports/tem
 2. Include agent success summary: "X of Y agents completed successfully" in the report header
 3. Call `renderReport(data)` to produce the final Markdown report
 4. The renderer handles severity counts, composite scores, EPSS averages, and finding categorization automatically
+
+**Enriched report content** — include in the Markdown report:
+- **Scan duration**: Total wall-clock time from start of Step 1 to end of Step 5
+- **Agent summary**: "X/Y agents OK (Z timed out, W parse errors)"
+- **Top 5 findings**: List the 5 highest composite-risk findings in a summary table at the top
+
+### Step 5b: Delta Report
+
+Compare current findings with the previous scan of the same project:
+
+1. Look for the most recent SARIF file in `reports/archive/` matching the same project name
+2. If found, diff findings by `ruleId` + `location.file` + `location.line`:
+   - **New**: findings present now but not in the previous scan
+   - **Resolved**: findings in the previous scan but not present now
+   - **Unchanged**: findings present in both scans
+3. Add a "Delta" section to the Markdown report with counts and lists of new/resolved findings
+4. If no previous scan exists, skip this step and note "No previous scan found for delta comparison"
 
 ### Step 6: Save Reports
 

@@ -6,6 +6,10 @@ rag/chromadb/
 rag/embeddings/
 reports/archive/*.sarif.json
 reports/archive/*.md
+knowledge-base/cve-feed/nvd-cache.json
+knowledge-base/cve-feed/osv-cache.json
+knowledge-base/cve-feed/github-advisories.json
+reports/archive/*.sbom.json
 .env
 .env.*
 !.env.example

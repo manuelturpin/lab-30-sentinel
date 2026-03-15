@@ -27,13 +27,17 @@ OWASP Top 10 Web 2025, API 2023, LLM 2025, Mobile 2024 | MITRE ATLAS | NIST AI R
 
 ## Statut
 
-**Session 10 — Production-ready** (2026-03-15)
+**Session 11 — Hardened** (2026-03-15)
 
-- RAG indexe 2604 documents (115 regles domaine + 2273 NVD CVE + 94 standards)
+- RAG indexe 4088 documents (115 regles domaine + 2273 NVD CVE + 1484 OSV + 100 GitHub + 94 standards)
 - Tests systeme : `bash scripts/test-sentinel.sh` — 31 checks
 - Tests E2E : `bash tests/e2e-session10.sh` — 27 checks
 - MCP tools : error handling structuré sur les 6 outils
 - Stack detector : 48+ regles d'indicateurs
+- CVE Sync : OSV batch API (`/v1/querybatch`), GitHub Advisories (optionnel `GITHUB_TOKEN`), EPSS
+- Agents : 180s timeout, guidance < 2 min execution
+- Reports : enrichis (duree, agent summary, top 5, delta avec scan precedent)
+- Config projet : `.sentinel.json` (exclude agents/paths, false positives, severity overrides)
 
 ## Commandes
 
@@ -41,8 +45,27 @@ OWASP Top 10 Web 2025, API 2023, LLM 2025, Mobile 2024 | MITRE ATLAS | NIST AI R
 - `bash scripts/setup.sh` : Installer les dependances et outils externes
 - `bash scripts/test-sentinel.sh` : Tester le systeme (structure, RAG, KB, templates)
 - `bash tests/e2e-session10.sh` : Tests E2E (RAG queries, schema validation, error handling)
+- `python3 scripts/cve-sync.py --days 90` : Sync CVE (NVD + OSV batch + GitHub + EPSS)
 - `python3 rag/indexer.py` : Re-indexer la KB dans ChromaDB
 - `python3 rag/query.py --query "..." --domain all --limit 10` : Requete semantique KB
+
+## Configuration projet
+
+Creer un fichier `.sentinel.json` a la racine du projet pour personnaliser l'audit :
+
+```json
+{
+  "exclude_agents": ["mobile-audit"],
+  "exclude_paths": ["vendor/", "third-party/"],
+  "false_positives": [{"rule_id": "LLM-MCP-002", "file": "docs/**"}],
+  "severity_overrides": {"LLM-MCP-002": "INFO"}
+}
+```
+
+## Variables d'environnement
+
+- `GITHUB_TOKEN` : Token GitHub pour sync des Security Advisories (optionnel, sans token = 60 req/h)
+- `NVD_API_KEY` : Cle API NVD pour rate limit plus eleve (optionnel)
 
 ## Structure cle
 

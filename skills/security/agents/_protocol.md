@@ -110,3 +110,4 @@ If no vulnerabilities are found, return an empty array: `[]`
 4. **No false positives**: If you're not confident a pattern match is a real vulnerability (>70% confidence), do not report it.
 5. **Location accuracy**: Always include the file path. Include line number when you can determine it precisely.
 6. **Standard references**: Always include at least one of `standard`, `owasp`, or `cwe` when applicable.
+7. **Execution time**: Aim to complete your audit in under 2 minutes. Prioritize the most impactful scans first. If you are running long, skip low-priority enrichment queries and return what you have.

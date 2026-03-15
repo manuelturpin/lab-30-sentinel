@@ -480,7 +480,7 @@
         "audit_config\\("
       ],
       "file_types": ["*.md", "*.txt", "*.yaml", "*.yml"],
-      "exclude": ["node_modules", "dist"]
+      "exclude": ["node_modules", "dist", "docs", "plans", "README.md", "CHANGELOG.md"]
     },
     "remediation": {
       "description": "Audit all agent configuration files for hidden instructions. Review CLAUDE.md, SKILL.md, and .cursorrules files in dependencies and cloned repos. Implement integrity checks on agent configuration files.",
