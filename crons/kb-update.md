@@ -23,4 +23,29 @@ Keep the Knowledge Base and RAG index current by:
 
 ## Implementation
 
-Pending — Session 9.
+**Script:** `scripts/kb-update.py`
+
+```bash
+# Manual run
+python3 scripts/kb-update.py
+
+# Dry run (preview only)
+python3 scripts/kb-update.py --dry-run
+
+# Generate rules without re-indexing ChromaDB
+python3 scripts/kb-update.py --skip-reindex
+```
+
+## Automated Installation
+
+Runs weekly (Monday 9h) as part of the unified cron pipeline:
+
+```bash
+crontab -e
+0 6 * * * cd /path/to/lab-30-sentinel && bash scripts/sentinel-cron.sh >> logs/sentinel-cron.log 2>&1
+```
+
+## Dependencies
+
+- Requires `cve-sync.py` to have run at least once (non-empty caches)
+- ChromaDB + sentence-transformers (`pip3 install chromadb sentence-transformers`)

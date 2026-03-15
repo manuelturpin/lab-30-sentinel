@@ -1,0 +1,14 @@
+{
+  "projects": [
+    {
+      "path": "tests/vulnerable-app",
+      "name": "vulnerable-app",
+      "depth": "standard"
+    }
+  ],
+  "notifications": {
+    "slack_webhook": null,
+    "email": null
+  },
+  "archive_path": "reports/archive"
+}

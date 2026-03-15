@@ -4,6 +4,7 @@
   "chromadb_path": "./chromadb",
   "sources": [
     "../knowledge-base/domains/*/rules.json",
+    "../knowledge-base/domains/*/cve-rules.json",
     "../knowledge-base/domains/*/patterns/*.json",
     "../knowledge-base/standards/*.json",
     "../knowledge-base/cve-feed/*.json"

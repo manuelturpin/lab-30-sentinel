@@ -10,7 +10,7 @@
 | 6 | RAG ChromaDB (231 docs indexes, all-MiniLM-L6-v2) | Done |
 | 7 | Agent implementation (execution protocols, MCP tool mapping, Finding[] output, E2E tests) | Done |
 | 8 | Orchestrator finalization + Reports (SARIF enrichi, SBOM CycloneDX, report renderer, 31/31 E2E) | Done |
-| 9 | Crons + Automated monitoring (CVE sync, KB update, project rescan) | Pending |
+| 9 | Crons + Automated monitoring (CVE sync, KB update, project rescan) | Done |
 | 10 | End-to-end testing + Polish (full /security flow, error handling, perf) | Pending |
 
 ## Metrics
