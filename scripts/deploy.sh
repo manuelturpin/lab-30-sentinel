@@ -90,12 +90,8 @@ deploy_local() {
   info "Deploying skill to $SKILL_DIR..."
 
   # Generate production SKILL.md with absolute paths
-  sed \
-    -e "s|lab-30-sentinel/skills/security/agents/|$HOME/.claude/skills/security/agents/|g" \
-    -e "s|lab-30-sentinel/reports/archive/|$HOME/.sentinel/reports/archive/|g" \
-    -e "s|knowledge-base/|$HOME/.sentinel/knowledge-base/|g" \
-    -e "s|reports/templates/|$HOME/.sentinel/reports/templates/|g" \
-    "$PROJECT_DIR/skills/security/SKILL.md" > "$SKILL_DIR/SKILL.md"
+  # Copy SKILL.md as-is (paths are already absolute in source)
+  cp "$PROJECT_DIR/skills/security/SKILL.md" "$SKILL_DIR/SKILL.md"
 
   # Copy agents
   cp "$PROJECT_DIR/skills/security/agents/"*.md "$SKILL_DIR/agents/"
