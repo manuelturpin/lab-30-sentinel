@@ -9,7 +9,7 @@
 | 5 | MCP Server (6 outils: scan-project, scan-secrets, scan-deps, scan-headers, query-kb, query-cve) | Done |
 | 6 | RAG ChromaDB (231 docs indexes, all-MiniLM-L6-v2) | Done |
 | 7 | Agent implementation (execution protocols, MCP tool mapping, Finding[] output, E2E tests) | Done |
-| 8 | Orchestrator finalization + Reports (SARIF completion, SBOM implementation, report rendering) | Pending |
+| 8 | Orchestrator finalization + Reports (SARIF enrichi, SBOM CycloneDX, report renderer, 31/31 E2E) | Done |
 | 9 | Crons + Automated monitoring (CVE sync, KB update, project rescan) | Pending |
 | 10 | End-to-end testing + Polish (full /security flow, error handling, perf) | Pending |
 
@@ -17,6 +17,7 @@
 
 - **Knowledge Base**: 100 rules across 11 domains (web-app, api, llm-ai, mobile, infrastructure, supply-chain, database, data-privacy, ssl-tls, cors, static-sites)
 - **RAG**: 231 documents indexed in ChromaDB
-- **MCP Server**: 6 tools operational
+- **MCP Server**: 7 tools operational (+ generate-sbom)
 - **Agents**: 12 specialized agents with execution protocols
-- **E2E tests**: web-audit (13 findings), llm-ai-audit (13 findings)
+- **Reports**: SARIF 2.1.0 (invocations + artifacts), CycloneDX 1.5 SBOM, Markdown (template renderer)
+- **E2E tests**: web-audit (13 findings), llm-ai-audit (13 findings), session-8 pipeline (31/31)
