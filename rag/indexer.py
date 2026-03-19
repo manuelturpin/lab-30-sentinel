@@ -93,8 +93,16 @@ def _flatten_nested(data, filepath: str) -> list[dict]:
     # GitHub advisories: {"advisories": [...]}
     if "advisories" in data:
         for adv in data["advisories"]:
-            if isinstance(adv, dict) and "id" in adv:
-                items.append(adv)
+            if isinstance(adv, dict):
+                item = dict(adv)
+                # Normalize ghsa_id → id for consistent indexing
+                if "ghsa_id" in item and "id" not in item:
+                    item["id"] = item.pop("ghsa_id")
+                if "id" not in item:
+                    continue
+                item.setdefault("title", item.get("summary", "")[:120])
+                item.setdefault("description", item.get("summary", ""))
+                items.append(item)
         return items
 
     # Standards files with nested lists (categories, tactics, techniques, etc.)
