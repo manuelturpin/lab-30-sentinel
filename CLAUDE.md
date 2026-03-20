@@ -2,11 +2,12 @@
 
 ## Projet
 
-Sentinel est un systeme de cybersecurite IA pour Claude Code. Il audite la securite de n'importe quel projet (web, mobile, API, DB, infra, SaaS, skills IA) via un skill orchestrateur `/security` qui detecte le stack, dispatche des agents specialises en parallele, consulte une Knowledge Base enrichie par RAG, et produit un rapport SARIF consolide avec scoring CVSS v4 + EPSS et remediations.
+Sentinel est un systeme de cybersecurite IA pour Claude Code. Il regroupe deux skills dans le namespace sentinel : `/sentinel-security` qui audite la securite de n'importe quel projet (web, mobile, API, DB, infra, SaaS, skills IA) en detectant le stack, dispatchant des agents specialises en parallele, consultant une Knowledge Base enrichie par RAG, et produisant un rapport SARIF consolide avec scoring CVSS v4 + EPSS et remediations ; et `/sentinel-rag` qui est un expert RAG autonome pour creer, diagnostiquer, optimiser et maintenir les systemes RAG.
 
 ## Architecture
 
-- **Skill `/security`** : Point d'entree — detecte le stack, dispatche les agents, agrege les resultats
+- **Skill `/sentinel-security`** : Point d'entree — detecte le stack, dispatche les agents, agrege les resultats
+- **Skill `/sentinel-rag`** : Expert RAG autonome — cree, diagnostique, optimise et maintient les systemes RAG avec sa propre base de connaissances
 - **12 Agents specialises** : web, api, llm-ai, mobile, infra, supply-chain, db, data-privacy, websocket, cors, ssl-tls, static-site
 - **Knowledge Base** : Regles JSON machine-readable par domaine, mappees aux standards OWASP/MITRE/CWE
 - **RAG (ChromaDB)** : Recherche semantique sur les regles et CVE
@@ -104,7 +105,8 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 ## Commandes
 
-- `/security` : Lancer un audit complet du projet courant
+- `/sentinel-security` : Lancer un audit complet du projet courant
+- `/sentinel-rag` : Expert RAG — diagnostic, optimisation, creation, evaluation
 - `bash scripts/deploy.sh` : Deployer sur la machine locale (OBLIGATOIRE apres chaque modif)
 - `bash scripts/setup.sh` : Installer les dependances et outils externes
 - `bash scripts/test-sentinel.sh` : Tester le systeme (structure, RAG, KB, templates)
@@ -136,6 +138,8 @@ Creer un fichier `.sentinel.json` a la racine du projet cible pour personnaliser
 ```
 skills/security/SKILL.md          — Skill orchestrateur
 skills/security/agents/*.md       — 12 agents specialises + _protocol.md
+skills/sentinel-rag/SKILL.md          — Skill expert RAG
+skills/sentinel-rag/knowledge/        — KB vectorielle du skill RAG (indexer, query, sources)
 knowledge-base/domains/*/         — Regles par domaine (115 regles)
 knowledge-base/cve-feed/          — Caches NVD/OSV/GitHub (2273 CVE)
 knowledge-base/standards/         — OWASP, MITRE, CWE, NIST (94 items)
