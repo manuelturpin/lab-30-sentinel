@@ -44,6 +44,16 @@ assert col.count() > 50, f'Only {col.count()} docs'
 print(f'{col.count()} docs indexed')
 \""
 
+# --- Query tests ---
+echo ""
+echo "--- Query ---"
+QUERY="$PROJECT_DIR/skills/sentinel-rag/knowledge/query.py"
+check "query.py exists" "[ -f '$QUERY' ]"
+check "query returns results for 'embedding model'" "cd '$PROJECT_DIR/skills/sentinel-rag/knowledge' && python3 query.py --query 'best embedding model' --limit 3 2>&1 | python3 -c 'import sys,json; d=json.load(sys.stdin); assert d[\"totalResults\"]>0, f\"got {d}\"'"
+check "query returns results for 'hybrid search BM25'" "cd '$PROJECT_DIR/skills/sentinel-rag/knowledge' && python3 query.py --query 'hybrid search BM25 RRF' --limit 3 2>&1 | python3 -c 'import sys,json; d=json.load(sys.stdin); assert d[\"totalResults\"]>0'"
+check "query returns results for 'RAG poisoning OWASP'" "cd '$PROJECT_DIR/skills/sentinel-rag/knowledge' && python3 query.py --query 'RAG poisoning OWASP security' --limit 3 2>&1 | python3 -c 'import sys,json; d=json.load(sys.stdin); assert d[\"totalResults\"]>0'"
+check "query domain filter works" "cd '$PROJECT_DIR/skills/sentinel-rag/knowledge' && python3 query.py --query 'embedding' --domain embedding --limit 3 2>&1 | python3 -c 'import sys,json; d=json.load(sys.stdin); r=d[\"results\"]; assert all(x[\"domain\"]==\"embedding\" for x in r) if r else True'"
+
 echo ""
 echo "=== Results: $PASS/$TOTAL passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ] && exit 0 || exit 1
