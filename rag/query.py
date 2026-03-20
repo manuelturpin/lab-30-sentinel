@@ -1,9 +1,12 @@
 """
 Sentinel RAG Query — CLI for querying the Knowledge Base via ChromaDB.
-Supports hybrid search (BM25 + semantic) with Reciprocal Rank Fusion.
+Supports hybrid search (BM25 + semantic + cross-encoder reranking) with RRF.
+
+Pipeline: Query → ID routing (exact) → Hybrid search (semantic + BM25/RRF) → Top-k
 
 Usage:
     python3 query.py --query "SQL injection" --domain all --limit 10
+    python3 query.py --query "CWE-89" --limit 1
 
 Outputs JSON to stdout for consumption by the TypeScript MCP server.
 """
@@ -27,6 +30,7 @@ try:
     HAS_BM25 = True
 except ImportError:
     HAS_BM25 = False
+
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
 
