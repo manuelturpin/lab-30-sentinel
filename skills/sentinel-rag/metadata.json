@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-03-20T10:00:00Z",
+  "last_update_check": "2026-03-20T10:00:00Z",
+  "update_check_interval_days": 7,
+  "total_sources": 7,
+  "total_indexed_docs": 0,
+  "update_history": [
+    {
+      "date": "2026-03-20T10:00:00Z",
+      "type": "initial",
+      "sources_added": 7,
+      "description": "Initial knowledge base from 7 research documents"
+    }
+  ]
+}
