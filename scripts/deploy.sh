@@ -96,6 +96,36 @@ deploy_local() {
   # Copy agents
   cp "$PROJECT_DIR/skills/security/agents/"*.md "$SKILL_DIR/agents/"
 
+  # --- 3b. Deploy sentinel-rag skill ---
+  SENTINEL_RAG_SKILL_DIR="$HOME/.claude/skills/sentinel-rag"
+  SENTINEL_RAG_HOME="$SENTINEL_HOME/skills/sentinel-rag"
+
+  info "Deploying sentinel-rag skill..."
+  mkdir -p "$SENTINEL_RAG_SKILL_DIR"
+  mkdir -p "$SENTINEL_RAG_HOME/knowledge/sources"
+
+  cp "$PROJECT_DIR/skills/sentinel-rag/SKILL.md" "$SENTINEL_RAG_SKILL_DIR/SKILL.md"
+
+  # Knowledge scripts + sources (NOT chromadb data)
+  cp "$PROJECT_DIR/skills/sentinel-rag/knowledge/indexer.py" "$SENTINEL_RAG_HOME/knowledge/"
+  cp "$PROJECT_DIR/skills/sentinel-rag/knowledge/query.py" "$SENTINEL_RAG_HOME/knowledge/"
+  cp "$PROJECT_DIR/skills/sentinel-rag/knowledge/config.json" "$SENTINEL_RAG_HOME/knowledge/"
+  rsync -a "$PROJECT_DIR/skills/sentinel-rag/knowledge/sources/" "$SENTINEL_RAG_HOME/knowledge/sources/"
+
+  # Golden dataset
+  [ -f "$PROJECT_DIR/skills/sentinel-rag/knowledge/golden_dataset.json" ] && \
+    cp "$PROJECT_DIR/skills/sentinel-rag/knowledge/golden_dataset.json" "$SENTINEL_RAG_HOME/knowledge/"
+
+  # Metadata: only copy if absent (don't overwrite runtime state)
+  [ ! -f "$SENTINEL_RAG_HOME/metadata.json" ] && \
+    cp "$PROJECT_DIR/skills/sentinel-rag/metadata.json" "$SENTINEL_RAG_HOME/metadata.json"
+
+  # Index sentinel-rag KB
+  info "Indexing sentinel-rag expertise KB..."
+  if command -v python3 &>/dev/null; then
+    (cd "$SENTINEL_RAG_HOME/knowledge" && python3 indexer.py 2>&1) || warn "RAG expertise indexing failed"
+  fi
+
   # --- 4. Register MCP server globally ---
   info "Registering MCP server with Claude Code..."
 
@@ -132,6 +162,7 @@ deploy_local() {
   [ -d "$SENTINEL_HOME/knowledge-base" ] && info "KB: OK" || { error "KB: MISSING"; ERRORS=$((ERRORS+1)); }
   [ -f "$SENTINEL_HOME/rag/query.py" ] && info "RAG: OK" || { error "RAG: MISSING"; ERRORS=$((ERRORS+1)); }
   [ -f "$MCP_SERVER" ] && info "MCP: OK" || { error "MCP: NOT BUILT"; ERRORS=$((ERRORS+1)); }
+  [ -f "$SENTINEL_RAG_SKILL_DIR/SKILL.md" ] && info "Sentinel-RAG Skill: OK" || { error "Sentinel-RAG Skill: MISSING"; ERRORS=$((ERRORS+1)); }
 
   echo ""
   if [ "$ERRORS" -eq 0 ]; then
@@ -149,6 +180,7 @@ deploy_local() {
   echo ""
   echo "Commands:"
   echo "  /sentinel-security                         # Run audit in any project"
+  echo "  /sentinel-rag                              # RAG expert in any project"
   echo "  bash $SENTINEL_HOME/scripts/test-sentinel.sh  # System tests"
   echo "  python3 $SENTINEL_HOME/rag/indexer.py      # Re-index KB"
   echo "  claude mcp list                            # Verify MCP registration"
