@@ -1,0 +1,17 @@
+[
+  {"query": "best embedding model for cybersecurity RAG", "expected_sources": ["06-mistral.md", "07-gemini.md"], "category": "embedding"},
+  {"query": "bge-base-en-v1.5 vs all-MiniLM-L6-v2", "expected_sources": ["05-claude-desktop.md", "06-mistral.md"], "category": "embedding"},
+  {"query": "asymmetric embedding query prefix", "expected_sources": ["06-mistral.md", "03-architecture-security.md"], "category": "embedding"},
+  {"query": "how to chunk JSON documents for RAG", "expected_sources": ["01-embedding-chunking-hybrid.md", "07-gemini.md"], "category": "chunking"},
+  {"query": "parent-child chunking strategy", "expected_sources": ["06-mistral.md", "07-gemini.md"], "category": "chunking"},
+  {"query": "hybrid search BM25 with ChromaDB", "expected_sources": ["01-embedding-chunking-hybrid.md", "04-chromadb-docs.md"], "category": "hybrid-search"},
+  {"query": "Reciprocal Rank Fusion RRF implementation", "expected_sources": ["06-mistral.md", "05-claude-desktop.md"], "category": "hybrid-search"},
+  {"query": "cross-encoder reranking for RAG", "expected_sources": ["06-mistral.md", "05-claude-desktop.md"], "category": "hybrid-search"},
+  {"query": "RAGAS evaluation framework for RAG", "expected_sources": ["02-evaluation-monitoring.md", "05-claude-desktop.md"], "category": "evaluation"},
+  {"query": "Hit@k MRR NDCG metrics for retrieval", "expected_sources": ["07-gemini.md", "05-claude-desktop.md"], "category": "evaluation"},
+  {"query": "HNSW tuning ef_construction M parameters", "expected_sources": ["02-evaluation-monitoring.md", "04-chromadb-docs.md"], "category": "chromadb"},
+  {"query": "ChromaDB cosine vs L2 distance", "expected_sources": ["01-embedding-chunking-hybrid.md", "04-chromadb-docs.md"], "category": "chromadb"},
+  {"query": "RAG poisoning attack detection", "expected_sources": ["05-claude-desktop.md", "03-architecture-security.md"], "category": "security"},
+  {"query": "OWASP LLM Top 10 RAG security", "expected_sources": ["05-claude-desktop.md", "03-architecture-security.md"], "category": "security"},
+  {"query": "HyDE hypothetical document embeddings", "expected_sources": ["03-architecture-security.md", "06-mistral.md"], "category": "architecture"}
+]
