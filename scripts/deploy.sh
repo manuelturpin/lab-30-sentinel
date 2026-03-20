@@ -13,7 +13,7 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Target paths
 SENTINEL_HOME="$HOME/.sentinel"
-SKILL_DIR="$HOME/.claude/skills/security"
+SKILL_DIR="$HOME/.claude/skills/sentinel-security"
 
 # Colors
 GREEN='\033[0;32m'
@@ -135,7 +135,7 @@ deploy_local() {
 
   echo ""
   if [ "$ERRORS" -eq 0 ]; then
-    info "Deployment complete. /security is now available in all Claude Code projects."
+    info "Deployment complete. /sentinel-security is now available in all Claude Code projects."
   else
     warn "Deployment done with $ERRORS warnings — check above."
   fi
@@ -148,7 +148,7 @@ deploy_local() {
   echo "  RAG DB: $SENTINEL_HOME/rag/chromadb/"
   echo ""
   echo "Commands:"
-  echo "  /security                                  # Run audit in any project"
+  echo "  /sentinel-security                         # Run audit in any project"
   echo "  bash $SENTINEL_HOME/scripts/test-sentinel.sh  # System tests"
   echo "  python3 $SENTINEL_HOME/rag/indexer.py      # Re-index KB"
   echo "  claude mcp list                            # Verify MCP registration"
@@ -189,7 +189,7 @@ deploy_remote() {
   ssh "$userhost" bash -s "$remote_path" << 'REMOTE_SCRIPT'
     set -euo pipefail
     SENTINEL_HOME="$1"
-    SKILL_DIR="$HOME/.claude/skills/security"
+    SKILL_DIR="$HOME/.claude/skills/sentinel-security"
 
     echo "[+] Creating directories..."
     mkdir -p "$SENTINEL_HOME" "$SKILL_DIR/agents"
