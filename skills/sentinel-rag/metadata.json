@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-03-20T10:00:00Z",
+  "last_updated": "2026-03-20T09:49:58Z",
   "last_update_check": "2026-03-20T10:00:00Z",
   "update_check_interval_days": 7,
   "total_sources": 7,
-  "total_indexed_docs": 0,
+  "total_indexed_docs": 100,
   "update_history": [
     {
       "date": "2026-03-20T10:00:00Z",
