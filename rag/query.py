@@ -60,7 +60,10 @@ def query_kb(query: str, domain: str = "all", limit: int = 10) -> dict:
 
     # Load embedding model
     model = SentenceTransformer(config["embedding_model"])
-    query_embedding = model.encode([query[:1000]]).tolist()
+    # bge-base asymmetric: prefix for queries, normalize for cosine
+    query_prefix = config.get("query_prefix", "")
+    prefixed_query = query_prefix + query[:1000]
+    query_embedding = model.encode([prefixed_query], normalize_embeddings=True).tolist()
 
     # Build where filter for domain
     where_filter = None

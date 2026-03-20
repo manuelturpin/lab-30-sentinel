@@ -184,7 +184,12 @@ def index_documents(documents: list[dict], config: dict):
 
     collection = client.create_collection(
         name=config["collection_name"],
-        metadata={"hnsw:space": "cosine"},
+        metadata={
+            "hnsw:space": "cosine",
+            "hnsw:construction_ef": 200,
+            "hnsw:M": 16,
+            "hnsw:search_ef": 100,
+        },
     )
 
     print(f"Loading embedding model: {config['embedding_model']}...")
@@ -198,7 +203,8 @@ def index_documents(documents: list[dict], config: dict):
         texts = [doc["text"] for doc in batch]
         metadatas = [doc["metadata"] for doc in batch]
 
-        embeddings = model.encode(texts, show_progress_bar=False).tolist()
+        # bge-base: no prefix for documents, normalize for cosine
+        embeddings = model.encode(texts, normalize_embeddings=True, show_progress_bar=False).tolist()
 
         collection.add(
             ids=ids,
