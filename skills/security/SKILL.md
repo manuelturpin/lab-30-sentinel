@@ -2,6 +2,7 @@
 name: sentinel-security
 description: Audit de cybersecurite complet — detecte le stack, dispatche des agents specialises en parallele, et produit un rapport SARIF consolide avec scoring et remediations
 user_invocable: true
+effort: high
 ---
 
 # /sentinel-security — Sentinel Cybersecurity Audit
@@ -56,6 +57,8 @@ For each agent in detected_agents:
       4. Use Read + Grep + Bash for KB pattern scanning (read rules.json, grep patterns, enrich via RAG)
       5. Only use MCP tools if your agent lists them (scan-dependencies for supply-chain, scan-headers for web/cors/ssl/static)
       6. Return ONLY a JSON code block containing a Finding[] array — no other text",
+    disallowedTools: ["Write", "Edit", "NotebookEdit"],
+    maxTurns: 15,
     run_in_background: true
   )
 ```
