@@ -14,6 +14,7 @@ knowledge-base/cve-feed/github-advisories.json
 reports/archive/*.sbom.json
 .env
 .env.*
+.claude/settings.local.json
 !.env.example
 *.log
 .DS_Store
