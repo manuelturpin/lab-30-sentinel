@@ -1,0 +1,30 @@
+{
+  "targets": [
+    {
+      "name": "sentinel-security",
+      "skill_path": "/Users/manuelturpin/.claude/skills/sentinel-security/SKILL.md",
+      "agents_path": "/Users/manuelturpin/.claude/skills/sentinel-security/agents/",
+      "protocol_path": "/Users/manuelturpin/.claude/skills/sentinel-security/agents/_protocol.md",
+      "type": "orchestrator"
+    },
+    {
+      "name": "sentinel-rag",
+      "skill_path": "/Users/manuelturpin/.claude/skills/sentinel-rag/SKILL.md",
+      "agents_path": null,
+      "protocol_path": null,
+      "type": "expert"
+    },
+    {
+      "name": "sentinel-evolve",
+      "skill_path": "/Users/manuelturpin/.claude/skills/sentinel-evolve/SKILL.md",
+      "agents_path": null,
+      "protocol_path": null,
+      "type": "meta"
+    }
+  ],
+  "infrastructure": {
+    "deploy_script": "/Users/manuelturpin/.sentinel/scripts/deploy.sh",
+    "cron_orchestrator": "/Users/manuelturpin/.sentinel/scripts/sentinel-cron.sh",
+    "mcp_server": "/Users/manuelturpin/.sentinel/mcp-servers/sentinel-scanner/"
+  }
+}

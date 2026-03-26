@@ -1,0 +1,9 @@
+{
+  "collection_name": "sentinel_evolve_intel",
+  "embedding_model": "BAAI/bge-base-en-v1.5",
+  "query_prefix": "Represent this sentence for searching relevant passages: ",
+  "distance": "cosine",
+  "chromadb_path": "./chromadb",
+  "sources": ["./sources/*.md"],
+  "feature_inventory_path": "../../../knowledge-base/anthropic-intel/feature-inventory.json"
+}

@@ -1,0 +1,77 @@
+{
+  "last_sync": "2026-03-26T04:43:23.037087+00:00",
+  "sync_sources": {
+    "claude_code": {
+      "repo": "anthropics/claude-code",
+      "api_url": "https://api.github.com/repos/anthropics/claude-code/releases",
+      "changelog_url": "https://api.github.com/repos/anthropics/claude-code/contents/CHANGELOG.md",
+      "enabled": true,
+      "tier": 1,
+      "note": "Primary source \u2014 Claude Code releases and changelog"
+    },
+    "skills": {
+      "repo": "anthropics/skills",
+      "api_url": "https://api.github.com/repos/anthropics/skills/git/trees/main",
+      "enabled": true,
+      "tier": 2,
+      "note": "Official skills repo \u2014 patterns, frontmatter, protocols"
+    },
+    "sdk_python": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "api_url": "https://api.github.com/repos/anthropics/anthropic-sdk-python/releases",
+      "enabled": true,
+      "tier": 3,
+      "note": "Python SDK releases"
+    },
+    "sdk_typescript": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "api_url": "https://api.github.com/repos/anthropics/anthropic-sdk-typescript/releases",
+      "enabled": true,
+      "tier": 3,
+      "note": "TypeScript SDK releases"
+    },
+    "mcp_python": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "api_url": "https://api.github.com/repos/modelcontextprotocol/python-sdk/releases",
+      "enabled": true,
+      "tier": 3,
+      "note": "MCP Python SDK releases"
+    },
+    "mcp_typescript": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "api_url": "https://api.github.com/repos/modelcontextprotocol/typescript-sdk/releases",
+      "enabled": true,
+      "tier": 3,
+      "note": "MCP TypeScript SDK releases"
+    },
+    "cookbooks": {
+      "repo": "anthropics/claude-cookbooks",
+      "api_url": "https://api.github.com/repos/anthropics/claude-cookbooks/commits",
+      "enabled": true,
+      "tier": 4,
+      "note": "Cookbooks \u2014 weekly only"
+    },
+    "courses": {
+      "repo": "anthropics/courses",
+      "api_url": "https://api.github.com/repos/anthropics/courses/commits",
+      "enabled": true,
+      "tier": 4,
+      "note": "Courses \u2014 weekly only"
+    }
+  },
+  "tier_schedule": {
+    "1": "every_sync",
+    "2": "every_sync",
+    "3": "every_sync",
+    "4": "weekly_only"
+  },
+  "rate_limit_ms": 1000,
+  "max_pages_per_source": 5,
+  "last_sync_status": {
+    "timestamp": "2026-03-26T04:43:23.037101+00:00",
+    "results": {
+      "claude_code": 66
+    },
+    "success": true
+  }
+}

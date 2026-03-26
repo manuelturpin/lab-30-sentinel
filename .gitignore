@@ -4,6 +4,8 @@ __pycache__/
 *.pyc
 rag/chromadb/
 rag/embeddings/
+skills/sentinel-evolve/knowledge/chromadb/
+skills/sentinel-rag/knowledge/chromadb/
 reports/archive/*.sarif.json
 reports/archive/*.md
 knowledge-base/cve-feed/nvd-cache.json

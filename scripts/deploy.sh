@@ -126,6 +126,32 @@ deploy_local() {
     (cd "$SENTINEL_RAG_HOME/knowledge" && python3 indexer.py 2>&1) || warn "RAG expertise indexing failed"
   fi
 
+  # --- 3c. Deploy sentinel-evolve skill ---
+  SENTINEL_EVOLVE_SKILL_DIR="$HOME/.claude/skills/sentinel-evolve"
+  SENTINEL_EVOLVE_HOME="$SENTINEL_HOME/skills/sentinel-evolve"
+
+  info "Deploying sentinel-evolve skill..."
+  mkdir -p "$SENTINEL_EVOLVE_SKILL_DIR"
+  mkdir -p "$SENTINEL_EVOLVE_HOME/knowledge/sources"
+
+  cp "$PROJECT_DIR/skills/sentinel-evolve/SKILL.md" "$SENTINEL_EVOLVE_SKILL_DIR/SKILL.md"
+
+  # Knowledge scripts + sources (NOT chromadb data)
+  cp "$PROJECT_DIR/skills/sentinel-evolve/knowledge/indexer.py" "$SENTINEL_EVOLVE_HOME/knowledge/"
+  cp "$PROJECT_DIR/skills/sentinel-evolve/knowledge/query.py" "$SENTINEL_EVOLVE_HOME/knowledge/"
+  cp "$PROJECT_DIR/skills/sentinel-evolve/knowledge/config.json" "$SENTINEL_EVOLVE_HOME/knowledge/"
+  rsync -a "$PROJECT_DIR/skills/sentinel-evolve/knowledge/sources/" "$SENTINEL_EVOLVE_HOME/knowledge/sources/"
+
+  # Metadata: only copy if absent (don't overwrite runtime state)
+  [ ! -f "$SENTINEL_EVOLVE_HOME/metadata.json" ] && \
+    cp "$PROJECT_DIR/skills/sentinel-evolve/metadata.json" "$SENTINEL_EVOLVE_HOME/metadata.json"
+
+  # Index sentinel-evolve KB
+  info "Indexing sentinel-evolve intelligence KB..."
+  if command -v python3 &>/dev/null; then
+    (cd "$SENTINEL_EVOLVE_HOME/knowledge" && python3 indexer.py 2>&1) || warn "Evolve KB indexing failed"
+  fi
+
   # --- 4. Register MCP server globally ---
   info "Registering MCP server with Claude Code..."
 
@@ -163,6 +189,7 @@ deploy_local() {
   [ -f "$SENTINEL_HOME/rag/query.py" ] && info "RAG: OK" || { error "RAG: MISSING"; ERRORS=$((ERRORS+1)); }
   [ -f "$MCP_SERVER" ] && info "MCP: OK" || { error "MCP: NOT BUILT"; ERRORS=$((ERRORS+1)); }
   [ -f "$SENTINEL_RAG_SKILL_DIR/SKILL.md" ] && info "Sentinel-RAG Skill: OK" || { error "Sentinel-RAG Skill: MISSING"; ERRORS=$((ERRORS+1)); }
+  [ -f "$SENTINEL_EVOLVE_SKILL_DIR/SKILL.md" ] && info "Sentinel-Evolve Skill: OK" || { error "Sentinel-Evolve Skill: MISSING"; ERRORS=$((ERRORS+1)); }
 
   echo ""
   if [ "$ERRORS" -eq 0 ]; then
@@ -181,6 +208,7 @@ deploy_local() {
   echo "Commands:"
   echo "  /sentinel-security                         # Run audit in any project"
   echo "  /sentinel-rag                              # RAG expert in any project"
+  echo "  /sentinel-evolve                           # Evolve intelligence in any project"
   echo "  bash $SENTINEL_HOME/scripts/test-sentinel.sh  # System tests"
   echo "  python3 $SENTINEL_HOME/rag/indexer.py      # Re-index KB"
   echo "  claude mcp list                            # Verify MCP registration"

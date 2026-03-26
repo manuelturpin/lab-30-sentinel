@@ -1,0 +1,293 @@
+{
+  "version": "1.0.0",
+  "last_built": "2026-03-26T12:00:00Z",
+  "features": {
+    "skills_system": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "skills",
+      "status": "stable",
+      "description": "SKILL.md files with frontmatter (name, description, user_invocable)"
+    },
+    "session_forking": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "sessions",
+      "status": "stable",
+      "description": "Fork sessions to create branches of conversation"
+    },
+    "cloud_handoff": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "sessions",
+      "status": "stable",
+      "description": "Cloud handoff with & operator"
+    },
+    "from_pr_flag": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "cli",
+      "status": "stable",
+      "description": "--from-pr flag to resume sessions linked to PR"
+    },
+    "pdf_pages_param": {
+      "introduced": "2.1.30",
+      "date": "2026-02-03",
+      "category": "tools",
+      "status": "stable",
+      "description": "PDF pages parameter for Read tool (e.g., pages: 1-5)"
+    },
+    "opus_4_6": {
+      "introduced": "2.1.32",
+      "date": "2026-02-05",
+      "category": "models",
+      "status": "stable",
+      "description": "Claude Opus 4.6 with 1M context window"
+    },
+    "agent_teams": {
+      "introduced": "2.1.32",
+      "date": "2026-02-05",
+      "category": "multi-agent",
+      "status": "experimental",
+      "description": "Multi-agent collaboration with team lead + teammates, shared task board, messaging"
+    },
+    "auto_memory": {
+      "introduced": "2.1.32",
+      "date": "2026-02-05",
+      "category": "memory",
+      "status": "stable",
+      "description": "Automatic memory saving and recall across sessions"
+    },
+    "teammate_idle_hook": {
+      "introduced": "2.1.33",
+      "date": "2026-02-06",
+      "category": "hooks",
+      "status": "stable",
+      "description": "TeammateIdle and TaskCompleted hook events"
+    },
+    "agent_memory_frontmatter": {
+      "introduced": "2.1.33",
+      "date": "2026-02-06",
+      "category": "agents",
+      "status": "stable",
+      "description": "memory frontmatter field for agents (user, project, local scope)"
+    },
+    "fast_mode": {
+      "introduced": "2.1.36",
+      "date": "2026-02-07",
+      "category": "performance",
+      "status": "stable",
+      "description": "Fast mode for Opus 4.6 — same model, faster output"
+    },
+    "sonnet_4_6": {
+      "introduced": "2.1.45",
+      "date": "2026-02-17",
+      "category": "models",
+      "status": "stable",
+      "description": "Claude Sonnet 4.6 support"
+    },
+    "git_worktrees": {
+      "introduced": "2.1.49",
+      "date": "2026-02-19",
+      "category": "isolation",
+      "status": "stable",
+      "description": "--worktree flag and isolation: worktree for agents"
+    },
+    "background_agents": {
+      "introduced": "2.1.49",
+      "date": "2026-02-19",
+      "category": "agents",
+      "status": "stable",
+      "description": "background: true frontmatter for agents + Ctrl+F kill"
+    },
+    "worktree_hooks": {
+      "introduced": "2.1.50",
+      "date": "2026-02-20",
+      "category": "hooks",
+      "status": "stable",
+      "description": "WorktreeCreate and WorktreeRemove hook events"
+    },
+    "config_change_hook": {
+      "introduced": "2.1.50",
+      "date": "2026-02-20",
+      "category": "hooks",
+      "status": "stable",
+      "description": "ConfigChange hook event when config files change"
+    },
+    "remote_control": {
+      "introduced": "2.1.51",
+      "date": "2026-02-24",
+      "category": "sessions",
+      "status": "stable",
+      "description": "claude remote-control subcommand for external builds"
+    },
+    "managed_settings_plist": {
+      "introduced": "2.1.51",
+      "date": "2026-02-24",
+      "category": "config",
+      "status": "stable",
+      "description": "macOS plist and Windows Registry managed settings support"
+    },
+    "batch_simplify_skills": {
+      "introduced": "2.1.63",
+      "date": "2026-02-28",
+      "category": "skills",
+      "status": "stable",
+      "description": "/simplify and /batch bundled slash commands"
+    },
+    "http_hooks": {
+      "introduced": "2.1.63",
+      "date": "2026-02-28",
+      "category": "hooks",
+      "status": "stable",
+      "description": "HTTP hooks — POST JSON to URL, receive JSON response"
+    },
+    "worktree_shared_config": {
+      "introduced": "2.1.63",
+      "date": "2026-02-28",
+      "category": "isolation",
+      "status": "stable",
+      "description": "Project configs and auto memory shared across git worktrees"
+    },
+    "auto_memory_directory": {
+      "introduced": "2.1.74",
+      "date": "2026-03-12",
+      "category": "memory",
+      "status": "stable",
+      "description": "autoMemoryDirectory setting for custom memory location"
+    },
+    "mcp_elicitation": {
+      "introduced": "2.1.76",
+      "date": "2026-03-14",
+      "category": "mcp",
+      "status": "stable",
+      "description": "MCP elicitation support — interactive dialogs for structured input"
+    },
+    "post_compact_hook": {
+      "introduced": "2.1.76",
+      "date": "2026-03-14",
+      "category": "hooks",
+      "status": "stable",
+      "description": "PostCompact hook event after context compaction"
+    },
+    "worktree_sparse_paths": {
+      "introduced": "2.1.76",
+      "date": "2026-03-14",
+      "category": "isolation",
+      "status": "stable",
+      "description": "worktree.sparsePaths setting for sparse checkouts"
+    },
+    "effort_slash_command": {
+      "introduced": "2.1.76",
+      "date": "2026-03-14",
+      "category": "performance",
+      "status": "stable",
+      "description": "/effort slash command to set effort level"
+    },
+    "opus_output_128k": {
+      "introduced": "2.1.77",
+      "date": "2026-03-17",
+      "category": "models",
+      "status": "stable",
+      "description": "Opus 4.6 output limits: 64k default, 128k upper bound"
+    },
+    "line_by_line_streaming": {
+      "introduced": "2.1.78",
+      "date": "2026-03-17",
+      "category": "performance",
+      "status": "stable",
+      "description": "Line-by-line response streaming as generated"
+    },
+    "stop_failure_hook": {
+      "introduced": "2.1.78",
+      "date": "2026-03-17",
+      "category": "hooks",
+      "status": "stable",
+      "description": "StopFailure hook for API error handling"
+    },
+    "agent_effort_maxturns_disallowed": {
+      "introduced": "2.1.78",
+      "date": "2026-03-17",
+      "category": "agents",
+      "status": "stable",
+      "description": "effort, maxTurns, disallowedTools frontmatter fields for agents"
+    },
+    "bare_flag": {
+      "introduced": "2.1.81",
+      "date": "2026-03-20",
+      "category": "cli",
+      "status": "stable",
+      "description": "--bare flag for scripted -p calls (skips hooks, LSP, plugin sync)"
+    },
+    "channels_mobile": {
+      "introduced": "2.1.81",
+      "date": "2026-03-20",
+      "category": "integrations",
+      "status": "experimental",
+      "description": "--channels support for forwarding tool approval prompts to mobile"
+    },
+    "managed_settings_d": {
+      "introduced": "2.1.83",
+      "date": "2026-03-25",
+      "category": "config",
+      "status": "stable",
+      "description": "managed-settings.d/ drop-in directory for policy fragments"
+    },
+    "cwd_file_changed_hooks": {
+      "introduced": "2.1.83",
+      "date": "2026-03-25",
+      "category": "hooks",
+      "status": "stable",
+      "description": "CwdChanged and FileChanged hook events for reactive environment management"
+    },
+    "transcript_search": {
+      "introduced": "2.1.83",
+      "date": "2026-03-25",
+      "category": "ui",
+      "status": "stable",
+      "description": "Transcript search — press / in transcript mode (Ctrl+O)"
+    },
+    "subprocess_env_scrub": {
+      "introduced": "2.1.83",
+      "date": "2026-03-25",
+      "category": "security",
+      "status": "stable",
+      "description": "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1 to strip credentials from subprocess environments"
+    },
+    "paths_yaml_globs": {
+      "introduced": "2.1.84",
+      "date": "2026-03-26",
+      "category": "skills",
+      "status": "stable",
+      "description": "Rules and skills paths: frontmatter accepts YAML list of globs"
+    },
+    "task_created_hook": {
+      "introduced": "2.1.84",
+      "date": "2026-03-26",
+      "category": "hooks",
+      "status": "stable",
+      "description": "TaskCreated hook when tasks created via TaskCreate"
+    },
+    "effort_frontmatter_skills": {
+      "introduced": "2.1.80",
+      "date": "2026-03-19",
+      "category": "skills",
+      "status": "stable",
+      "description": "effort frontmatter field for skills and commands"
+    },
+    "structured_outputs": {
+      "introduced": "2.1.82",
+      "date": "2026-03-20",
+      "category": "cli",
+      "status": "beta",
+      "description": "--json-schema for validated structured JSON output from agents"
+    },
+    "initial_prompt_agents": {
+      "introduced": "2.1.83",
+      "date": "2026-03-25",
+      "category": "agents",
+      "status": "stable",
+      "description": "Agents can declare initialPrompt in frontmatter for auto-submitting first turn"
+    }
+  }
+}

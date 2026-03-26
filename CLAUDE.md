@@ -2,17 +2,19 @@
 
 ## Projet
 
-Sentinel est un systeme de cybersecurite IA pour Claude Code. Il regroupe deux skills dans le namespace sentinel : `/sentinel-security` qui audite la securite de n'importe quel projet (web, mobile, API, DB, infra, SaaS, skills IA) en detectant le stack, dispatchant des agents specialises en parallele, consultant une Knowledge Base enrichie par RAG, et produisant un rapport SARIF consolide avec scoring CVSS v4 + EPSS et remediations ; et `/sentinel-rag` qui est un expert RAG autonome pour creer, diagnostiquer, optimiser et maintenir les systemes RAG.
+Sentinel est un systeme de cybersecurite IA pour Claude Code. Il regroupe trois skills dans le namespace sentinel : `/sentinel-security` qui audite la securite de n'importe quel projet (web, mobile, API, DB, infra, SaaS, skills IA) en detectant le stack, dispatchant des agents specialises en parallele, consultant une Knowledge Base enrichie par RAG, et produisant un rapport SARIF consolide avec scoring CVSS v4 + EPSS et remediations ; `/sentinel-rag` qui est un expert RAG autonome pour creer, diagnostiquer, optimiser et maintenir les systemes RAG ; et `/sentinel-evolve` qui est un meta-skill d'intelligence evolutive surveillant l'ecosysteme Anthropic (Claude Code, skills officiels, MCP, SDKs) pour detecter les opportunites d'optimisation et evoluer automatiquement les skills Sentinel.
 
 ## Architecture
 
 - **Skill `/sentinel-security`** : Point d'entree — detecte le stack, dispatche les agents, agrege les resultats
 - **Skill `/sentinel-rag`** : Expert RAG autonome — cree, diagnostique, optimise et maintient les systemes RAG avec sa propre base de connaissances
+- **Skill `/sentinel-evolve`** : Meta-skill d'intelligence evolutive — surveille l'ecosysteme Anthropic, detecte les opportunites d'optimisation, produit des rapports EIR (Evolve Intelligence Report)
 - **12 Agents specialises** : web, api, llm-ai, mobile, infra, supply-chain, db, data-privacy, websocket, cors, ssl-tls, static-site
 - **Knowledge Base** : Regles JSON machine-readable par domaine, mappees aux standards OWASP/MITRE/CWE
-- **RAG (ChromaDB)** : Recherche semantique sur les regles et CVE
+- **Anthropic Intel** : Feature inventory + releases cache pour le suivi des capacites Claude Code
+- **RAG (ChromaDB)** : 3 collections — securite (4088 docs), RAG expertise (100 docs), evolve intel (87 docs)
 - **MCP Server** : 2 outils reseau (scan-dependencies, scan-headers) — les 4 outils locaux ont ete remplaces par Read/Grep/Bash natifs
-- **Crons** : Veille automatisee CVE, re-scan, mise a jour KB
+- **Crons** : Veille automatisee CVE, re-scan, mise a jour KB, sync ecosysteme Anthropic (bi-hebdo)
 
 ## Standards couverts
 
@@ -107,11 +109,13 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 - `/sentinel-security` : Lancer un audit complet du projet courant
 - `/sentinel-rag` : Expert RAG — diagnostic, optimisation, creation, evaluation
+- `/sentinel-evolve` : Intelligence evolutive — scan, analyze, recommend, apply, maintain
 - `bash scripts/deploy.sh` : Deployer sur la machine locale (OBLIGATOIRE apres chaque modif)
 - `bash scripts/setup.sh` : Installer les dependances et outils externes
 - `bash scripts/test-sentinel.sh` : Tester le systeme (structure, RAG, KB, templates)
 - `bash tests/e2e-session10.sh` : Tests E2E (RAG queries, schema validation, error handling)
 - `python3 scripts/cve-sync.py --days 90` : Sync CVE (NVD + OSV batch + GitHub + EPSS)
+- `python3 scripts/anthropic-sync.py` : Sync ecosysteme Anthropic (Claude Code, skills, SDKs, MCP)
 - `python3 rag/indexer.py` : Re-indexer la KB dans ChromaDB
 - `python3 rag/query.py --query "..." --domain all --limit 10` : Requete semantique KB
 
@@ -130,23 +134,28 @@ Creer un fichier `.sentinel.json` a la racine du projet cible pour personnaliser
 
 ## Variables d'environnement
 
-- `GITHUB_TOKEN` : Token GitHub pour sync des Security Advisories (optionnel, sans token = 60 req/h)
+- `GITHUB_TOKEN` : Token GitHub pour sync des Security Advisories ET Anthropic Sync (optionnel, sans token = 60 req/h)
 - `NVD_API_KEY` : Cle API NVD pour rate limit plus eleve (optionnel)
 
 ## Structure cle
 
 ```
-skills/security/SKILL.md          — Skill orchestrateur
-skills/security/agents/*.md       — 12 agents specialises + _protocol.md
+skills/security/SKILL.md              — Skill orchestrateur
+skills/security/agents/*.md           — 12 agents specialises + _protocol.md
 skills/sentinel-rag/SKILL.md          — Skill expert RAG
 skills/sentinel-rag/knowledge/        — KB vectorielle du skill RAG (indexer, query, sources)
-knowledge-base/domains/*/         — Regles par domaine (115 regles)
-knowledge-base/cve-feed/          — Caches NVD/OSV/GitHub (2273 CVE)
-knowledge-base/standards/         — OWASP, MITRE, CWE, NIST (94 items)
-mcp-servers/sentinel-scanner/     — MCP Server TypeScript (2 tools actifs)
-rag/                              — RAG ChromaDB (4088 docs indexes)
-scripts/deploy.sh                 — Script de deploiement local
-crons/                            — Taches automatisees
-reports/                          — Templates et archives
-tests/                            — E2E tests, vulnerable-app
+skills/sentinel-evolve/SKILL.md       — Skill meta-evolution
+skills/sentinel-evolve/knowledge/     — KB intelligence evolutive (indexer, query, sources, ChromaDB)
+knowledge-base/domains/*/             — Regles par domaine (115 regles)
+knowledge-base/cve-feed/              — Caches NVD/OSV/GitHub (2273 CVE)
+knowledge-base/anthropic-intel/       — Feature inventory + releases cache ecosysteme Anthropic
+knowledge-base/standards/             — OWASP, MITRE, CWE, NIST (94 items)
+mcp-servers/sentinel-scanner/         — MCP Server TypeScript (2 tools actifs)
+rag/                                  — RAG ChromaDB (4088 docs indexes)
+scripts/deploy.sh                     — Script de deploiement local
+scripts/anthropic-sync.py             — Pipeline sync ecosysteme Anthropic
+crons/                                — Taches automatisees (4 crons)
+reports/                              — Templates et archives
+tests/                                — E2E tests, vulnerable-app
+config/evolve-targets.json            — Skills cibles pour sentinel-evolve
 ```

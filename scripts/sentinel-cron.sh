@@ -6,6 +6,7 @@
 #   1. CVE Sync (daily)
 #   2. KB Update (Monday only)
 #   3. Project Rescan (Monday only, after KB update)
+#   4. Anthropic Sync (Monday + Thursday)
 #
 # Usage:
 #   bash scripts/sentinel-cron.sh           # Normal run
@@ -93,6 +94,25 @@ if [ "$IS_MONDAY" = true ] || [ "$FORCE" = true ]; then
     fi
 else
     log "[3/3] Project Rescan: SKIPPED (not Monday)"
+fi
+
+# --- Step 4: Anthropic Sync (Monday + Thursday, or --force) ---
+IS_THURSDAY=false
+if [ "$DOW" = "4" ]; then
+    IS_THURSDAY=true
+fi
+
+if [ "$IS_MONDAY" = true ] || [ "$IS_THURSDAY" = true ] || [ "$FORCE" = true ]; then
+    log "[4/4] Anthropic Sync (bi-weekly)"
+    "$PYTHON" "$PROJECT_ROOT/scripts/anthropic-sync.py" && rc=0 || rc=$?
+    if [ "$rc" -eq 0 ]; then
+        log "[4/4] Anthropic Sync: SUCCESS"
+    else
+        log "[4/4] Anthropic Sync: FAILED (exit $rc)"
+        ERRORS=$((ERRORS + 1))
+    fi
+else
+    log "[4/4] Anthropic Sync: SKIPPED (not Monday or Thursday)"
 fi
 
 log ""
