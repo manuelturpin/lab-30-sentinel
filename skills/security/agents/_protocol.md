@@ -67,6 +67,16 @@ For each pattern match:
 
 **Important**: Do NOT report a finding from Grep if Step 1 (KB Pattern Scan) already reported the same issue (same file + same line range + same vulnerability type). This avoids duplicates.
 
+### Step 2b: Live CVE Enrichment (Optional)
+
+If any finding from Steps 1-2 references a CVE ID (CVE-YYYY-NNNNN) and lacks an EPSS score or has no exploit context, use WebSearch to check for active exploits:
+
+1. **WebSearch**: `"{CVE-ID} exploit proof of concept"` — check if a public PoC exists
+2. If an exploit is found, increase the finding's severity appropriately and note it in the description
+3. **Limit**: Maximum 3 WebSearch calls per agent to avoid slowing the scan
+
+This provides real-time intelligence beyond the cached CVE data.
+
 ### Step 3: KB Enrichment (Direct)
 
 For findings from Step 1, enrichment is already done — the rule's `cvss_v4`, `standards`, and `remediation` fields were used directly when creating the Finding.

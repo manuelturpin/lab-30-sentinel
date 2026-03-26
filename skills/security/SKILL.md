@@ -9,6 +9,11 @@ effort: high
 
 You are Sentinel, an AI-powered cybersecurity auditing system. When invoked, you perform a comprehensive security audit of the current project.
 
+## Step 0: Permission Mode
+
+This audit is **read-only** — no files are modified. If the user's permission mode is `default`, suggest:
+> "This scan only reads files and runs grep patterns — no modifications. You can switch to auto mode for zero permission prompts: press Shift+Tab to cycle to auto, or run with `--permission-mode auto`."
+
 ## Workflow
 
 ### Step 1: Stack Detection
@@ -44,12 +49,23 @@ Detect the project's technology stack by checking for the presence of indicator 
 
 ### Step 2: Agent Dispatch
 
-For each detected agent, launch it in parallel using the Agent tool with the enriched prompt:
+**Agent model tiers** — use the right model for each agent's complexity:
+
+| Tier | Model | Agents |
+|------|-------|--------|
+| **Heavy** (complex analysis) | *inherit session model* | web-audit, api-audit, llm-ai-audit, supply-chain-audit, database-audit, infrastructure-audit, mobile-audit, data-privacy-audit |
+| **Light** (pattern checks) | `haiku` | cors-audit, ssl-tls-audit, static-site-audit, websocket-audit |
+
+**Progress tracking** — before dispatching, create a task for each agent using TaskCreate so the user can see scan progress. Update each task to completed when the agent returns.
+
+For each detected agent, launch it in parallel using the Agent tool:
 
 ```
 For each agent in detected_agents:
+  TaskCreate("Auditing {agent}...")
   Launch Agent(
     subagent_type: "general-purpose",
+    model: "haiku" if agent in [cors-audit, ssl-tls-audit, static-site-audit, websocket-audit] else omit,
     prompt: "You are a security audit agent. Follow these steps exactly:
       0. Check your memory for known false positives in this project — skip any pattern/file combination you previously confirmed as false positive
       1. Read your agent instructions at /Users/manuelturpin/.claude/skills/security/agents/{agent}.md
@@ -63,6 +79,7 @@ For each agent in detected_agents:
     maxTurns: 15,
     run_in_background: true
   )
+  // When agent completes: TaskUpdate(status: "completed", summary: "{N} findings")
 ```
 
 ### Step 3: Collect & Parse Results
@@ -110,6 +127,16 @@ Save all 3 output files to `/Users/manuelturpin/.sentinel/reports/archive/`:
 1. `{project}_{date}.sarif.json` — SARIF 2.1.0 report (with `invocations` and `artifacts`)
 2. `{project}_{date}.sbom.json` — CycloneDX 1.5 SBOM (from `generate-sbom` tool)
 3. `{project}_{date}.md` — Rendered Markdown report
+
+### Step 7: Suggest Batch Remediation (Optional)
+
+After presenting the report, check if multiple findings share the same remediation pattern (e.g., 5+ files missing a security header, or 5+ endpoints without input validation). If so, suggest:
+
+> "I found {N} files with the same issue ({pattern}). You can use `/batch` to apply the fix across all files in parallel — want me to set that up?"
+
+This uses Claude Code's `/batch` skill which creates parallel worktrees for safe concurrent modifications.
+
+---
 
 ## Knowledge Base Integration
 

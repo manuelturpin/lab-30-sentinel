@@ -231,6 +231,15 @@ KB housekeeping, history, and dashboard.
 
 5. **Update inventory**: If user reports a new Claude Code feature not yet tracked, add it to `feature-inventory.json`
 
+6. **Setup crons**: Create native Claude Code scheduled tasks using CronCreate:
+   ```
+   CronCreate: "CVE sync"         schedule="0 6 * * *"     command="python3 ~/.sentinel/scripts/cve-sync.py"
+   CronCreate: "KB update"        schedule="0 9 * * 1"     command="python3 ~/.sentinel/scripts/kb-update.py"
+   CronCreate: "Project rescan"   schedule="0 8 * * 1"     command="python3 ~/.sentinel/scripts/project-rescan.py"
+   CronCreate: "Anthropic sync"   schedule="0 7 * * 1,4"   command="python3 ~/.sentinel/scripts/anthropic-sync.py"
+   ```
+   Use `CronList` to show active crons and `CronDelete` to remove them. This replaces external crontab configuration.
+
 ---
 
 ## Knowledge Base

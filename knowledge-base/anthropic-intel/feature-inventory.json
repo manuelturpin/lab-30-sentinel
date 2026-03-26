@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_built": "2026-03-26T12:00:00Z",
+  "last_built": "2026-03-26T06:00:00Z",
   "features": {
     "skills_system": {
       "introduced": "2.1.0",
@@ -77,7 +77,7 @@
       "date": "2026-02-07",
       "category": "performance",
       "status": "stable",
-      "description": "Fast mode for Opus 4.6 — same model, faster output"
+      "description": "Fast mode for Opus 4.6 \u2014 same model, faster output"
     },
     "sonnet_4_6": {
       "introduced": "2.1.45",
@@ -140,7 +140,7 @@
       "date": "2026-02-28",
       "category": "hooks",
       "status": "stable",
-      "description": "HTTP hooks — POST JSON to URL, receive JSON response"
+      "description": "HTTP hooks \u2014 POST JSON to URL, receive JSON response"
     },
     "worktree_shared_config": {
       "introduced": "2.1.63",
@@ -161,7 +161,7 @@
       "date": "2026-03-14",
       "category": "mcp",
       "status": "stable",
-      "description": "MCP elicitation support — interactive dialogs for structured input"
+      "description": "MCP elicitation support \u2014 interactive dialogs for structured input"
     },
     "post_compact_hook": {
       "introduced": "2.1.76",
@@ -245,7 +245,7 @@
       "date": "2026-03-25",
       "category": "ui",
       "status": "stable",
-      "description": "Transcript search — press / in transcript mode (Ctrl+O)"
+      "description": "Transcript search \u2014 press / in transcript mode (Ctrl+O)"
     },
     "subprocess_env_scrub": {
       "introduced": "2.1.83",
@@ -288,6 +288,132 @@
       "category": "agents",
       "status": "stable",
       "description": "Agents can declare initialPrompt in frontmatter for auto-submitting first turn"
+    },
+    "explore_subagent": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "agents",
+      "status": "stable",
+      "description": "Explore subagent type \u2014 fast read-only codebase search (uses Haiku, cheaper)"
+    },
+    "plan_subagent": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "agents",
+      "status": "stable",
+      "description": "Plan subagent type \u2014 research and design before implementation"
+    },
+    "worktree_isolation_agents": {
+      "introduced": "2.1.49",
+      "date": "2026-02-19",
+      "category": "isolation",
+      "status": "stable",
+      "description": "isolation: worktree parameter on Agent calls \u2014 each agent gets isolated repo copy"
+    },
+    "task_create_update": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "tools",
+      "status": "stable",
+      "description": "TaskCreate/TaskUpdate tools for tracking progress within a session"
+    },
+    "web_fetch_search": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "tools",
+      "status": "stable",
+      "description": "WebFetch and WebSearch tools for live web lookups"
+    },
+    "cron_create_native": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "automation",
+      "status": "stable",
+      "description": "CronCreate/CronList/CronDelete tools for native scheduled tasks"
+    },
+    "rules_files": {
+      "introduced": "2.1.3",
+      "date": "2026-01-09",
+      "category": "config",
+      "status": "stable",
+      "description": ".claude/rules/*.md files with paths: frontmatter for conditional project rules"
+    },
+    "browser_automation": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "tools",
+      "status": "stable",
+      "description": "Chrome browser automation tools for web app testing and verification"
+    },
+    "plugin_packaging": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "distribution",
+      "status": "stable",
+      "description": "Package skills+agents+MCP as a distributable plugin via marketplace"
+    },
+    "remote_scheduled_tasks": {
+      "introduced": "2.1.51",
+      "date": "2026-02-24",
+      "category": "automation",
+      "status": "stable",
+      "description": "Cloud scheduled tasks on Anthropic infrastructure \u2014 no local machine needed"
+    },
+    "model_alias_override": {
+      "introduced": "2.1.45",
+      "date": "2026-02-17",
+      "category": "models",
+      "status": "stable",
+      "description": "model frontmatter in agents \u2014 use haiku for light agents, opus for critical"
+    },
+    "deep_links": {
+      "introduced": "2.1.76",
+      "date": "2026-03-14",
+      "category": "integrations",
+      "status": "stable",
+      "description": "claude:// deep links to open sessions, files, or start with a prompt"
+    },
+    "auto_mode": {
+      "introduced": "2.1.51",
+      "date": "2026-02-24",
+      "category": "security",
+      "status": "stable",
+      "description": "Auto permission mode \u2014 classifier reviews actions for non-destructive workflows"
+    },
+    "lsp_integration": {
+      "introduced": "2.1.0",
+      "date": "2026-01-07",
+      "category": "tools",
+      "status": "stable",
+      "description": "LSP tool for code intelligence \u2014 go to definition, find references, diagnostics"
+    },
+    "simplify_skill": {
+      "introduced": "2.1.63",
+      "date": "2026-02-28",
+      "category": "skills",
+      "status": "stable",
+      "description": "/simplify bundled skill \u2014 review changed code for reuse, quality, efficiency"
+    },
+    "batch_parallel": {
+      "introduced": "2.1.63",
+      "date": "2026-02-28",
+      "category": "skills",
+      "status": "stable",
+      "description": "/batch skill \u2014 parallelize large codebase changes across worktrees"
+    },
+    "session_naming": {
+      "introduced": "2.1.76",
+      "date": "2026-03-14",
+      "category": "sessions",
+      "status": "stable",
+      "description": "--name flag and AI-generated session titles for organization"
+    },
+    "compact_hooks": {
+      "introduced": "2.1.76",
+      "date": "2026-03-14",
+      "category": "hooks",
+      "status": "stable",
+      "description": "PreCompact/PostCompact hooks for context management automation"
     }
   }
 }
