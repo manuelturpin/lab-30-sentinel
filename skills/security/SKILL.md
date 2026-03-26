@@ -51,12 +51,14 @@ For each agent in detected_agents:
   Launch Agent(
     subagent_type: "general-purpose",
     prompt: "You are a security audit agent. Follow these steps exactly:
+      0. Check your memory for known false positives in this project — skip any pattern/file combination you previously confirmed as false positive
       1. Read your agent instructions at /Users/manuelturpin/.claude/skills/security/agents/{agent}.md
       2. Read the common execution protocol at /Users/manuelturpin/.claude/skills/security/agents/_protocol.md
       3. Audit the project at {target_path} following your Execution Protocol
       4. Use Read + Grep + Bash for KB pattern scanning (read rules.json, grep patterns, enrich via RAG)
       5. Only use MCP tools if your agent lists them (scan-dependencies for supply-chain, scan-headers for web/cors/ssl/static)
       6. Return ONLY a JSON code block containing a Finding[] array — no other text",
+    memory: "project",
     disallowedTools: ["Write", "Edit", "NotebookEdit"],
     maxTurns: 15,
     run_in_background: true
@@ -68,7 +70,10 @@ For each agent in detected_agents:
 Wait for all agents to complete. For each agent result:
 
 1. **Extract JSON**: Parse the agent's response to find the JSON code block (between ` ```json ` and ` ``` ` or `[` to `]`)
-2. **Validate findings**: Each finding must have at minimum: `id`, `severity`, `title`, `description`, `location.file`, `remediation`
+2. **Validate findings against schema**: Each finding MUST conform to this JSON schema — reject any finding missing required fields:
+   - **Required**: `id` (string), `severity` (CRITICAL|HIGH|MEDIUM|LOW|INFO), `title` (string), `description` (string), `location.file` (string), `remediation` (string)
+   - **Optional**: `location.line`, `location.column`, `standard`, `owasp`, `cwe`, `cvss_v4` (number 0-10), `epss` (number 0-1)
+   - Discard findings that don't match (log which ones were rejected and why)
 3. **Fallback**: If an agent does not return valid JSON:
    - Log a warning: `"WARNING: Agent {agent_name} did not return valid Finding[] JSON — skipping"`
    - Continue with remaining agents — do NOT fail the entire audit
