@@ -5,16 +5,26 @@
   "hooks": {
     "FileChanged": [
       {
-        "type": "command",
-        "command": "basename \"$CLAUDE_FILE_PATH\" | grep -qE '^(package\\.json|package-lock\\.json|requirements\\.txt|Dockerfile|go\\.mod|Gemfile\\.lock|Cargo\\.lock|pom\\.xml)$' && echo '⚠️ Dependencies changed — consider running /sentinel-security' || true",
-        "description": "Sentinel: alert when dependency files change"
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "basename \"$CLAUDE_FILE_PATH\" | grep -qE '^(package\\.json|package-lock\\.json|requirements\\.txt|Dockerfile|go\\.mod|Gemfile\\.lock|Cargo\\.lock|pom\\.xml)$' && echo '⚠️ Dependencies changed — consider running /sentinel-security' || true",
+            "description": "Sentinel: alert when dependency files change"
+          }
+        ]
       }
     ],
     "StopFailure": [
       {
-        "type": "command",
-        "command": "mkdir -p ~/.sentinel/logs && echo \"[$(date '+%Y-%m-%d %H:%M:%S')] Agent failed — reason: ${CLAUDE_STOP_REASON:-unknown}\" >> ~/.sentinel/logs/agent-failures.log",
-        "description": "Sentinel: log agent failures for diagnostics"
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.sentinel/logs && echo \"[$(date '+%Y-%m-%d %H:%M:%S')] Agent failed — reason: ${CLAUDE_STOP_REASON:-unknown}\" >> ~/.sentinel/logs/agent-failures.log",
+            "description": "Sentinel: log agent failures for diagnostics"
+          }
+        ]
       }
     ]
   }
