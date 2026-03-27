@@ -18,3 +18,5 @@ reports/archive/*.sbom.json
 !.env.example
 *.log
 .DS_Store
+*.lock
+.claude/scheduled_tasks.lock
