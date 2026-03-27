@@ -26,6 +26,31 @@ Auto-generated from GitHub releases for RAG indexing.
 - [VSCode] Added rate limit warning banner with usage percentage and reset time
 - Stats screenshot (Ctrl+S in /stats) now works in all builds and is 16× faster
 
+## v2.1.85 (2026-03-26)
+
+
+### Features
+
+- Added CLAUDE_CODE_MCP_SERVER_NAME and CLAUDE_CODE_MCP_SERVER_URL environment variables to MCP headersHelper scripts, allowing one helper to serve multiple servers
+- Added conditional if field for hooks using permission rule syntax (e.g., Bash(git *)) to filter when they run, reducing process spawning overhead
+- Added timestamp markers in transcripts when scheduled tasks (/loop, CronCreate) fire
+- Added trailing space after [Image #N] placeholder when pasting images
+- Deep link queries (claude-cli://open?q=…) now support up to 5,000 characters, with a "scroll to review" warning for long pre-filled prompts
+- MCP OAuth now follows RFC 9728 Protected Resource Metadata discovery to find the authorization server
+- Plugins blocked by organization policy (managed-settings.json) can no longer be installed or enabled, and are hidden from marketplace views
+- PreToolUse hooks can now satisfy AskUserQuestion by returning updatedInput alongside permissionDecision: "allow", enabling headless integrations that collect answers via their own UI
+- tool_parameters in OpenTelemetry tool_result events are now gated behind OTEL_LOG_TOOL_DETAILS=1
+- Fixed shift+enter and meta+enter being intercepted by typeahead suggestions instead of inserting newlines
+- Fixed terminal left in enhanced keyboard mode after exit in Ghostty, Kitty, WezTerm, and other terminals supporting the Kitty keyboard protocol — Ctrl+C and Ctrl+D now work correctly after quitting
+- Improved @-mention file autocomplete performance on large repositories
+- Improved PowerShell dangerous command detection
+- Improved scroll performance with large transcripts by replacing WASM yoga-layout with a pure TypeScript implementation
+- Reduced UI stutter when compaction triggers on large sessions
+
+### Deprecations
+
+- Fixed Python Agent SDK: type:'sdk' MCP servers passed via --mcp-config are no longer dropped during startup
+
 ## v2.1.83 (2026-03-25)
 
 

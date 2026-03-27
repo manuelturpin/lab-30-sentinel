@@ -3,6 +3,18 @@ name: sentinel-security
 description: Audit de cybersecurite complet — detecte le stack, dispatche des agents specialises en parallele, et produit un rapport SARIF consolide avec scoring et remediations
 user_invocable: true
 effort: high
+paths:
+  - "**/package.json"
+  - "**/requirements.txt"
+  - "**/pyproject.toml"
+  - "**/go.mod"
+  - "**/Gemfile"
+  - "**/Cargo.toml"
+  - "**/Dockerfile"
+  - "**/*.tf"
+  - "**/SKILL.md"
+  - "**/CLAUDE.md"
+  - "**/.env"
 ---
 
 # /sentinel-security — Sentinel Cybersecurity Audit
@@ -152,6 +164,19 @@ Agents now read the Knowledge Base directly using native tools (Read, Grep, Bash
 **MCP tools retained** (external network calls only):
 - `scan-dependencies` — calls OSV API for dependency CVE analysis
 - `scan-headers` — makes HTTP GET to check security headers on live URLs
+
+## CI/Headless Mode
+
+When invoked via `claude --output-format json` or `claude -p`, produce structured SARIF output:
+
+1. Detect headless mode: if no interactive terminal is available, skip Markdown rendering
+2. Output the SARIF 2.1.0 JSON directly to stdout (no wrapping, no prose)
+3. Exit with code 0 (clean) or 1 (findings with CRITICAL/HIGH severity)
+
+This enables integration in CI/CD pipelines:
+```bash
+claude -p "/sentinel-security" --output-format json > report.sarif.json
+```
 
 ## Important Notes
 

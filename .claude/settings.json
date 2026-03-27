@@ -6,10 +6,11 @@
     "FileChanged": [
       {
         "matcher": "",
+        "if": "Edit(package.json|package-lock.json|requirements.txt|Dockerfile|go.mod|Gemfile.lock|Cargo.lock|pom.xml|pyproject.toml)",
         "hooks": [
           {
             "type": "command",
-            "command": "basename \"$CLAUDE_FILE_PATH\" | grep -qE '^(package\\.json|package-lock\\.json|requirements\\.txt|Dockerfile|go\\.mod|Gemfile\\.lock|Cargo\\.lock|pom\\.xml)$' && echo '⚠️ Dependencies changed — consider running /sentinel-security' || true",
+            "command": "echo '⚠️ Dependencies changed — consider running /sentinel-security'",
             "description": "Sentinel: alert when dependency files change"
           }
         ]
@@ -23,6 +24,18 @@
             "type": "command",
             "command": "mkdir -p ~/.sentinel/logs && echo \"[$(date '+%Y-%m-%d %H:%M:%S')] Agent failed — reason: ${CLAUDE_STOP_REASON:-unknown}\" >> ~/.sentinel/logs/agent-failures.log",
             "description": "Sentinel: log agent failures for diagnostics"
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.sentinel/logs && echo \"[$(date '+%Y-%m-%d %H:%M:%S')] Session compacted — partial scan results may need re-collection\" >> ~/.sentinel/logs/compaction.log",
+            "description": "Sentinel: log compaction events for scan resilience"
           }
         ]
       }

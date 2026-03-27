@@ -1,0 +1,965 @@
+{
+  "releases": {
+    "anthropics/anthropic-sdk-python@v0.86.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.86.0",
+      "date": "2026-03-18",
+      "name": "v0.86.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.86.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.85.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.85.0",
+      "date": "2026-03-16",
+      "name": "v0.85.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.85.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.84.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.84.0",
+      "date": "2026-02-25",
+      "name": "v0.84.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.84.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.83.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.83.0",
+      "date": "2026-02-19",
+      "name": "v0.83.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.83.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.82.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.82.0",
+      "date": "2026-02-18",
+      "name": "v0.82.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.82.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.81.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.81.0",
+      "date": "2026-02-18",
+      "name": "v0.81.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.81.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.80.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.80.0",
+      "date": "2026-02-17",
+      "name": "v0.80.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.80.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.79.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.79.0",
+      "date": "2026-02-07",
+      "name": "v0.79.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.79.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.78.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.78.0",
+      "date": "2026-02-05",
+      "name": "v0.78.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.78.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.77.1": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.77.1",
+      "date": "2026-02-03",
+      "name": "v0.77.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.77.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.77.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.77.0",
+      "date": "2026-01-29",
+      "name": "v0.77.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.77.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.76.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.76.0",
+      "date": "2026-01-13",
+      "name": "v0.76.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.76.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.75.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.75.0",
+      "date": "2025-11-24",
+      "name": "v0.75.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.75.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.74.1": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.74.1",
+      "date": "2025-11-19",
+      "name": "v0.74.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.74.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.74.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.74.0",
+      "date": "2025-11-18",
+      "name": "v0.74.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.74.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.73.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.73.0",
+      "date": "2025-11-14",
+      "name": "v0.73.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.73.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.72.1": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.72.1",
+      "date": "2025-11-11",
+      "name": "v0.72.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.72.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.72.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.72.0",
+      "date": "2025-10-28",
+      "name": "v0.72.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.72.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.71.1": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.71.1",
+      "date": "2025-10-28",
+      "name": "v0.71.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.71.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.71.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.71.0",
+      "date": "2025-10-16",
+      "name": "v0.71.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.71.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.70.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.70.0",
+      "date": "2025-10-15",
+      "name": "v0.70.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.70.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.69.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.69.0",
+      "date": "2025-09-29",
+      "name": "v0.69.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.69.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.68.2": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.68.2",
+      "date": "2025-09-29",
+      "name": "v0.68.2",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.68.2",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.68.1": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.68.1",
+      "date": "2025-09-26",
+      "name": "v0.68.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.68.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.68.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.68.0",
+      "date": "2025-09-17",
+      "name": "v0.68.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.68.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.67.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.67.0",
+      "date": "2025-09-10",
+      "name": "v0.67.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.67.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.66.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.66.0",
+      "date": "2025-09-03",
+      "name": "v0.66.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.66.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.65.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.65.0",
+      "date": "2025-09-02",
+      "name": "v0.65.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.65.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.64.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.64.0",
+      "date": "2025-08-13",
+      "name": "v0.64.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.64.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.63.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.63.0",
+      "date": "2025-08-12",
+      "name": "v0.63.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.63.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.80.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.80.0",
+      "date": "2026-03-18",
+      "name": "sdk: v0.80.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.80.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.79.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.79.0",
+      "date": "2026-03-16",
+      "name": "sdk: v0.79.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.79.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@vertex-sdk-v0.14.4": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "vertex-sdk-v0.14.4",
+      "date": "2026-02-19",
+      "name": "vertex-sdk: v0.14.4",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/vertex-sdk-v0.14.4",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.78.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.78.0",
+      "date": "2026-02-19",
+      "name": "sdk: v0.78.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.78.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@bedrock-sdk-v0.26.4": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "bedrock-sdk-v0.26.4",
+      "date": "2026-02-19",
+      "name": "bedrock-sdk: v0.26.4",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/bedrock-sdk-v0.26.4",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.77.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.77.0",
+      "date": "2026-02-18",
+      "name": "sdk: v0.77.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.77.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.76.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.76.0",
+      "date": "2026-02-18",
+      "name": "sdk: v0.76.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.76.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.75.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.75.0",
+      "date": "2026-02-17",
+      "name": "sdk: v0.75.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.75.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.74.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.74.0",
+      "date": "2026-02-07",
+      "name": "sdk: v0.74.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.74.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@vertex-sdk-v0.14.3": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "vertex-sdk-v0.14.3",
+      "date": "2026-02-05",
+      "name": "vertex-sdk: v0.14.3",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/vertex-sdk-v0.14.3",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.73.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.73.0",
+      "date": "2026-02-05",
+      "name": "sdk: v0.73.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.73.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@foundry-sdk-v0.2.3": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "foundry-sdk-v0.2.3",
+      "date": "2026-02-05",
+      "name": "foundry-sdk: v0.2.3",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/foundry-sdk-v0.2.3",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@bedrock-sdk-v0.26.3": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "bedrock-sdk-v0.26.3",
+      "date": "2026-02-05",
+      "name": "bedrock-sdk: v0.26.3",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/bedrock-sdk-v0.26.3",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.72.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.72.1",
+      "date": "2026-01-30",
+      "name": "sdk: v0.72.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.72.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@vertex-sdk-v0.14.2": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "vertex-sdk-v0.14.2",
+      "date": "2026-01-29",
+      "name": "vertex-sdk: v0.14.2",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/vertex-sdk-v0.14.2",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.72.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.72.0",
+      "date": "2026-01-29",
+      "name": "sdk: v0.72.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.72.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@foundry-sdk-v0.2.2": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "foundry-sdk-v0.2.2",
+      "date": "2026-01-29",
+      "name": "foundry-sdk: v0.2.2",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/foundry-sdk-v0.2.2",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@bedrock-sdk-v0.26.2": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "bedrock-sdk-v0.26.2",
+      "date": "2026-01-29",
+      "name": "bedrock-sdk: v0.26.2",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/bedrock-sdk-v0.26.2",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.71.2": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.71.2",
+      "date": "2025-12-06",
+      "name": "sdk: v0.71.2",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.71.2",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.71.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.71.1",
+      "date": "2025-12-04",
+      "name": "sdk: v0.71.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.71.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@vertex-sdk-v0.14.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "vertex-sdk-v0.14.1",
+      "date": "2025-11-24",
+      "name": "vertex-sdk: v0.14.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/vertex-sdk-v0.14.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.71.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.71.0",
+      "date": "2025-11-24",
+      "name": "sdk: v0.71.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.71.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@bedrock-sdk-v0.26.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "bedrock-sdk-v0.26.1",
+      "date": "2025-11-24",
+      "name": "bedrock-sdk: v0.26.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/bedrock-sdk-v0.26.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.70.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.70.1",
+      "date": "2025-11-20",
+      "name": "sdk: v0.70.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.70.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@foundry-sdk-v0.2.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "foundry-sdk-v0.2.1",
+      "date": "2025-11-20",
+      "name": "foundry-sdk: v0.2.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/foundry-sdk-v0.2.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.70.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.70.0",
+      "date": "2025-11-19",
+      "name": "sdk: v0.70.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.70.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@foundry-sdk-v0.2.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "foundry-sdk-v0.2.0",
+      "date": "2025-11-19",
+      "name": "foundry-sdk: v0.2.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/foundry-sdk-v0.2.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.69.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.69.0",
+      "date": "2025-11-14",
+      "name": "sdk: v0.69.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.69.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@bedrock-sdk-v0.26.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "bedrock-sdk-v0.26.0",
+      "date": "2025-11-14",
+      "name": "bedrock-sdk: v0.26.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/bedrock-sdk-v0.26.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.68.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.68.0",
+      "date": "2025-10-28",
+      "name": "sdk: v0.68.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.68.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.26.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.26.0",
+      "date": "2026-01-24",
+      "name": "v1.26.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.26.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.25.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.25.0",
+      "date": "2025-12-18",
+      "name": "v1.25.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.25.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.24.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.24.0",
+      "date": "2025-12-12",
+      "name": "v1.24.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.24.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.23.3": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.23.3",
+      "date": "2025-12-09",
+      "name": "v1.23.3",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.23.3",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.23.2": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.23.2",
+      "date": "2025-12-04",
+      "name": "v1.23.2",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.23.2",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.23.1": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.23.1",
+      "date": "2025-12-02",
+      "name": "v1.23.1",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.23.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.23.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.23.0",
+      "date": "2025-12-02",
+      "name": "v1.23.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.23.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.22.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.22.0",
+      "date": "2025-11-20",
+      "name": "v1.22.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.22.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.21.2": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.21.2",
+      "date": "2025-11-17",
+      "name": "v1.21.2",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.21.2",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.21.1": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.21.1",
+      "date": "2025-11-13",
+      "name": "v1.21.1",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.21.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.21.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.21.0",
+      "date": "2025-11-06",
+      "name": "v1.21.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.21.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.20.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.20.0",
+      "date": "2025-10-30",
+      "name": "v1.20.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.20.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.19.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.19.0",
+      "date": "2025-10-24",
+      "name": "v1.19.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.19.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.18.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.18.0",
+      "date": "2025-10-16",
+      "name": "v1.18.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.18.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.17.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.17.0",
+      "date": "2025-10-09",
+      "name": "v1.17.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.17.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.16.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.16.0",
+      "date": "2025-10-02",
+      "name": "v1.16.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.16.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.15.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.15.0",
+      "date": "2025-09-25",
+      "name": "v1.15.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.15.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.14.1": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.14.1",
+      "date": "2025-09-18",
+      "name": "v1.14.1",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.14.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.14.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.14.0",
+      "date": "2025-09-11",
+      "name": "v1.14.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.14.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.13.1": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.13.1",
+      "date": "2025-08-21",
+      "name": "v1.13.1",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.13.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.13.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.13.0",
+      "date": "2025-08-14",
+      "name": "v1.13.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.13.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.12.4": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.12.4",
+      "date": "2025-08-07",
+      "name": "v1.12.4",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.12.4",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.12.3": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.12.3",
+      "date": "2025-07-31",
+      "name": "v1.12.3",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.12.3",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.12.2": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.12.2",
+      "date": "2025-07-24",
+      "name": "v1.12.2",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.12.2",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.12.1": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.12.1",
+      "date": "2025-07-22",
+      "name": "v1.12.1",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.12.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.12.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.12.0",
+      "date": "2025-07-17",
+      "name": "v1.12.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.12.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.11.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.11.0",
+      "date": "2025-07-10",
+      "name": "v1.11.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.11.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.10.1": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.10.1",
+      "date": "2025-06-27",
+      "name": "v1.10.1",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.10.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.10.0": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.10.0",
+      "date": "2025-06-26",
+      "name": "v1.10.0",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.10.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.9.4": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.9.4",
+      "date": "2025-06-12",
+      "name": "v1.9.4",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.9.4",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@v1.28.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "v1.28.0",
+      "date": "2026-03-25",
+      "name": "v1.28.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/v1.28.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@v1.27.1": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "v1.27.1",
+      "date": "2026-02-24",
+      "name": "v1.27.1",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/v1.27.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@v1.27.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "v1.27.0",
+      "date": "2026-02-16",
+      "name": "v1.27.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/v1.27.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@v1.26.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "v1.26.0",
+      "date": "2026-02-04",
+      "name": "v1.26.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/v1.26.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@v1.25.3": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "v1.25.3",
+      "date": "2026-01-20",
+      "name": "v1.25.3",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/v1.25.3",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@v1.25.2": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "v1.25.2",
+      "date": "2026-01-07",
+      "name": "v1.25.2",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/v1.25.2",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.25.1": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.25.1",
+      "date": "2025-12-16",
+      "name": "1.25.1",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.25.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.25.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.25.0",
+      "date": "2025-12-15",
+      "name": "1.25.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.25.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.24.3": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.24.3",
+      "date": "2025-12-04",
+      "name": "1.24.3",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.24.3",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.23.1": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.23.1",
+      "date": "2025-12-04",
+      "name": "1.23.1",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.23.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.24.2": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.24.2",
+      "date": "2025-12-03",
+      "name": "1.24.2",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.24.2",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.24.1": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.24.1",
+      "date": "2025-12-02",
+      "name": "1.24.1",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.24.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.24.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.24.0",
+      "date": "2025-12-02",
+      "name": "1.24.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.24.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.23.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.23.0",
+      "date": "2025-11-25",
+      "name": "1.23.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.23.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.23.0-beta.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.23.0-beta.0",
+      "date": "2025-11-20",
+      "name": "1.23.0-beta.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.23.0-beta.0",
+      "prerelease": true
+    },
+    "modelcontextprotocol/typescript-sdk@1.22.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.22.0",
+      "date": "2025-11-13",
+      "name": "1.22.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.22.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.21.2": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.21.2",
+      "date": "2025-11-13",
+      "name": "1.21.2",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.21.2",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.21.1": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.21.1",
+      "date": "2025-11-07",
+      "name": "1.21.1",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.21.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.21.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.21.0",
+      "date": "2025-10-30",
+      "name": "1.21.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.21.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.20.2": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.20.2",
+      "date": "2025-10-24",
+      "name": "1.20.2",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.20.2",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.20.1": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.20.1",
+      "date": "2025-10-16",
+      "name": "1.20.1",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.20.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.20.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.20.0",
+      "date": "2025-10-09",
+      "name": "1.20.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.20.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.19.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.19.0",
+      "date": "2025-10-02",
+      "name": "1.19.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.19.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.18.2": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.18.2",
+      "date": "2025-09-25",
+      "name": "1.18.2",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.18.2",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.18.1": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.18.1",
+      "date": "2025-09-18",
+      "name": "1.18.1",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.18.1",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.18.0": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.18.0",
+      "date": "2025-09-18",
+      "name": "1.18.0",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.18.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.17.5": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.17.5",
+      "date": "2025-09-02",
+      "name": "1.17.5",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.17.5",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.17.4": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.17.4",
+      "date": "2025-08-21",
+      "name": "1.17.4",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.17.4",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.17.3": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.17.3",
+      "date": "2025-08-14",
+      "name": "1.17.3",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.17.3",
+      "prerelease": false
+    },
+    "modelcontextprotocol/typescript-sdk@1.17.2": {
+      "repo": "modelcontextprotocol/typescript-sdk",
+      "tag": "1.17.2",
+      "date": "2025-08-07",
+      "name": "1.17.2",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.17.2",
+      "prerelease": false
+    }
+  },
+  "last_modified": "2026-03-27T02:17:01.298718+00:00"
+}

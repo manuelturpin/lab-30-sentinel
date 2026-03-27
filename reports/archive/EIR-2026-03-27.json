@@ -1,0 +1,126 @@
+{
+  "report_id": "EIR-2026-03-27",
+  "date": "2026-03-27",
+  "claude_code_version": "2.1.85",
+  "exploitation_score": {
+    "current": 63,
+    "potential": 78,
+    "features_used": 27,
+    "features_partial": 2,
+    "features_not_used": 14,
+    "features_not_applicable": 16,
+    "total": 59
+  },
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Model tiers par agent (haiku/sonnet/opus)",
+      "description": "Assigner model: haiku aux agents simples (cors, static-site, ssl-tls), model: sonnet aux moyens, garder opus pour web/llm-ai/supply-chain. Reduit couts 40-60%.",
+      "source": {"feature": "model_alias_override", "introduced": "2.1.45"},
+      "impact": {"score": 5, "affected_files": ["skills/security/SKILL.md"]},
+      "effort": {"level": "low", "estimate_minutes": 15},
+      "status": "applied"
+    },
+    {
+      "id": "REC-002",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Hooks conditionnels avec if (v2.1.85)",
+      "description": "Utiliser le champ 'if' pour filtrer FileChanged sur fichiers de deps uniquement.",
+      "source": {"feature": "cwd_file_changed_hooks", "introduced": "2.1.85"},
+      "impact": {"score": 3, "affected_files": [".claude/settings.json"]},
+      "effort": {"level": "low", "estimate_minutes": 5},
+      "status": "applied"
+    },
+    {
+      "id": "REC-003",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Paths YAML globs pour activation ciblee",
+      "description": "Ajouter paths: globs au frontmatter pour activation intelligente.",
+      "source": {"feature": "paths_yaml_globs", "introduced": "2.1.84"},
+      "impact": {"score": 3, "affected_files": ["skills/security/SKILL.md"]},
+      "effort": {"level": "low", "estimate_minutes": 5},
+      "status": "applied"
+    },
+    {
+      "id": "REC-004",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Crons natifs Claude Code",
+      "description": "Remplacer crontab externe par CronCreate natifs.",
+      "source": {"feature": "cron_create_native", "introduced": "2.1.0"},
+      "impact": {"score": 4, "affected_files": ["crons/"]},
+      "effort": {"level": "low", "estimate_minutes": 10},
+      "status": "applied"
+    },
+    {
+      "id": "REC-005",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Agents en background pour parallelisme reel",
+      "description": "run_in_background: true sur les Agent dispatches pour paralleliser les 12 agents.",
+      "source": {"feature": "background_agents", "introduced": "2.1.49"},
+      "impact": {"score": 5, "affected_files": ["skills/security/SKILL.md"]},
+      "effort": {"level": "medium", "estimate_minutes": 30},
+      "status": "applied"
+    },
+    {
+      "id": "REC-006",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Post-compact hook pour sauvegarder l'etat",
+      "description": "Sauvegarder findings partiels avant compaction.",
+      "source": {"feature": "compact_hooks", "introduced": "2.1.76"},
+      "impact": {"score": 4, "affected_files": [".claude/settings.json"]},
+      "effort": {"level": "medium", "estimate_minutes": 20},
+      "status": "applied"
+    },
+    {
+      "id": "REC-007",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Structured outputs SARIF pour CI",
+      "description": "Garantir conformite SARIF en mode headless/CI.",
+      "source": {"feature": "structured_outputs", "introduced": "2.1.82"},
+      "impact": {"score": 4, "affected_files": ["skills/security/SKILL.md"]},
+      "effort": {"level": "medium", "estimate_minutes": 25},
+      "status": "applied"
+    },
+    {
+      "id": "REC-008",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Remote scheduled tasks pour scans auto",
+      "description": "Planifier scans automatiques via remote triggers.",
+      "source": {"feature": "remote_scheduled_tasks", "introduced": "2.1.51"},
+      "impact": {"score": 4, "affected_files": ["crons/project-rescan.md"]},
+      "effort": {"level": "medium", "estimate_minutes": 30},
+      "status": "applied"
+    },
+    {
+      "id": "REC-009",
+      "priority": "P3",
+      "category": "strategic",
+      "title": "Packager Sentinel comme plugin",
+      "description": "Plugin installable pour distribution.",
+      "source": {"feature": "plugin_packaging", "introduced": "2.1.0"},
+      "impact": {"score": 5, "affected_files": ["package.json", "skills/"]},
+      "effort": {"level": "high", "estimate_minutes": 240},
+      "status": "deferred"
+    },
+    {
+      "id": "REC-010",
+      "priority": "P3",
+      "category": "strategic",
+      "title": "LSP pour analyse de code precise",
+      "description": "Typage et scope pour reduire les faux positifs.",
+      "source": {"feature": "lsp_integration", "introduced": "2.1.0"},
+      "impact": {"score": 4, "affected_files": ["skills/security/agents/_protocol.md"]},
+      "effort": {"level": "high", "estimate_minutes": 120},
+      "status": "deferred"
+    }
+  ]
+}
