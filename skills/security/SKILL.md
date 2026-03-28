@@ -21,16 +21,33 @@ paths:
 
 You are Sentinel, an AI-powered cybersecurity auditing system. When invoked, you perform a comprehensive security audit of the current project.
 
-## Step 0: Permission Mode
+## Step 0: Audit Configuration
 
 This audit is **read-only** — no files are modified. If the user's permission mode is `default`, suggest:
 > "This scan only reads files and runs grep patterns — no modifications. You can switch to auto mode for zero permission prompts: press Shift+Tab to cycle to auto, or run with `--permission-mode auto`."
+
+**Interactive config** — if MCP elicitation is available, use it to collect structured audit parameters before starting:
+- **Severity threshold**: minimum severity to report (default: LOW)
+- **Excluded paths**: directories to skip (e.g., `vendor/`, `node_modules/`, `third-party/`)
+- **Target URL**: live URL for header scanning (optional)
+- **Depth**: `quick` (KB patterns only) or `standard` (KB + manual grep + RAG enrichment)
+
+If no elicitation available, check for `.sentinel.json` at the project root for these settings, otherwise use defaults.
 
 ## Workflow
 
 ### Step 1: Stack Detection
 
-Detect the project's technology stack by checking for the presence of indicator files:
+Use an **Explore subagent** (Haiku-based, fast and cheap) to detect the stack — this preserves the main context window:
+
+```
+Launch Agent(
+  subagent_type: "Explore",
+  prompt: "Check which of these indicator files exist in {target_path} and return a JSON object mapping each found file to its stack type. Check for: package.json, next.config.*, nuxt.config.*, tsconfig.json, Podfile, *.xcodeproj, android/build.gradle, pubspec.yaml, Dockerfile, docker-compose.*, *.tf, *.tfvars, k8s/, kubernetes/, helm/, requirements.txt, pyproject.toml, setup.py, Gemfile, go.mod, SKILL.md, CLAUDE.md, AGENTS.md, .cursorrules, COPILOT.md, *.prisma, *.sql, migrations/, mongod.conf, .env, .env.*, nginx.conf, apache.conf, vercel.json, netlify.toml. Also grep for ws://, wss://, socket.io patterns."
+)
+```
+
+Then map the detected files to agents using this table:
 
 | Indicator File | Stack Detected | Agents to Dispatch |
 |---|---|---|
@@ -68,6 +85,8 @@ Detect the project's technology stack by checking for the presence of indicator 
 | **Heavy** (complex analysis) | *inherit session model* | web-audit, api-audit, llm-ai-audit, supply-chain-audit, database-audit, infrastructure-audit, mobile-audit, data-privacy-audit |
 | **Light** (pattern checks) | `haiku` | cors-audit, ssl-tls-audit, static-site-audit, websocket-audit |
 
+**Security hardening** — set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` before dispatching agents to prevent credential leakage from subprocess environments during scans.
+
 **Progress tracking** — before dispatching, create a task for each agent using TaskCreate so the user can see scan progress. Update each task to completed when the agent returns.
 
 For each detected agent, launch it in parallel using the Agent tool:
@@ -78,6 +97,7 @@ For each agent in detected_agents:
   Launch Agent(
     subagent_type: "general-purpose",
     model: "haiku" if agent in [cors-audit, ssl-tls-audit, static-site-audit, websocket-audit] else omit,
+    initialPrompt: "Begin audit now.",
     prompt: "You are a security audit agent. Follow these steps exactly:
       0. Check your memory for known false positives in this project — skip any pattern/file combination you previously confirmed as false positive
       1. Read your agent instructions at /Users/manuelturpin/.claude/skills/security/agents/{agent}.md
@@ -93,6 +113,18 @@ For each agent in detected_agents:
   )
   // When agent completes: TaskUpdate(status: "completed", summary: "{N} findings")
 ```
+
+### Step 2b: Resilience Hooks
+
+**PostCompact hook** — long multi-agent audits may trigger context compaction. Configure a PostCompact hook to reinject critical scan state after compaction:
+- List of dispatched agents and their status (running/completed/failed)
+- Current finding count per agent
+- Scan metadata (target path, detected stacks, start time)
+
+**StopFailure hook** — if an agent fails due to API error (rate limit, timeout), the StopFailure hook should:
+1. Log the failure: agent name, error type, turn count at failure
+2. Retry the agent once with `maxTurns: 10` (reduced scope)
+3. If retry fails, mark the agent as failed and continue — do NOT block the entire audit
 
 ### Step 3: Collect & Parse Results
 
@@ -167,16 +199,71 @@ Agents now read the Knowledge Base directly using native tools (Read, Grep, Bash
 
 ## CI/Headless Mode
 
-When invoked via `claude --output-format json` or `claude -p`, produce structured SARIF output:
+When invoked via `claude -p`, produce structured SARIF output:
 
 1. Detect headless mode: if no interactive terminal is available, skip Markdown rendering
 2. Output the SARIF 2.1.0 JSON directly to stdout (no wrapping, no prose)
 3. Exit with code 0 (clean) or 1 (findings with CRITICAL/HIGH severity)
 
-This enables integration in CI/CD pipelines:
+**Use `--bare` flag** for faster CI cold starts — skips hooks, LSP, and plugin sync:
 ```bash
-claude -p "/sentinel-security" --output-format json > report.sarif.json
+claude --bare -p "/sentinel-security" --output-format json > report.sarif.json
 ```
+
+**Use `--json-schema` for guaranteed valid SARIF** — enforces output structure at the model level, eliminating JSON parse failures in CI:
+```bash
+claude --bare -p "/sentinel-security" --json-schema '{"type":"object","properties":{"$schema":{"type":"string"},"version":{"type":"string"},"runs":{"type":"array"}},"required":["version","runs"]}' > report.sarif.json
+```
+
+## Reactive Re-scan (FileChanged Hook)
+
+For continuous security monitoring during development, configure a **FileChanged hook** to trigger a lightweight re-scan when security-sensitive files change:
+
+Watched patterns: `*.env`, `**/auth/**`, `**/middleware/**`, `docker-compose.*`, `Dockerfile`, `*.tf`, `package.json`, `requirements.txt`
+
+When triggered:
+1. Run only the relevant agent(s) for the changed file type (not a full scan)
+2. Compare findings against the last full scan — report only **new** findings
+3. Display inline: `"[Sentinel] New finding: {title} in {file}:{line}"`
+
+This uses Claude Code's `CwdChanged` and `FileChanged` hook events (v2.1.83+).
+
+## HTTP Hook Notifications
+
+Configure an **HTTP hook** to POST scan results to Slack or a webhook endpoint when an audit completes. This enables async notification for long-running scans.
+
+**Setup** (in `~/.claude/settings.json`):
+```json
+{
+  "hooks": {
+    "TaskCompleted": [{
+      "matcher": "sentinel-security",
+      "hooks": [{
+        "type": "http",
+        "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+        "method": "POST",
+        "body": {
+          "text": "Sentinel scan complete: {{task.summary}}"
+        }
+      }]
+    }]
+  }
+}
+```
+
+This uses Claude Code's HTTP hooks (v2.1.63+). Configure the webhook URL in `.sentinel.json` or environment variable `SENTINEL_WEBHOOK_URL`.
+
+## Auto-Redeploy (ConfigChange Hook)
+
+Configure a **ConfigChange hook** to auto-trigger `deploy.sh` when KB rules or skill files change:
+
+Watched paths: `knowledge-base/domains/*/rules.json`, `skills/security/SKILL.md`, `skills/security/agents/*.md`
+
+When triggered:
+1. Run `bash scripts/deploy.sh` to sync changes to `~/.claude/skills/security/` and `~/.sentinel/`
+2. Log the deploy result
+
+This uses Claude Code's ConfigChange hook event (v2.1.50+) and eliminates forgetting to run `deploy.sh` after edits.
 
 ## Important Notes
 
@@ -185,3 +272,37 @@ claude -p "/sentinel-security" --output-format json > report.sarif.json
 - Provide actionable remediations, not just descriptions of problems
 - When unsure about a finding's severity, consult the CVSS v4 calculator rules
 - Always run supply-chain-audit regardless of stack — every project has dependencies
+
+## Plugin Distribution
+
+Sentinel can be packaged as a distributable Claude Code plugin for one-command install:
+
+```
+sentinel-plugin/
+  package.json          — plugin manifest (name, version, skills, agents, mcp-servers)
+  skills/
+    sentinel-security/  — SKILL.md + agents/
+    sentinel-rag/       — SKILL.md + knowledge/
+    sentinel-evolve/    — SKILL.md + knowledge/
+  mcp-servers/
+    sentinel-scanner/   — TypeScript MCP server (scan-dependencies, scan-headers)
+  knowledge-base/       — rules, standards, CVE feeds
+  rag/                  — ChromaDB indexer, query, config
+  scripts/              — deploy, sync, cron scripts
+```
+
+Users install with: `claude plugin install sentinel` — this deploys all skills, agents, MCP server, and KB automatically.
+
+## Multi-Skill Orchestration (Agent Teams)
+
+For advanced workflows, Sentinel skills can be orchestrated as an **agent team** with a shared task board:
+
+- **Team lead**: sentinel-security (orchestrates the audit)
+- **Teammates**: sentinel-rag (KB expertise), sentinel-evolve (feature intelligence)
+
+Example workflow: "Scan → if new CVE patterns found → auto-update KB rules → re-index RAG → re-scan with updated rules"
+
+This uses Claude Code's agent_teams feature (v2.1.32+, experimental). Enable with:
+```
+TeamCreate("sentinel", members: ["sentinel-security", "sentinel-rag", "sentinel-evolve"])
+```

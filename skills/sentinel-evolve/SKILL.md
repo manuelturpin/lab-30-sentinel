@@ -189,7 +189,20 @@ Ask the user which recommendations to apply:
 
 ### Step 4: Apply Each Recommendation
 
+Use **worktree isolation** to apply changes safely — each recommendation is applied in an isolated copy of the repo to prevent breaking the working tree:
+
+```
 For each selected recommendation:
+  Launch Agent(
+    subagent_type: "general-purpose",
+    isolation: "worktree",
+    prompt: "Apply recommendation {rec.id}: {rec.description}.
+      Files to modify: {rec.impact.affected_files}.
+      Read each file, apply the change, verify no syntax errors."
+  )
+```
+
+If worktree isolation is unavailable (e.g., uncommitted changes), fall back to direct edits:
 1. Read the target file(s) from `affected_files`
 2. Explain the change to the user
 3. Apply the modification using Edit tool
@@ -199,8 +212,9 @@ For each selected recommendation:
 ### Step 5: Post-Apply
 
 After all changes:
-1. Suggest running `bash scripts/deploy.sh` to deploy changes
-2. Update the EIR JSON with applied statuses
+1. If worktree was used, review the diff and merge into main branch
+2. Suggest running `bash scripts/deploy.sh` to deploy changes
+3. Update the EIR JSON with applied statuses
 
 **IMPORTANT**: Always ask for user confirmation before each modification. Never auto-apply without explicit approval.
 
@@ -231,7 +245,7 @@ KB housekeeping, history, and dashboard.
 
 5. **Update inventory**: If user reports a new Claude Code feature not yet tracked, add it to `feature-inventory.json`
 
-6. **Setup crons**: Create native Claude Code scheduled tasks using CronCreate:
+6. **Setup local crons**: Create native Claude Code scheduled tasks using CronCreate:
    ```
    CronCreate: "CVE sync"         schedule="0 6 * * *"     command="python3 ~/.sentinel/scripts/cve-sync.py"
    CronCreate: "KB update"        schedule="0 9 * * 1"     command="python3 ~/.sentinel/scripts/kb-update.py"
@@ -239,6 +253,14 @@ KB housekeeping, history, and dashboard.
    CronCreate: "Anthropic sync"   schedule="0 7 * * 1,4"   command="python3 ~/.sentinel/scripts/anthropic-sync.py"
    ```
    Use `CronList` to show active crons and `CronDelete` to remove them. This replaces external crontab configuration.
+
+7. **Setup cloud crons (remote)**: For 24/7 monitoring without requiring the local machine to be on, use **remote scheduled tasks** on Anthropic infrastructure:
+   ```
+   RemoteTrigger: "Sentinel CVE Sync"      schedule="0 6 * * *"     prompt="Run python3 ~/.sentinel/scripts/cve-sync.py and report summary"
+   RemoteTrigger: "Sentinel KB Update"      schedule="0 9 * * 1"     prompt="Run python3 ~/.sentinel/scripts/kb-update.py and report summary"
+   RemoteTrigger: "Sentinel Anthropic Sync" schedule="0 7 * * 1,4"   prompt="Run python3 ~/.sentinel/scripts/anthropic-sync.py and report summary"
+   ```
+   Remote tasks run on Anthropic's cloud (v2.1.51+) — use the `/schedule` skill to manage them. Prefer remote over local for critical crons (CVE sync, anthropic sync) to ensure they run even when the machine is off.
 
 ---
 

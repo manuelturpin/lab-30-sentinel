@@ -3,6 +3,15 @@
 Auto-generated from GitHub releases for RAG indexing.
 
 
+## v2.1.86 (2026-03-27)
+
+
+### Features
+
+- Added X-Claude-Code-Session-Id header to API requests so proxies can aggregate requests by session without parsing the body
+- Added .jj and .sl to VCS directory exclusion lists so Grep and file autocomplete don't descend into Jujutsu or Sapling metadata
+- Fixed scroll not following new messages after wheel scroll or click-to-select at the bottom of a long conversation
+
 ## v2.1.84 (2026-03-26)
 
 

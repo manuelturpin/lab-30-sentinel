@@ -88,6 +88,21 @@ For findings from Step 2 (manual Grep) that don't have a KB rule match, enrich t
 
 **Do NOT call `query-kb` via MCP** — the Bash call above does the same thing without MCP serialization overhead.
 
+### Step 3b: Live Vulnerability Verification (web-audit, cors-audit, ssl-tls-audit, static-site-audit)
+
+If a live URL is provided in the audit config, use **browser automation** to dynamically verify web vulnerabilities found in Steps 1-3:
+
+1. **XSS verification**: Navigate to the affected URL with a safe test payload (e.g., `<img src=x onerror=console.log('xss-test')>`) and check console for execution
+2. **Open redirect verification**: Follow redirect chains and verify the final destination matches the expected domain
+3. **CSRF verification**: Check forms for missing CSRF tokens by reading page HTML
+4. **Security headers**: Use `mcp__claude-in-chrome__read_network_requests` to inspect response headers (CSP, HSTS, X-Frame-Options)
+
+**Rules for browser verification:**
+- Only verify findings already identified by static analysis — do NOT use browser as a scanner
+- Maximum 5 browser verifications per agent to avoid slowing the audit
+- Mark verified findings with `"verified": true` in the description
+- Findings that fail dynamic verification should be downgraded to INFO with note "Static analysis only — not confirmed dynamically"
+
 ### Step 4: Deduplicate and Return
 
 1. **Deduplicate**: Remove findings with identical `location.file` + `location.line` + same vulnerability type

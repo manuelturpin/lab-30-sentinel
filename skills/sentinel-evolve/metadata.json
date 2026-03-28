@@ -1,9 +1,18 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-03-26T04:43:47Z",
+  "last_updated": "2026-03-28T04:44:04Z",
   "last_update_check": null,
   "update_check_interval_days": 3,
   "total_sources": 1,
-  "total_indexed_docs": 87,
-  "update_history": []
+  "total_indexed_docs": 107,
+  "update_history": [
+    {
+      "date": "2026-03-28",
+      "report": "EIR-2026-03-28",
+      "recommendations_applied": 18,
+      "exploitation_score_before": 36,
+      "exploitation_score_after": 77,
+      "summary": "Applied all 18 EIR recommendations: Explore subagent, subprocess_env_scrub, initialPrompt, PostCompact/StopFailure hooks, structured_outputs, --bare CI, MCP elicitation, LSP taint, browser verification, FileChanged re-scan, HTTP notifications, ConfigChange auto-redeploy, worktree isolation, native+remote crons, plugin packaging, agent teams."
+    }
+  ]
 }
