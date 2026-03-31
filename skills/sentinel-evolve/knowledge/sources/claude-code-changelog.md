@@ -3,6 +3,20 @@
 Auto-generated from GitHub releases for RAG indexing.
 
 
+## v2.1.88 (2026-03-30)
+
+
+### Features
+
+- Added CLAUDE_CODE_NO_FLICKER=1 environment variable to opt into flicker-free alt-screen rendering with virtualized scrollback
+- Added PermissionDenied hook that fires after auto mode classifier denials — return {retry: true} to tell the model it can retry
+- Added named subagents to @ mention typeahead suggestions
+- Fixed Shift+Enter submitting instead of inserting a newline on Windows Terminal Preview 1.25
+
+### Deprecations
+
+- Fixed prompt history entries containing CJK or emoji being silently dropped when they fall on a 4KB boundary in ~/.claude/history.jsonl
+
 ## v2.1.86 (2026-03-27)
 
 

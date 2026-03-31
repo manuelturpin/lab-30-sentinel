@@ -1,5 +1,5 @@
 {
-  "last_sync": "2026-03-28T04:23:19.973605+00:00",
+  "last_sync": "2026-03-31T03:57:49.354759+00:00",
   "sync_sources": {
     "claude_code": {
       "repo": "anthropics/claude-code",
@@ -68,14 +68,14 @@
   "rate_limit_ms": 1000,
   "max_pages_per_source": 5,
   "last_sync_status": {
-    "timestamp": "2026-03-28T04:23:19.973611+00:00",
+    "timestamp": "2026-03-31T03:57:49.354767+00:00",
     "results": {
-      "claude_code": 1,
+      "claude_code": 2,
       "skills": 0,
       "sdk_python": 0,
       "sdk_typescript": 0,
       "mcp_python": 0,
-      "mcp_typescript": 0
+      "mcp_typescript": 1
     },
     "success": true
   }

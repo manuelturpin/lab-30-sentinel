@@ -15,6 +15,12 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 SENTINEL_HOME="$HOME/.sentinel"
 SKILL_DIR="$HOME/.claude/skills/sentinel-security"
 
+# Python: use repo venv if available
+VENV_PYTHON="python3"
+if [ -f "$PROJECT_DIR/.venv/bin/python3" ]; then
+  VENV_PYTHON="$PROJECT_DIR/.venv/bin/python3"
+fi
+
 # Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -122,9 +128,7 @@ deploy_local() {
 
   # Index sentinel-rag KB
   info "Indexing sentinel-rag expertise KB..."
-  if command -v python3 &>/dev/null; then
-    (cd "$SENTINEL_RAG_HOME/knowledge" && python3 indexer.py 2>&1) || warn "RAG expertise indexing failed"
-  fi
+  (cd "$SENTINEL_RAG_HOME/knowledge" && "$VENV_PYTHON" indexer.py 2>&1) || warn "RAG expertise indexing failed"
 
   # --- 3c. Deploy sentinel-evolve skill ---
   SENTINEL_EVOLVE_SKILL_DIR="$HOME/.claude/skills/sentinel-evolve"
@@ -148,9 +152,7 @@ deploy_local() {
 
   # Index sentinel-evolve KB
   info "Indexing sentinel-evolve intelligence KB..."
-  if command -v python3 &>/dev/null; then
-    (cd "$SENTINEL_EVOLVE_HOME/knowledge" && python3 indexer.py 2>&1) || warn "Evolve KB indexing failed"
-  fi
+  (cd "$SENTINEL_EVOLVE_HOME/knowledge" && "$VENV_PYTHON" indexer.py 2>&1) || warn "Evolve KB indexing failed"
 
   # --- 4. Register MCP server globally ---
   info "Registering MCP server with Claude Code..."
@@ -172,11 +174,7 @@ deploy_local() {
 
   # --- 5. Index RAG ---
   info "Indexing Knowledge Base into ChromaDB..."
-  if command -v python3 &>/dev/null; then
-    (cd "$SENTINEL_HOME/rag" && python3 indexer.py 2>&1) || warn "RAG indexing failed — run manually: cd $SENTINEL_HOME/rag && python3 indexer.py"
-  else
-    warn "python3 not found — install Python 3 and run: cd $SENTINEL_HOME/rag && python3 indexer.py"
-  fi
+  (cd "$SENTINEL_HOME/rag" && "$VENV_PYTHON" indexer.py 2>&1) || warn "RAG indexing failed — run manually: cd $SENTINEL_HOME/rag && python3 indexer.py"
 
   # --- 6. Verify ---
   echo ""
