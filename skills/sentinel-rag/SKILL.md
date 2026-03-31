@@ -3,13 +3,6 @@ name: sentinel-rag
 description: Expert RAG autonome et auto-evolutif — cree, diagnostique, optimise, evalue et securise les systemes RAG. Maintient sa propre base de connaissances vectorielle.
 user_invocable: true
 effort: medium
-paths:
-  - "**/chromadb/**"
-  - "**/chroma.sqlite3"
-  - "**/qdrant/**"
-  - "**/lancedb/**"
-  - "**/*embedding*"
-  - "**/sentence_transformers/**"
 ---
 
 # /sentinel-rag — Sentinel RAG Expert
