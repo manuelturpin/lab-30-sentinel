@@ -342,5 +342,44 @@
     "standards": ["CWE-345", "CWE-494"],
     "ai_specific": false,
     "frameworks": []
+  },
+  {
+    "id": "SC-SOURCEMAP-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "supply-chain",
+    "subcategory": "source-exposure",
+    "title": "Source maps included in production bundle or published package",
+    "description": "Source map files (.map) are shipped in the production build or included in a published npm package. Source maps allow full reconstruction of the original source code, exposing business logic, internal architecture, API keys, and proprietary algorithms. The Claude Code source leak (2026-03-31) was caused by exactly this — a .map file in the npm package exposed 512K lines of source code.",
+    "detect": {
+      "patterns": [
+        "sourceMappingURL\\s*=",
+        "\\.map['\"]\\s*:",
+        "\"sourceMap\"\\s*:\\s*true",
+        "\"source-map\"",
+        "devtool.*source-map",
+        "productionSourceMap.*true"
+      ],
+      "negative_patterns": [
+        "sourceMappingURL.*data:",
+        "\"sourceMap\"\\s*:\\s*false",
+        "productionSourceMap.*false",
+        "devtool.*false",
+        "GENERATE_SOURCEMAP.*false"
+      ],
+      "file_types": ["*.js", "*.json", "*.ts", "webpack.config.*", "vite.config.*", "rollup.config.*", ".npmignore"],
+      "exclude": ["node_modules", "test"]
+    },
+    "remediation": {
+      "description": "Disable source maps in production builds. Add .map files to .npmignore and .dockerignore. Use the 'files' field in package.json to explicitly list published files. Verify with 'npm pack --dry-run' before publishing.",
+      "code_example": "// webpack.config.js\nmodule.exports = {\n  devtool: process.env.NODE_ENV === 'production' ? false : 'source-map'\n};\n\n// package.json — explicit file list\n{\n  \"files\": [\"dist/index.js\", \"dist/types.d.ts\"]\n}\n\n// .npmignore\n*.map\nsrc/",
+      "references": [
+        "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/",
+        "https://docs.npmjs.com/cli/v10/using-npm/developers#keeping-files-out-of-your-package"
+      ]
+    },
+    "standards": ["CWE-540", "CWE-615", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": ["webpack", "vite", "rollup", "esbuild", "bun"]
   }
 ]

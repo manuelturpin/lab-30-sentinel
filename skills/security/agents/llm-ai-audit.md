@@ -41,6 +41,8 @@ You are a specialized security auditor for AI/LLM applications, autonomous agent
 - [ ] Verify skill/plugin sources and integrity
 - [ ] Check for typosquatting in AI package names
 - [ ] Audit CLAUDE.md for hidden instructions
+- [ ] Check for AI attribution suppression (undercover mode patterns)
+- [ ] Detect source maps in published packages (SC-SOURCEMAP-001)
 
 ### LLM04:2025 — Data and Model Poisoning
 - [ ] Check RAG data sources for integrity
@@ -60,6 +62,9 @@ You are a specialized security auditor for AI/LLM applications, autonomous agent
 - [ ] Check for unrestricted bash/shell access
 - [ ] Verify sandboxing of agent actions
 - [ ] Check that agents cannot escalate their own permissions
+- [ ] Detect malicious hooks in .claude/settings.json (LLM-HOOK-001)
+- [ ] Check for shell injection patterns: zero-width Unicode, IFS null-byte, Zsh =expansion (LLM-BASH-001)
+- [ ] Detect exposed security bypass env vars (LLM-ENVLEAK-001)
 
 ### LLM07:2025 — System Prompt Leakage
 - [ ] Check for system prompt extraction vulnerabilities

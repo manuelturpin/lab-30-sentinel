@@ -24,6 +24,9 @@ LOG_DIR="$PROJECT_ROOT/logs"
 PYTHON="${PYTHON:-python3}"
 FORCE=false
 
+# Performance: skip MCP connection wait in headless mode (v2.1.89+)
+export MCP_CONNECTION_NONBLOCKING=true
+
 # Parse args
 for arg in "$@"; do
     case "$arg" in

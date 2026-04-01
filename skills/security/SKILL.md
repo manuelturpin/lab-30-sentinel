@@ -21,7 +21,17 @@ paths:
 
 You are Sentinel, an AI-powered cybersecurity auditing system. When invoked, you perform a comprehensive security audit of the current project.
 
-## Step 0: Audit Configuration
+## Step 0: Session Setup
+
+**Session naming** — for audit traceability, name the session:
+```
+--name "sentinel-audit-{project}-{date}"
+```
+This enables easy session lookup via `claude sessions list` for audit trail.
+
+**Worktree sparse paths** — for large monorepos, use `worktree.sparsePaths` to checkout only relevant directories when dispatching agents in worktrees. This reduces clone time and disk usage.
+
+## Step 0b: Audit Configuration
 
 This audit is **read-only** — no files are modified. If the user's permission mode is `default`, suggest:
 > "This scan only reads files and runs grep patterns — no modifications. You can switch to auto mode for zero permission prompts: press Shift+Tab to cycle to auto, or run with `--permission-mode auto`."
@@ -197,6 +207,52 @@ Agents now read the Knowledge Base directly using native tools (Read, Grep, Bash
 - `scan-dependencies` — calls OSV API for dependency CVE analysis
 - `scan-headers` — makes HTTP GET to check security headers on live URLs
 
+## Permission & Resilience Hooks
+
+### PermissionDenied Hook (v2.1.88+)
+
+For read-only security scans in auto mode, configure a PermissionDenied hook to auto-retry safe tool denials:
+
+```json
+{
+  "hooks": {
+    "PermissionDenied": [{
+      "matcher": "Read|Grep|Glob",
+      "hooks": [{
+        "type": "command",
+        "command": "echo '{\"retry\": true}'"
+      }]
+    }]
+  }
+}
+```
+
+This eliminates manual permission approval friction during audits for safe read operations.
+
+### PreCompact Finding Preservation (v2.1.76+)
+
+Long multi-agent audits may hit context limits. Configure PreCompact/PostCompact hooks to preserve findings:
+
+- **PreCompact**: Save in-progress findings, dispatched agent statuses, and scan metadata to a temp JSON file
+- **PostCompact**: Reload the saved state after compaction — zero finding loss
+
+```json
+{
+  "hooks": {
+    "PreCompact": [{
+      "hooks": [{
+        "type": "command",
+        "command": "echo 'Saving audit state before compaction...'"
+      }]
+    }]
+  }
+}
+```
+
+### Defer Decision for CI Gating (v2.1.89+)
+
+For CI pipelines, PreToolUse hooks can return `"defer"` to pause headless sessions at risky tool calls (e.g., `scan-headers` making external HTTP requests). Resume after human approval with `-p --resume`.
+
 ## CI/Headless Mode
 
 When invoked via `claude -p`, produce structured SARIF output:
@@ -207,8 +263,15 @@ When invoked via `claude -p`, produce structured SARIF output:
 
 **Use `--bare` flag** for faster CI cold starts — skips hooks, LSP, and plugin sync:
 ```bash
-claude --bare -p "/sentinel-security" --output-format json > report.sarif.json
+# MCP_CONNECTION_NONBLOCKING skips MCP connection wait (v2.1.89+)
+MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-security" --output-format json > report.sarif.json
 ```
+
+**Deep link for one-click audit launch:**
+```
+claude-cli://open?q=/sentinel-security
+```
+Share this link in README, Slack, or docs for instant audit launch from anywhere.
 
 **Use `--json-schema` for guaranteed valid SARIF** — enforces output structure at the model level, eliminating JSON parse failures in CI:
 ```bash

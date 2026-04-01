@@ -414,6 +414,41 @@
       "category": "hooks",
       "status": "stable",
       "description": "PreCompact/PostCompact hooks for context management automation"
+    },
+    "permission_denied_hook": {
+      "introduced": "2.1.88",
+      "date": "2026-03-30",
+      "category": "hooks",
+      "status": "stable",
+      "description": "PermissionDenied hook fires after auto mode classifier denials — return {retry: true} to auto-retry"
+    },
+    "defer_pretooluse": {
+      "introduced": "2.1.89",
+      "date": "2026-04-01",
+      "category": "hooks",
+      "status": "stable",
+      "description": "PreToolUse hooks can return 'defer' to pause headless sessions — resume with -p --resume"
+    },
+    "named_subagents": {
+      "introduced": "2.1.88",
+      "date": "2026-03-30",
+      "category": "agents",
+      "status": "stable",
+      "description": "Named subagents appear in @ mention typeahead suggestions for direct messaging"
+    },
+    "mcp_connection_nonblocking": {
+      "introduced": "2.1.89",
+      "date": "2026-04-01",
+      "category": "performance",
+      "status": "stable",
+      "description": "MCP_CONNECTION_NONBLOCKING=true skips MCP connection wait in -p mode for faster CI starts"
+    },
+    "session_id_header": {
+      "introduced": "2.1.86",
+      "date": "2026-03-27",
+      "category": "cli",
+      "status": "stable",
+      "description": "X-Claude-Code-Session-Id header in API requests for proxy session aggregation"
     }
   }
 }

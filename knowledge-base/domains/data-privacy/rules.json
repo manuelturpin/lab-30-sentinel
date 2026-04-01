@@ -278,5 +278,41 @@
     "standards": ["CWE-459", "GDPR-Art-17", "CCPA-1798.105"],
     "ai_specific": false,
     "frameworks": ["express", "fastify", "django", "flask", "fastapi", "spring", "rails"]
+  },
+  {
+    "id": "PRIV-ENVBYPASS-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "data-privacy",
+    "subcategory": "security-bypass",
+    "title": "Security bypass flags exposed in environment configuration",
+    "description": "Environment files or CI configs contain variables that disable security mechanisms (credential scrubbing, MCP sandboxing, hook execution). The Claude Code source leak (2026-03-31) revealed multiple env vars that bypass security features. Exposing these in committed files creates a documented path for attackers to disable protections.",
+    "detect": {
+      "patterns": [
+        "DISABLE_.*(?:AUTH|SECURITY|VERIFY|CHECK|HOOK|SANDBOX)",
+        "SKIP_.*(?:AUTH|SECURITY|VERIFY|CHECK|VALIDATION)",
+        "NO_.*(?:AUTH|VERIFY|CHECK|SSL|TLS)\\s*=",
+        "UNSAFE_.*=",
+        "INSECURE_.*=",
+        "NODE_TLS_REJECT_UNAUTHORIZED\\s*=\\s*['\"]?0"
+      ],
+      "negative_patterns": [
+        "# test only",
+        "# development only",
+        "NODE_ENV.*test"
+      ],
+      "file_types": [".env", ".env.*", "Dockerfile", "docker-compose.*", "*.yaml", "*.yml"],
+      "exclude": ["node_modules", "dist", "test"]
+    },
+    "remediation": {
+      "description": "Never commit security bypass variables to production configs. Use separate environment files for dev/test/prod. Audit CI pipelines for security-disabling variables. Add pre-commit hooks to block commits containing security bypass patterns.",
+      "code_example": "# pre-commit hook to catch bypass vars\n#!/bin/bash\nif git diff --cached | grep -iE '(DISABLE_AUTH|SKIP_VERIFY|NODE_TLS_REJECT_UNAUTHORIZED=0|INSECURE_)'; then\n  echo 'ERROR: Security bypass variable detected in commit'\n  exit 1\nfi",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Environment_Secrets_Cheat_Sheet.html"
+      ]
+    },
+    "standards": ["CWE-489", "CWE-215", "OWASP-A05:2025"],
+    "ai_specific": false,
+    "frameworks": []
   }
 ]

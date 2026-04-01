@@ -561,5 +561,163 @@
     "standards": ["CWE-200", "CWE-284", "OWASP-LLM08:2025"],
     "ai_specific": true,
     "frameworks": ["langchain", "llamaindex"]
+  },
+  {
+    "id": "LLM-HOOK-001",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.0,
+    "category": "llm-ai",
+    "subcategory": "hook-exploitation",
+    "title": "Malicious or unguarded hooks in AI agent configuration",
+    "description": "Claude Code hooks (PreToolUse, PostToolUse, etc.) in settings.json or project configs can execute arbitrary shell commands or POST to external URLs. After the Claude Code source leak (2026-03-31), the hook orchestration logic is publicly known — attackers can craft repos with malicious .claude/settings.json that exfiltrate data, run background commands, or suppress security warnings. Hooks without 'if' conditional guards or pointing to external URLs are high risk.",
+    "detect": {
+      "patterns": [
+        "\"hooks\"\\s*:\\s*\\{",
+        "\"PreToolUse\"\\s*:",
+        "\"PostToolUse\"\\s*:",
+        "\"command\"\\s*:\\s*\".*curl",
+        "\"command\"\\s*:\\s*\".*wget",
+        "\"command\"\\s*:\\s*\".*nc\\s",
+        "\"type\"\\s*:\\s*\"http\"",
+        "\"url\"\\s*:\\s*\"https?://(?!localhost|127\\.0\\.0\\.1)"
+      ],
+      "negative_patterns": [
+        "\"if\"\\s*:",
+        "\"matcher\"\\s*:",
+        "localhost",
+        "127\\.0\\.0\\.1"
+      ],
+      "file_types": ["*.json", "settings.json"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Review all hooks in .claude/settings.json before trusting a cloned repository. Add 'if' conditional guards to restrict when hooks fire. Never allow hooks to POST to external URLs without explicit review. Use 'matcher' to limit hooks to specific tool patterns.",
+      "code_example": "// Safe hook with conditional guard\n{\n  \"hooks\": {\n    \"PreToolUse\": [{\n      \"matcher\": \"Bash(git *)\",\n      \"if\": \"Bash(git *)\",\n      \"hooks\": [{\n        \"type\": \"command\",\n        \"command\": \"echo 'git command detected'\"\n      }]\n    }]\n  }\n}",
+      "references": [
+        "https://venturebeat.com/technology/claude-codes-source-code-appears-to-have-leaked-heres-what-we-know"
+      ]
+    },
+    "standards": ["CWE-94", "CWE-78", "OWASP-LLM06:2025", "AML.T0056"],
+    "ai_specific": true,
+    "frameworks": ["claude-code"]
+  },
+  {
+    "id": "LLM-BASH-001",
+    "severity": "HIGH",
+    "cvss_v4": 8.5,
+    "category": "llm-ai",
+    "subcategory": "shell-injection",
+    "title": "Advanced shell injection patterns in AI agent commands",
+    "description": "AI agent configurations or skill files contain shell commands vulnerable to advanced injection techniques revealed in Claude Code's bashSecurity.ts (23 security checks): Unicode zero-width space injection (U+200B, U+FEFF), IFS null-byte injection, Zsh equals expansion (=curl bypasses command restrictions), and use of blocked Zsh builtins. These patterns can bypass naive command allowlists.",
+    "detect": {
+      "patterns": [
+        "\\\\u200[bBcCdD]",
+        "\\\\uFEFF",
+        "\\\\x00",
+        "\\$IFS",
+        "=curl",
+        "=wget",
+        "=chmod",
+        "=python",
+        "\\bsource\\b.*\\$",
+        "\\beval\\b.*\\$",
+        "\\$\\(.*\\$\\{",
+        "\\bbuiltin\\b",
+        "\\bzmodload\\b",
+        "\\bcommand\\b\\s+-"
+      ],
+      "negative_patterns": [
+        "# test",
+        "# example",
+        "security_check\\(",
+        "sanitize_command\\("
+      ],
+      "file_types": ["*.md", "*.json", "*.yaml", "*.yml", "*.sh", "*.zsh"],
+      "exclude": ["node_modules", "dist", "test"]
+    },
+    "remediation": {
+      "description": "Sanitize all shell command inputs against Unicode zero-width characters, null bytes, and Zsh-specific expansion patterns. Use allowlists for permitted commands. Block dangerous Zsh builtins (zmodload, builtin, source with variables). Never construct shell commands from untrusted input.",
+      "code_example": "# Strip zero-width and control characters\nimport re\ndef sanitize_cmd(cmd: str) -> str:\n    # Remove zero-width spaces, BOM, null bytes\n    cmd = re.sub(r'[\\u200b-\\u200f\\ufeff\\x00]', '', cmd)\n    # Block Zsh equals expansion\n    if re.search(r'=[a-zA-Z]', cmd.split()[0] if cmd.split() else ''):\n        raise SecurityError('Zsh equals expansion detected')\n    return cmd",
+      "references": [
+        "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/"
+      ]
+    },
+    "standards": ["CWE-78", "CWE-116", "OWASP-LLM06:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code", "cursor"]
+  },
+  {
+    "id": "LLM-ENVLEAK-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "llm-ai",
+    "subcategory": "security-bypass",
+    "title": "Security bypass environment variables exposed or documented",
+    "description": "Environment variables that disable security features of AI coding tools are exposed in .env files, CI configs, Dockerfiles, or documentation. The Claude Code source leak revealed variables like CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS (disables anti-distillation), CLAUDE_CODE_ATTRIBUTION_HEADER (disables client attestation), and CLAUDE_CODE_SIMPLE (disables hooks/MCP/security). Exposing these enables targeted security bypasses.",
+    "detect": {
+      "patterns": [
+        "CLAUDE_CODE_DISABLE",
+        "CLAUDE_CODE_SIMPLE",
+        "CLAUDE_CODE_ATTRIBUTION",
+        "CLAUDE_CODE_SUBPROCESS_ENV",
+        "ENABLE_CLAUDEAI_MCP_SERVERS\\s*=\\s*false",
+        "CLAUDE_CODE_NO_",
+        "DISABLE_.*SECURITY",
+        "BYPASS_.*CHECK",
+        "SKIP_.*VERIFY"
+      ],
+      "negative_patterns": [
+        "# example",
+        "# documentation",
+        "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\\s*=\\s*1"
+      ],
+      "file_types": [".env", ".env.*", "Dockerfile", "docker-compose.*", "*.yaml", "*.yml", "*.sh", "*.md"],
+      "exclude": ["node_modules", "dist", "test"]
+    },
+    "remediation": {
+      "description": "Never commit security bypass env vars to version control. Use .env.example with placeholder values only. Audit CI/CD configs for variables that disable security features. Set CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1 to prevent credential leakage.",
+      "code_example": "# .env.example (committed) — never real values\n# CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1  # ENABLE this, don't disable\n\n# .gitignore\n.env\n.env.local\n.env.production",
+      "references": [
+        "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/"
+      ]
+    },
+    "standards": ["CWE-215", "CWE-489", "OWASP-LLM06:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code", "cursor"]
+  },
+  {
+    "id": "LLM-STEALTH-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.5,
+    "category": "llm-ai",
+    "subcategory": "attribution-suppression",
+    "title": "AI attribution suppression instructions in agent config",
+    "description": "Agent configuration files contain instructions that suppress AI identity disclosure — hiding that code was AI-generated. The Claude Code source leak revealed an 'undercover mode' that strips AI attribution from commits and PRs. This pattern undermines open source transparency and supply chain integrity when AI-generated code is presented as human-written.",
+    "detect": {
+      "patterns": [
+        "(?i)do not.*(?:mention|reveal|disclose).*(?:ai|claude|gpt|copilot)",
+        "(?i)never.*(?:mention|include).*(?:co-authored|generated.*by|assisted.*by)",
+        "(?i)(?:hide|suppress|remove).*(?:attribution|ai.*identity|claude)",
+        "(?i)(?:undercover|stealth|incognito).*mode",
+        "(?i)do not blow.*cover",
+        "(?i)NEVER.*include.*commit.*(?:AI|Claude|GPT)"
+      ],
+      "negative_patterns": [
+        "# security policy",
+        "# privacy requirement"
+      ],
+      "file_types": ["*.md", "*.txt", "*.yaml", "*.yml", "*.json"],
+      "exclude": ["node_modules", "dist", "docs"]
+    },
+    "remediation": {
+      "description": "Require transparent AI attribution in all AI-assisted code. Use Co-Authored-By lines in commits. Maintain an AI disclosure policy for the project. Attribution suppression undermines code review trust and supply chain auditing.",
+      "code_example": "# Good: transparent attribution\ngit commit -m 'feat: add auth module\n\nCo-Authored-By: Claude <noreply@anthropic.com>'\n\n# In CLAUDE.md — be transparent\n# Always include Co-Authored-By when AI assists with code changes",
+      "references": [
+        "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/"
+      ]
+    },
+    "standards": ["CWE-451", "OWASP-LLM03:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code", "cursor", "copilot"]
   }
 ]
