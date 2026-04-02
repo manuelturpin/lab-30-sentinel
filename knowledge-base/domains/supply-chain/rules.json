@@ -381,5 +381,45 @@
     "standards": ["CWE-540", "CWE-615", "OWASP-A05:2025"],
     "ai_specific": false,
     "frameworks": ["webpack", "vite", "rollup", "esbuild", "bun"]
+  },
+  {
+    "id": "SC-HUSKY-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "supply-chain",
+    "subcategory": "git-hook-manipulation",
+    "title": "Git hook manipulation or .husky directory tampering",
+    "description": "Git hooks (.husky/, .git/hooks/) are modified or contain suspicious commands. Attackers can inject malicious code into pre-commit, pre-push, or post-checkout hooks to execute arbitrary commands on every git operation. Claude Code v2.1.90 added .husky to protected directories, recognizing this as a supply-chain attack vector.",
+    "detect": {
+      "patterns": [
+        "(?:pre-commit|pre-push|post-checkout|post-merge).*(?:curl|wget|nc |bash -c|eval|base64)",
+        "\\.husky/.*(?:rm |chmod|chown|curl|wget|python|node -e)",
+        "core\\.hooksPath\\s*=",
+        "git\\s+config\\s+core\\.hooksPath",
+        "\\$\\(.*\\).*>.*\\.husky/",
+        "echo.*>.*\\.git/hooks/"
+      ],
+      "negative_patterns": [
+        "npx husky install",
+        "npx --yes husky",
+        "lint-staged",
+        "commitlint",
+        "prettier --write"
+      ],
+      "file_types": ["*.sh", "*.yaml", "*.yml", "Makefile", "Dockerfile", ".husky/*", "package.json"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Review all git hooks for suspicious commands. Use husky from npm with verified scripts only. Monitor .husky/ directory changes in CI. Never redirect untrusted content to git hook files. Consider using core.hooksPath only with a reviewed, committed hooks directory.",
+      "code_example": "# Audit existing hooks\nfind .husky .git/hooks -type f -exec grep -l 'curl\\|wget\\|eval\\|base64' {} \\;\n\n# Safe husky setup\nnpx husky init\necho 'npx lint-staged' > .husky/pre-commit",
+      "references": [
+        "https://typicode.github.io/husky/",
+        "https://owasp.org/www-project-developer-guide/draft/design/web_app_checklist/",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.90"
+      ]
+    },
+    "standards": ["CWE-506", "CWE-829", "CWE-94"],
+    "ai_specific": false,
+    "frameworks": []
   }
 ]

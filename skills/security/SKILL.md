@@ -31,6 +31,8 @@ This enables easy session lookup via `claude sessions list` for audit trail.
 
 **Worktree sparse paths** — for large monorepos, use `worktree.sparsePaths` to checkout only relevant directories when dispatching agents in worktrees. This reduces clone time and disk usage.
 
+**Dedicated memory** — configure `autoMemoryDirectory: "~/.sentinel/memory/"` in project settings so Sentinel skills share a dedicated memory space, separate from the user's personal auto-memory. This prevents cross-contamination and simplifies backup/export of Sentinel's learned knowledge (false positives, project preferences, scan history).
+
 ## Step 0b: Audit Configuration
 
 This audit is **read-only** — no files are modified. If the user's permission mode is `default`, suggest:
@@ -47,6 +49,17 @@ If no elicitation available, check for `.sentinel.json` at the project root for 
 ## Workflow
 
 ### Step 1: Stack Detection
+
+**Plan subagent for monorepos** — for projects with 10+ top-level directories or multiple `package.json`/`requirements.txt` files, launch a **Plan subagent** before Explore to analyze project structure and produce a targeted audit plan:
+
+```
+Launch Agent(
+  subagent_type: "Plan",
+  prompt: "Analyze this monorepo at {target_path}. Identify independent services, shared libraries, and cross-service data flows. Return a JSON audit plan: {services: [{name, path, stack, priority}], shared_libs: [path], data_flows: [{from, to, protocol}]}"
+)
+```
+
+For simpler projects, skip directly to stack detection.
 
 Use an **Explore subagent** (Haiku-based, fast and cheap) to detect the stack — this preserves the main context window:
 
@@ -99,13 +112,14 @@ Then map the detected files to agents using this table:
 
 **Progress tracking** — before dispatching, create a task for each agent using TaskCreate so the user can see scan progress. Update each task to completed when the agent returns.
 
-For each detected agent, launch it in parallel using the Agent tool:
+For each detected agent, launch it in parallel using the Agent tool with **named subagents** for inter-agent coordination via `SendMessage`:
 
 ```
 For each agent in detected_agents:
   TaskCreate("Auditing {agent}...")
   Launch Agent(
     subagent_type: "general-purpose",
+    name: "{agent}",
     model: "haiku" if agent in [cors-audit, ssl-tls-audit, static-site-audit, websocket-audit] else omit,
     initialPrompt: "Begin audit now.",
     prompt: "You are a security audit agent. Follow these steps exactly:
@@ -122,6 +136,7 @@ For each agent in detected_agents:
     run_in_background: true
   )
   // When agent completes: TaskUpdate(status: "completed", summary: "{N} findings")
+  // Named agents can coordinate: SendMessage(to: "web-audit", message: "compromised dep found in lodash")
 ```
 
 ### Step 2b: Resilience Hooks
@@ -249,6 +264,26 @@ Long multi-agent audits may hit context limits. Configure PreCompact/PostCompact
 }
 ```
 
+### TaskCreated Hook for Audit Trail (v2.1.84+)
+
+Configure a TaskCreated hook to automatically log every scan task to a persistent audit trail file for compliance:
+
+```json
+{
+  "hooks": {
+    "TaskCreated": [{
+      "matcher": "Auditing.*audit",
+      "hooks": [{
+        "type": "command",
+        "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%SZ) TASK_CREATED: $TASK_DESCRIPTION\" >> ~/.sentinel/reports/audit-trail.log"
+      }]
+    }]
+  }
+}
+```
+
+This creates a timestamped record of every agent dispatched during a scan — useful for SOC-2 and ISO 27001 compliance.
+
 ### Defer Decision for CI Gating (v2.1.89+)
 
 For CI pipelines, PreToolUse hooks can return `"defer"` to pause headless sessions at risky tool calls (e.g., `scan-headers` making external HTTP requests). Resume after human approval with `-p --resume`.
@@ -356,16 +391,43 @@ sentinel-plugin/
 
 Users install with: `claude plugin install sentinel` — this deploys all skills, agents, MCP server, and KB automatically.
 
+**Offline environments** — set `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` to preserve the local marketplace cache when `git pull` fails (v2.1.90+). This prevents plugin install failures in air-gapped or restricted network environments.
+
 ## Multi-Skill Orchestration (Agent Teams)
 
-For advanced workflows, Sentinel skills can be orchestrated as an **agent team** with a shared task board:
+Sentinel skills can be orchestrated as an **agent team** with a shared task board for self-improving audit loops.
 
-- **Team lead**: sentinel-security (orchestrates the audit)
-- **Teammates**: sentinel-rag (KB expertise), sentinel-evolve (feature intelligence)
+### Setup
 
-Example workflow: "Scan → if new CVE patterns found → auto-update KB rules → re-index RAG → re-scan with updated rules"
-
-This uses Claude Code's agent_teams feature (v2.1.32+, experimental). Enable with:
 ```
 TeamCreate("sentinel", members: ["sentinel-security", "sentinel-rag", "sentinel-evolve"])
+```
+
+### Roles
+
+| Member | Role | Responsibilities |
+|--------|------|-----------------|
+| **sentinel-security** | Team lead | Orchestrates scans, dispatches agents, aggregates findings |
+| **sentinel-rag** | KB expert | Enriches findings via RAG, diagnoses KB gaps, optimizes search quality |
+| **sentinel-evolve** | Intel analyst | Monitors Claude Code updates, suggests skill improvements |
+
+### Self-Improving Scan Loop
+
+When the team is active, the audit workflow extends with a closed feedback loop:
+
+1. **Scan** — sentinel-security runs a full audit, producing findings
+2. **Analyze gaps** — if findings reference CVE patterns not in the KB, SendMessage to sentinel-rag: `"New pattern detected: {pattern}. Check if KB has coverage."`
+3. **Update KB** — sentinel-rag adds missing rules/patterns to the KB and re-indexes
+4. **Re-scan** — sentinel-security re-runs only the affected agents with updated KB
+5. **Evolve** — sentinel-evolve logs the improvement in its update_history for tracking
+
+### Activation
+
+Agent teams are experimental (v2.1.32+). The team is activated on demand — add this to Step 0 when the user requests "deep scan" or "self-improving scan":
+
+```
+If user requests deep/self-improving scan:
+  TeamCreate("sentinel", members: ["sentinel-security", "sentinel-rag", "sentinel-evolve"])
+  // Team members can now SendMessage to each other
+  // Shared task board tracks cross-skill work
 ```

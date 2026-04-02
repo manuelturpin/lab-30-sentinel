@@ -15,9 +15,11 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 SENTINEL_HOME="$HOME/.sentinel"
 SKILL_DIR="$HOME/.claude/skills/sentinel-security"
 
-# Python: use repo venv if available
+# Python: use venv with sentence_transformers (required for KB indexing)
 VENV_PYTHON="python3"
-if [ -f "$PROJECT_DIR/.venv/bin/python3" ]; then
+if [ -f "$SENTINEL_HOME/rag/.venv/bin/python3" ]; then
+  VENV_PYTHON="$SENTINEL_HOME/rag/.venv/bin/python3"
+elif [ -f "$PROJECT_DIR/.venv/bin/python3" ]; then
   VENV_PYTHON="$PROJECT_DIR/.venv/bin/python3"
 fi
 

@@ -37,7 +37,7 @@ Detect what the user needs by analyzing the project:
 Before making any technical recommendation (embedding model, chunking strategy, search architecture, HNSW config, evaluation framework), consult your expertise KB:
 
 ```
-Bash: python3 /Users/manuelturpin/.sentinel/skills/sentinel-rag/knowledge/query.py \
+Bash: /Users/manuelturpin/.sentinel/rag/.venv/bin/python3 /Users/manuelturpin/.sentinel/skills/sentinel-rag/knowledge/query.py \
   --query "<formulate a specific question from the user's context>" \
   --domain <relevant domain: embedding|chunking|hybrid-search|evaluation|security|architecture|chromadb|monitoring|all> \
   --limit 5
@@ -154,7 +154,7 @@ Ongoing RAG maintenance:
 To add knowledge to this skill:
 
 1. Save new source: `cp article.md /Users/manuelturpin/.sentinel/skills/sentinel-rag/knowledge/sources/`
-2. Re-index: `python3 /Users/manuelturpin/.sentinel/skills/sentinel-rag/knowledge/indexer.py`
+2. Re-index: `/Users/manuelturpin/.sentinel/rag/.venv/bin/python3 /Users/manuelturpin/.sentinel/skills/sentinel-rag/knowledge/indexer.py`
 3. The source will be chunked by H2, classified by domain, and available for future queries.
 
 ## Important Notes
@@ -164,3 +164,5 @@ To add knowledge to this skill:
 - Be conversational — analyze the situation first, then propose actions
 - Quick wins first — prioritize changes with highest impact/effort ratio
 - Generic — your recommendations apply to any RAG, not just Sentinel's
+- **Cross-session memory**: Use auto-memory to remember confirmed false positives, user-preferred embedding models, project-specific RAG configs, and diagnosed anti-patterns across sessions. This avoids repeating diagnostics and builds expertise over time. Configure `autoMemoryDirectory: "~/.sentinel/memory/"` to keep Sentinel memory separate from user memory.
+- **Agent team role**: When part of a Sentinel team (`TeamCreate("sentinel")`), this skill acts as **KB expert** — receiving messages from sentinel-security about pattern gaps (`SendMessage(to: "sentinel-rag", message: "New pattern detected: {pattern}")`), adding missing rules, re-indexing, and confirming readiness for re-scan.

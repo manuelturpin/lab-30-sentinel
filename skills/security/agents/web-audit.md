@@ -103,12 +103,23 @@ mcp__sentinel-scanner__scan-headers({ url: "{target_url}" })
 - **Secret Detection**: `Grep` with secret patterns from Detection Patterns (password, api_key, token regexes) — replaces `scan-secrets`
 - **KB Enrichment**: Rules already contain `cvss_v4`, `standards`, `remediation`. For manual findings without a KB rule, use `Bash`: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query "{title}" --domain web-app --limit 3` — replaces `query-kb`
 
+## LSP Taint Analysis (Optional)
+
+For injection findings (XSS, SQLi, command injection) from Steps 1-2, use the **LSP tool** to verify that user input actually flows to the dangerous sink before reporting:
+
+1. **Find source**: Use `LSP("findReferences")` on `req.params`, `req.body`, `req.query`, `searchParams`, `formData` to identify where user input enters
+2. **Trace to sink**: Use `LSP("goToDefinition")` on the variable used in the dangerous pattern (e.g., the string concatenated into SQL) to verify it originates from user input
+3. **Verdict**: If the data flow is confirmed (source → sink), report with full confidence. If no flow is found, downgrade severity by one level and note "Static pattern match only — data flow not confirmed via LSP"
+
+**Limit**: Maximum 5 LSP traces per agent to avoid slowing the scan. Prioritize CRITICAL/HIGH findings.
+
 ## Execution Protocol
 
 Follow the common execution protocol defined in `_protocol.md`:
 
 1. **KB Pattern Scan**: Read `web-app/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`
 2. **Grep Scan**: Search for each pattern in Detection Patterns section (including secret patterns). For each match, read context and check negative patterns before reporting
+2b. **LSP Taint Trace**: For injection findings, use LSP to verify source→sink data flow (see above)
 3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
 4. **MCP Scan**: Call `scan-headers` if a URL is available (external HTTP call)
 5. **Deduplicate & Return**: Remove duplicates (same file + line + vuln type), sort by cvss_v4 desc, redact secrets, return JSON

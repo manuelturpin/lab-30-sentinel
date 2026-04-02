@@ -449,6 +449,48 @@
       "category": "cli",
       "status": "stable",
       "description": "X-Claude-Code-Session-Id header in API requests for proxy session aggregation"
+    },
+    "powerup_interactive_lessons": {
+      "introduced": "2.1.90",
+      "date": "2026-04-01",
+      "category": "cli",
+      "status": "stable",
+      "description": "/powerup — interactive lessons teaching Claude Code features with animated demos"
+    },
+    "plugin_keep_marketplace_on_failure": {
+      "introduced": "2.1.90",
+      "date": "2026-04-01",
+      "category": "distribution",
+      "status": "stable",
+      "description": "CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE env var to preserve marketplace cache when git pull fails (offline environments)"
+    },
+    "husky_protected_directory": {
+      "introduced": "2.1.90",
+      "date": "2026-04-01",
+      "category": "security",
+      "status": "stable",
+      "description": ".husky added to protected directories in acceptEdits mode — prevents git hook manipulation"
+    },
+    "no_flicker_env": {
+      "introduced": "2.1.89",
+      "date": "2026-04-01",
+      "category": "ui",
+      "status": "stable",
+      "description": "CLAUDE_CODE_NO_FLICKER=1 opts into flicker-free alt-screen rendering with virtualized scrollback"
+    },
+    "dns_autoallow_removal": {
+      "introduced": "2.1.90",
+      "date": "2026-04-01",
+      "category": "security",
+      "status": "stable",
+      "description": "Removed Get-DnsClientCache and ipconfig /displaydns from auto-allow for DNS cache privacy"
+    },
+    "automode_denied_ux": {
+      "introduced": "2.1.89",
+      "date": "2026-04-01",
+      "category": "ui",
+      "status": "stable",
+      "description": "Auto mode denied commands show notification and appear in /permissions > Recent tab with retry via r key"
     }
   }
 }

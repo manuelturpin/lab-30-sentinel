@@ -47,7 +47,7 @@ Fetch latest data from Anthropic's ecosystem.
 
 2. After sync, re-index the evolve KB:
    ```
-   Bash: cd /Users/manuelturpin/.sentinel/skills/sentinel-evolve/knowledge && python3 indexer.py
+   Bash: cd /Users/manuelturpin/.sentinel/skills/sentinel-evolve/knowledge && /Users/manuelturpin/.sentinel/rag/.venv/bin/python3 indexer.py
    ```
 
 3. Report what was fetched:
@@ -93,7 +93,7 @@ For each feature in the inventory, determine:
 
 Query the evolve KB for context on underutilized features:
 ```
-Bash: python3 /Users/manuelturpin/.sentinel/skills/sentinel-evolve/knowledge/query.py --query "<feature name>" --domain <category> --limit 3
+Bash: /Users/manuelturpin/.sentinel/rag/.venv/bin/python3 /Users/manuelturpin/.sentinel/skills/sentinel-evolve/knowledge/query.py --query "<feature name>" --domain <category> --limit 3
 ```
 
 ### Step 5: Present Gap Analysis
@@ -228,7 +228,7 @@ KB housekeeping, history, and dashboard.
 
 1. **Re-index**: Re-run the KB indexer
    ```
-   Bash: cd /Users/manuelturpin/.sentinel/skills/sentinel-evolve/knowledge && python3 indexer.py
+   Bash: cd /Users/manuelturpin/.sentinel/skills/sentinel-evolve/knowledge && /Users/manuelturpin/.sentinel/rag/.venv/bin/python3 indexer.py
    ```
 
 2. **History**: Show optimization history from metadata.json update_history
@@ -270,7 +270,7 @@ The evolve KB is stored in ChromaDB at `/Users/manuelturpin/.sentinel/skills/sen
 
 Query it for context on Claude Code features and patterns:
 ```
-Bash: python3 /Users/manuelturpin/.sentinel/skills/sentinel-evolve/knowledge/query.py --query "<question>" --domain <domain> --limit 5
+Bash: /Users/manuelturpin/.sentinel/rag/.venv/bin/python3 /Users/manuelturpin/.sentinel/skills/sentinel-evolve/knowledge/query.py --query "<question>" --domain <domain> --limit 5
 ```
 
 Available domains: `skills`, `agents`, `hooks`, `mcp`, `performance`, `config`, `models`, `cli`, `isolation`, `all`
@@ -284,3 +284,5 @@ Available domains: `skills`, `agents`, `hooks`, `mcp`, `performance`, `config`, 
 - **Scope**: Currently targets Sentinel skills only. Extensible to any skill set via `config/evolve-targets.json`.
 - **Rate limits**: GitHub API has 60 req/h without token, 5000/h with `GITHUB_TOKEN`. Always recommend setting the token.
 - **Sync frequency**: Designed for bi-weekly sync (Monday + Thursday). Can be run manually anytime.
+- **Cross-session memory**: Use auto-memory to remember which recommendations were applied, which were rejected (and why), and user preferences for prioritization. This avoids re-suggesting rejected recommendations and builds institutional knowledge across sessions. Configure `autoMemoryDirectory: "~/.sentinel/memory/"` to keep Sentinel memory separate from user memory.
+- **Agent team role**: When part of a Sentinel team (`TeamCreate("sentinel")`), this skill acts as **intel analyst** — monitoring Claude Code updates and suggesting skill improvements via `SendMessage(to: "sentinel-security")` when new features are relevant to audit capabilities.

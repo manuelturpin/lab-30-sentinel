@@ -1,0 +1,48 @@
+{
+  "name": "sentinel",
+  "version": "1.0.0",
+  "description": "AI-powered cybersecurity auditing system for Claude Code — OWASP, MITRE ATLAS, CVE/EPSS enrichment, SARIF reports",
+  "publisher": "bonsai974",
+  "license": "MIT",
+  "keywords": ["security", "audit", "owasp", "sarif", "cve", "sast"],
+  "skills": {
+    "sentinel-security": {
+      "path": "skills/sentinel-security/SKILL.md",
+      "agents": "skills/sentinel-security/agents/"
+    },
+    "sentinel-rag": {
+      "path": "skills/sentinel-rag/SKILL.md"
+    },
+    "sentinel-evolve": {
+      "path": "skills/sentinel-evolve/SKILL.md"
+    }
+  },
+  "mcp-servers": {
+    "sentinel-scanner": {
+      "path": "mcp-servers/sentinel-scanner",
+      "transport": "stdio",
+      "entry": "dist/index.js",
+      "build": "npm install --production && npm run build"
+    }
+  },
+  "postInstall": "bash scripts/deploy.sh",
+  "env": {
+    "GITHUB_TOKEN": {
+      "description": "GitHub token for CVE sync and Anthropic ecosystem sync (optional, 60 req/h without)",
+      "required": false
+    },
+    "NVD_API_KEY": {
+      "description": "NVD API key for higher rate limits on CVE sync (optional)",
+      "required": false
+    },
+    "CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE": {
+      "description": "Set to 1 for offline/air-gapped environments to preserve marketplace cache on git pull failure",
+      "required": false,
+      "default": "0"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/manuelturpin/lab-30-sentinel.git"
+  }
+}
