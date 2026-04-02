@@ -109,7 +109,8 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 - `/sentinel-security` : Lancer un audit complet du projet courant
 - `/sentinel-rag` : Expert RAG — diagnostic, optimisation, creation, evaluation
-- `/sentinel-evolve` : Intelligence evolutive — scan, analyze, recommend, apply, maintain
+- `/sentinel-evolve` : Intelligence evolutive — scan, analyze, recommend, apply, maintain, **auto**
+- `/sentinel-evolve auto` : Pipeline complet en une commande — scan→analyze→recommend→apply→deploy→commit (headless-ready pour cron)
 - `bash scripts/deploy.sh` : Deployer sur la machine locale (OBLIGATOIRE apres chaque modif)
 - `bash scripts/setup.sh` : Installer les dependances et outils externes
 - `bash scripts/test-sentinel.sh` : Tester le systeme (structure, RAG, KB, templates)

@@ -29,7 +29,77 @@ If no mode specified, auto-detect:
 3. If user explicitly requested a mode: use that mode
 4. Default: **recommend**
 
-Available modes: `scan`, `analyze`, `recommend`, `apply`, `maintain`
+Available modes: `scan`, `analyze`, `recommend`, `apply`, `maintain`, `auto`
+
+---
+
+## Mode: auto
+
+**Full evolution pipeline** — runs the complete scan→analyze→recommend→apply→deploy→commit cycle in one shot. This is what you run when Claude Code publishes a new release.
+
+### Interactive usage
+```
+/sentinel-evolve auto
+```
+
+### Headless / cron usage
+```bash
+MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-evolve auto" --name "sentinel-evolve-auto-$(date +%Y-%m-%d)"
+```
+
+### Pipeline steps
+
+1. **Scan** — run `anthropic-sync.py` + re-index evolve KB
+2. **Analyze** — cross-reference feature inventory vs current skills
+3. **Recommend** — generate EIR with prioritized recommendations
+4. **Auto-apply** — apply all P1 (quick wins) automatically. For P2/P3:
+   - **Interactive mode**: ask the user which P2/P3 to apply
+   - **Headless mode**: apply all P2 too, skip P3 (require explicit approval for strategic changes)
+5. **Deploy** — run `bash /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/deploy.sh`
+6. **Commit** — stage all modified files, commit with message `perf(evolve): apply EIR-{date} — {N} recommendations, score {before}%→{after}%`, push to origin
+
+### Safety guardrails
+
+- **Dry-run first**: if running for the first time in auto mode, add `--dry-run` to the sync and show the EIR without applying. Ask for confirmation before proceeding.
+- **P3 gating**: strategic recommendations (high effort) are NEVER auto-applied in headless mode — they are saved as pending in the EIR for manual review.
+- **Rollback**: each apply step uses worktree isolation when possible. If a recommendation breaks JSON validation or SKILL.md syntax, it is reverted and marked as `status: "failed"` in the EIR.
+- **Diff review**: in interactive mode, show the full `git diff --stat` before committing and ask for confirmation.
+
+### Cron setup (future VPS)
+
+When Sentinel runs autonomously on a server, schedule the auto mode bi-weekly:
+
+```bash
+# Local machine (Claude Code native cron)
+CronCreate: "Sentinel Auto-Evolve" schedule="0 8 * * 1,4" command="claude --bare -p '/sentinel-evolve auto'"
+
+# VPS / Anthropic cloud (remote scheduled task)
+RemoteTrigger: "Sentinel Auto-Evolve" schedule="0 8 * * 1,4" prompt="/sentinel-evolve auto"
+```
+
+The cron runs every Monday and Thursday at 8am — matching the bi-weekly sync cadence. It produces:
+- EIR report in `/Users/manuelturpin/.sentinel/reports/archive/`
+- Git commit with all applied changes
+- Updated metadata.json with exploitation score history
+
+### Output (headless)
+
+In headless mode (`claude -p`), auto mode outputs a JSON summary to stdout:
+
+```json
+{
+  "date": "2026-04-02",
+  "cc_version": "2.1.90",
+  "new_releases": 2,
+  "recommendations_total": 12,
+  "recommendations_applied": 10,
+  "recommendations_skipped": 2,
+  "exploitation_score_before": 83,
+  "exploitation_score_after": 95,
+  "commit": "3a2f94f",
+  "report": "EIR-2026-04-02.json"
+}
+```
 
 ---
 
