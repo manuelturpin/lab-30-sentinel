@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Sentinel RAG Indexer — plugin bin/ executable (v2.1.91+)
+# Re-indexes all knowledge bases into ChromaDB
+set -euo pipefail
+SENTINEL_HOME="${SENTINEL_HOME:-$HOME/.sentinel}"
+VENV_PYTHON="$SENTINEL_HOME/rag/.venv/bin/python3"
+PYTHON="${VENV_PYTHON:-python3}"
+[ -x "$VENV_PYTHON" ] && PYTHON="$VENV_PYTHON"
+echo "=== Indexing main security KB ==="
+"$PYTHON" "$SENTINEL_HOME/rag/indexer.py" "$@"
+echo "=== Indexing evolve KB ==="
+cd "$SENTINEL_HOME/skills/sentinel-evolve/knowledge" && "$PYTHON" indexer.py "$@"
+echo "=== Indexing RAG KB ==="
+cd "$SENTINEL_HOME/skills/sentinel-rag/knowledge" && "$PYTHON" indexer.py "$@"
+echo "All KBs indexed."

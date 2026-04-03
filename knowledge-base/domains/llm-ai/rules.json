@@ -591,8 +591,8 @@
       "exclude": ["node_modules", "dist"]
     },
     "remediation": {
-      "description": "Review all hooks in .claude/settings.json before trusting a cloned repository. Add 'if' conditional guards to restrict when hooks fire. Never allow hooks to POST to external URLs without explicit review. Use 'matcher' to limit hooks to specific tool patterns.",
-      "code_example": "// Safe hook with conditional guard\n{\n  \"hooks\": {\n    \"PreToolUse\": [{\n      \"matcher\": \"Bash(git *)\",\n      \"if\": \"Bash(git *)\",\n      \"hooks\": [{\n        \"type\": \"command\",\n        \"command\": \"echo 'git command detected'\"\n      }]\n    }]\n  }\n}",
+      "description": "Review all hooks in .claude/settings.json before trusting a cloned repository. Add 'if' conditional guards (v2.1.85+) to restrict when hooks fire — this uses permission rule syntax (e.g., Bash(git *)) and prevents unnecessary process spawning. Never allow hooks to POST to external URLs without explicit review. Use 'matcher' to limit hooks to specific tool patterns.",
+      "code_example": "// Safe hook with 'if' conditional guard (v2.1.85+)\n// The 'if' field uses permission rule syntax to filter when hooks spawn\n{\n  \"hooks\": {\n    \"PreToolUse\": [{\n      \"if\": \"Bash(git *)\",\n      \"matcher\": \"Bash(git *)\",\n      \"hooks\": [{\n        \"type\": \"command\",\n        \"command\": \"echo 'git command detected'\"\n      }]\n    }]\n  }\n}\n// Without 'if', the hook process spawns for EVERY tool call — 'if' reduces overhead",
       "references": [
         "https://venturebeat.com/technology/claude-codes-source-code-appears-to-have-leaked-heres-what-we-know"
       ]
@@ -719,5 +719,138 @@
     "standards": ["CWE-451", "OWASP-LLM03:2025"],
     "ai_specific": true,
     "frameworks": ["claude-code", "cursor", "copilot"]
+  },
+  {
+    "id": "LLM-SKILL-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "llm-ai",
+    "subcategory": "skill-execution",
+    "title": "Skills executing shell commands without disableSkillShellExecution",
+    "description": "AI agent skills, custom slash commands, or plugin commands execute shell commands via Bash tool without the disableSkillShellExecution setting enabled. In enterprise or multi-tenant environments, untrusted skills can run arbitrary shell commands to exfiltrate data, install backdoors, or pivot to other systems. Claude Code v2.1.91+ provides disableSkillShellExecution to block inline shell execution in skill contexts.",
+    "detect": {
+      "patterns": [
+        "Bash:\\s",
+        "```bash",
+        "```shell",
+        "command\"\\s*:\\s*\"",
+        "run_command\\(",
+        "subprocess\\.run\\(",
+        "os\\.system\\("
+      ],
+      "negative_patterns": [
+        "disableSkillShellExecution",
+        "# read-only",
+        "# safe command"
+      ],
+      "file_types": ["SKILL.md", "*.md", "settings.json", "*.json"],
+      "exclude": ["node_modules", "dist", "test", "docs"]
+    },
+    "remediation": {
+      "description": "Enable disableSkillShellExecution in settings.json for environments where untrusted skills are loaded. Audit all Bash tool invocations in SKILL.md files — ensure they are strictly necessary and use allowlists. For enterprise deployments, combine with managed-settings.json to enforce this policy org-wide.",
+      "code_example": "// In settings.json — block shell execution in skills\n{\n  \"disableSkillShellExecution\": true\n}\n\n// If a skill MUST use shell, document the commands explicitly\n// and use an allowlist in managed-settings.json",
+      "references": [
+        "https://docs.anthropic.com/en/docs/claude-code"
+      ]
+    },
+    "standards": ["CWE-78", "CWE-94", "OWASP-LLM06:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code"]
+  },
+  {
+    "id": "LLM-SANDBOX-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.5,
+    "category": "llm-ai",
+    "subcategory": "sandbox-enforcement",
+    "title": "Missing sandbox.failIfUnavailable configuration",
+    "description": "Projects using Claude Code sandbox mode lack the sandbox.failIfUnavailable setting. Without it, if the sandbox cannot start (e.g., missing runtime, permission issues), Claude Code silently falls back to running unsandboxed — negating the security boundary. Claude Code v2.1.83+ provides sandbox.failIfUnavailable to exit with an error instead of running unsandboxed.",
+    "detect": {
+      "patterns": [
+        "\"sandbox\"\\s*:",
+        "sandbox.*mode",
+        "CLAUDE_CODE.*SANDBOX"
+      ],
+      "negative_patterns": [
+        "failIfUnavailable.*true",
+        "\"failIfUnavailable\"\\s*:\\s*true"
+      ],
+      "file_types": ["settings.json", "*.json", ".claude/*"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Add sandbox.failIfUnavailable: true to settings.json whenever sandbox mode is configured. This ensures that sandboxed execution is enforced — if the sandbox cannot start, the process exits with an error rather than silently running without isolation.",
+      "code_example": "// In settings.json\n{\n  \"sandbox\": {\n    \"enabled\": true,\n    \"failIfUnavailable\": true\n  }\n}",
+      "references": [
+        "https://docs.anthropic.com/en/docs/claude-code"
+      ]
+    },
+    "standards": ["CWE-693", "CWE-269", "OWASP-LLM06:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code"]
+  },
+  {
+    "id": "LLM-PLUGIN-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.0,
+    "category": "llm-ai",
+    "subcategory": "plugin-governance",
+    "title": "Missing plugin allowlist in enterprise managed settings",
+    "description": "Enterprise deployments using managed-settings.json or managed-settings.d/ lack an allowedChannelPlugins policy. Without it, any user can install arbitrary plugins from the marketplace, which may include untrusted skills, agents, and MCP servers. Claude Code v2.1.85+ blocks plugins not in the allowlist, hiding them from marketplace views.",
+    "detect": {
+      "patterns": [
+        "managed-settings",
+        "managed.settings",
+        "\"managedSettings\""
+      ],
+      "negative_patterns": [
+        "allowedChannelPlugins",
+        "\"allowedChannelPlugins\""
+      ],
+      "file_types": ["*.json", "*.plist"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Add an allowedChannelPlugins list to managed-settings.json specifying which plugins are approved for the organization. Plugins not in the list cannot be installed and are hidden from marketplace. Combine with managed-settings.d/ for per-team plugin policies.",
+      "code_example": "// In managed-settings.json\n{\n  \"allowedChannelPlugins\": [\n    \"@company/approved-plugin-1\",\n    \"@company/approved-plugin-2\"\n  ]\n}\n\n// Or per-team in managed-settings.d/security-team.json\n{\n  \"allowedChannelPlugins\": [\"sentinel\", \"@company/security-tools\"]\n}",
+      "references": [
+        "https://docs.anthropic.com/en/docs/claude-code"
+      ]
+    },
+    "standards": ["CWE-284", "CWE-269", "OWASP-LLM09:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code"]
+  },
+  {
+    "id": "LLM-MCP-003",
+    "severity": "LOW",
+    "cvss_v4": 3.5,
+    "category": "llm-ai",
+    "subcategory": "mcp-context-bloat",
+    "title": "MCP server with oversized tool descriptions consuming context budget",
+    "description": "MCP servers with tool descriptions or server instructions exceeding 2KB waste the AI model's context budget. OpenAPI-generated MCP servers are common offenders — auto-generated descriptions often include full API schemas. Claude Code v2.1.84+ caps descriptions at 2KB, but pre-existing servers may still generate oversized payloads that get truncated unpredictably.",
+    "detect": {
+      "patterns": [
+        "server\\.tool\\(",
+        "McpServer\\(",
+        "description.*\\.{200,}",
+        "\"description\"\\s*:\\s*\"[^\"]{2000,}"
+      ],
+      "negative_patterns": [
+        "# intentionally verbose"
+      ],
+      "file_types": ["*.ts", "*.js", "*.py", "*.json"],
+      "exclude": ["node_modules", "dist", "test"]
+    },
+    "remediation": {
+      "description": "Keep MCP tool descriptions under 2KB. For OpenAPI-generated servers, override auto-generated descriptions with concise summaries. Claude Code v2.1.84+ truncates at 2KB — design for this limit proactively.",
+      "code_example": "// Good: concise MCP tool description\nserver.tool(\n  \"scan-headers\",\n  \"Check security headers (CSP, HSTS, X-Frame-Options) for a URL.\",  // ~60 chars\n  { url: z.string() },\n  handler\n);\n\n// Bad: auto-generated OpenAPI description (often >2KB)\n// server.tool(\"scan\", fullOpenAPISchema.description, ...)",
+      "references": [
+        "https://docs.anthropic.com/en/docs/claude-code"
+      ]
+    },
+    "standards": ["CWE-400", "OWASP-LLM10:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code", "mcp"]
   }
 ]

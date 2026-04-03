@@ -491,6 +491,83 @@
       "category": "ui",
       "status": "stable",
       "description": "Auto mode denied commands show notification and appear in /permissions > Recent tab with retry via r key"
+    },
+    "mcp_result_size_override": {
+      "introduced": "2.1.91",
+      "date": "2026-04-02",
+      "category": "mcp",
+      "status": "stable",
+      "description": "MCP tool result persistence override via _meta[\"anthropic/maxResultSizeChars\"] annotation (up to 500K) — larger results like DB schemas pass through without truncation"
+    },
+    "disable_skill_shell_execution": {
+      "introduced": "2.1.91",
+      "date": "2026-04-02",
+      "category": "security",
+      "status": "stable",
+      "description": "disableSkillShellExecution setting to disable inline shell execution in skills, custom slash commands, and plugin commands"
+    },
+    "multiline_deep_links": {
+      "introduced": "2.1.91",
+      "date": "2026-04-02",
+      "category": "integrations",
+      "status": "stable",
+      "description": "Multi-line prompts in claude-cli://open?q= deep links — encoded newlines %0A no longer rejected"
+    },
+    "plugin_bin_executables": {
+      "introduced": "2.1.91",
+      "date": "2026-04-02",
+      "category": "distribution",
+      "status": "stable",
+      "description": "Plugins can ship executables under bin/ and invoke them as bare commands from the Bash tool"
+    },
+    "conditional_hooks_if": {
+      "introduced": "2.1.85",
+      "date": "2026-03-26",
+      "category": "hooks",
+      "status": "stable",
+      "description": "Conditional if field for hooks using permission rule syntax (e.g., Bash(git *)) to filter when they run, reducing process spawning overhead"
+    },
+    "pretooluse_askuser_override": {
+      "introduced": "2.1.85",
+      "date": "2026-03-26",
+      "category": "hooks",
+      "status": "stable",
+      "description": "PreToolUse hooks can satisfy AskUserQuestion by returning updatedInput alongside permissionDecision allow — headless integrations collect answers via their own UI"
+    },
+    "mcp_server_env_vars": {
+      "introduced": "2.1.85",
+      "date": "2026-03-26",
+      "category": "mcp",
+      "status": "stable",
+      "description": "CLAUDE_CODE_MCP_SERVER_NAME and CLAUDE_CODE_MCP_SERVER_URL environment variables for MCP headersHelper scripts — one helper serves multiple servers"
+    },
+    "plugin_org_policy_block": {
+      "introduced": "2.1.85",
+      "date": "2026-03-26",
+      "category": "security",
+      "status": "stable",
+      "description": "Plugins blocked by organization policy (managed-settings.json) cannot be installed or enabled, hidden from marketplace views"
+    },
+    "mcp_description_cap_2kb": {
+      "introduced": "2.1.84",
+      "date": "2026-03-26",
+      "category": "mcp",
+      "status": "stable",
+      "description": "MCP tool descriptions and server instructions capped at 2KB to prevent OpenAPI-generated servers from bloating context"
+    },
+    "sandbox_fail_if_unavailable": {
+      "introduced": "2.1.83",
+      "date": "2026-03-25",
+      "category": "security",
+      "status": "stable",
+      "description": "sandbox.failIfUnavailable setting to exit with error when sandbox enabled but cannot start, instead of running unsandboxed"
+    },
+    "worktree_http_hook_path": {
+      "introduced": "2.1.84",
+      "date": "2026-03-26",
+      "category": "hooks",
+      "status": "stable",
+      "description": "WorktreeCreate hook supports type http — return created worktree path via hookSpecificOutput.worktreePath in response JSON"
     }
   }
 }

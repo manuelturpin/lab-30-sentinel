@@ -232,6 +232,7 @@ For read-only security scans in auto mode, configure a PermissionDenied hook to 
 {
   "hooks": {
     "PermissionDenied": [{
+      "if": "Read|Grep|Glob",
       "matcher": "Read|Grep|Glob",
       "hooks": [{
         "type": "command",
@@ -241,6 +242,8 @@ For read-only security scans in auto mode, configure a PermissionDenied hook to 
   }
 }
 ```
+
+The `if` conditional (v2.1.85+) ensures the hook only spawns a process when the denied tool matches read-only patterns — reducing overhead for unrelated denials.
 
 This eliminates manual permission approval friction during audits for safe read operations.
 
@@ -272,6 +275,7 @@ Configure a TaskCreated hook to automatically log every scan task to a persisten
 {
   "hooks": {
     "TaskCreated": [{
+      "if": "TaskCreate",
       "matcher": "Auditing.*audit",
       "hooks": [{
         "type": "command",
@@ -288,6 +292,27 @@ This creates a timestamped record of every agent dispatched during a scan — us
 
 For CI pipelines, PreToolUse hooks can return `"defer"` to pause headless sessions at risky tool calls (e.g., `scan-headers` making external HTTP requests). Resume after human approval with `-p --resume`.
 
+### PreToolUse AskUser Override for Headless Audits (v2.1.85+)
+
+In headless CI environments, `AskUserQuestion` prompts (e.g., "Which severity threshold?") would block the pipeline. Configure a PreToolUse hook to auto-answer these:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "if": "AskUserQuestion",
+      "matcher": "AskUserQuestion",
+      "hooks": [{
+        "type": "command",
+        "command": "echo '{\"permissionDecision\": \"allow\", \"updatedInput\": \"Use defaults: severity=MEDIUM, depth=standard\"}'"
+      }]
+    }]
+  }
+}
+```
+
+This returns a pre-configured answer via `updatedInput`, enabling fully unattended audit runs without interactive prompts.
+
 ## CI/Headless Mode
 
 When invoked via `claude -p`, produce structured SARIF output:
@@ -302,11 +327,11 @@ When invoked via `claude -p`, produce structured SARIF output:
 MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-security" --output-format json > report.sarif.json
 ```
 
-**Deep link for one-click audit launch:**
+**Deep link for one-click audit launch** (v2.1.91 multi-line support):
 ```
-claude-cli://open?q=/sentinel-security
+claude-cli://open?q=/sentinel-security%0A%0APerform%20a%20full%20security%20audit%20of%20this%20project.%0ASeverity%20threshold:%20MEDIUM%0ADepth:%20standard
 ```
-Share this link in README, Slack, or docs for instant audit launch from anywhere.
+Share this link in README, Slack, or docs for instant audit launch from anywhere. Multi-line prompts via `%0A` encoding let you pre-fill audit parameters.
 
 **Use `--json-schema` for guaranteed valid SARIF** — enforces output structure at the model level, eliminating JSON parse failures in CI:
 ```bash
@@ -377,7 +402,11 @@ Sentinel can be packaged as a distributable Claude Code plugin for one-command i
 
 ```
 sentinel-plugin/
-  package.json          — plugin manifest (name, version, skills, agents, mcp-servers)
+  package.json          — plugin manifest (name, version, skills, agents, mcp-servers, bin)
+  bin/                  — executable commands (v2.1.91+ plugin bin/ support)
+    sentinel-cve-sync   — sync CVE feeds from NVD/OSV/GitHub
+    sentinel-anthropic-sync — sync Anthropic ecosystem releases
+    sentinel-index      — re-index all ChromaDB knowledge bases
   skills/
     sentinel-security/  — SKILL.md + agents/
     sentinel-rag/       — SKILL.md + knowledge/
@@ -387,6 +416,13 @@ sentinel-plugin/
   knowledge-base/       — rules, standards, CVE feeds
   rag/                  — ChromaDB indexer, query, config
   scripts/              — deploy, sync, cron scripts
+```
+
+Plugin `bin/` executables (v2.1.91+) are available as bare commands from the Bash tool after install — no path required:
+```bash
+sentinel-cve-sync --days 90
+sentinel-anthropic-sync
+sentinel-index
 ```
 
 Users install with: `claude plugin install sentinel` — this deploys all skills, agents, MCP server, and KB automatically.

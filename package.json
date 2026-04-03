@@ -1,0 +1,12 @@
+{
+  "name": "sentinel",
+  "version": "1.0.0",
+  "description": "AI-powered cybersecurity auditing system for Claude Code — security scanning, RAG knowledge base, and self-evolving intelligence",
+  "bin": {
+    "sentinel-cve-sync": "./bin/sentinel-cve-sync",
+    "sentinel-anthropic-sync": "./bin/sentinel-anthropic-sync",
+    "sentinel-index": "./bin/sentinel-index"
+  },
+  "keywords": ["security", "audit", "cybersecurity", "claude-code", "mcp", "rag"],
+  "license": "MIT"
+}

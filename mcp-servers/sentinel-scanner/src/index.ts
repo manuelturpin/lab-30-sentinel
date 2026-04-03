@@ -67,6 +67,9 @@ server.tool(
           text: JSON.stringify(result, null, 2),
         },
       ],
+      _meta: {
+        "anthropic/maxResultSizeChars": 500000,
+      },
     };
   }
 );
@@ -111,6 +114,9 @@ server.tool(
           text: JSON.stringify(result, null, 2),
         },
       ],
+      _meta: {
+        "anthropic/maxResultSizeChars": 500000,
+      },
     };
   }
 );

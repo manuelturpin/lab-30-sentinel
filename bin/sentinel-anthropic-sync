@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Sentinel Anthropic Sync — plugin bin/ executable (v2.1.91+)
+# Syncs Claude Code releases, skills, SDKs, MCP from Anthropic ecosystem
+set -euo pipefail
+SENTINEL_HOME="${SENTINEL_HOME:-$HOME/.sentinel}"
+exec python3 "$SENTINEL_HOME/scripts/anthropic-sync.py" "$@"
