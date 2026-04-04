@@ -852,5 +852,39 @@
     "standards": ["CWE-400", "OWASP-LLM10:2025"],
     "ai_specific": true,
     "frameworks": ["claude-code", "mcp"]
+  },
+  {
+    "id": "LLM-MGMT-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.3,
+    "category": "llm-ai",
+    "subcategory": "managed-settings",
+    "title": "AI agent deployment without fail-closed managed settings policy",
+    "description": "Enterprise AI agent deployments (Claude Code skills, plugins, MCP servers) that rely on remote managed settings for security policy enforcement should enable fail-closed startup. Without forceRemoteSettingsRefresh, the CLI may start with stale or missing policy — allowing disabled plugins, bypassed org restrictions, or outdated security configurations to remain active.",
+    "detect": {
+      "patterns": [
+        "managed-settings\\.json",
+        "managed-settings\\.d/",
+        "allowedChannelPlugins",
+        "disableSkillShellExecution",
+        "sandbox\\.failIfUnavailable"
+      ],
+      "negative_patterns": [
+        "forceRemoteSettingsRefresh.*true",
+        "forceRemoteSettingsRefresh.*:\\s*true"
+      ],
+      "file_types": ["*.json", "*.plist", "*.md"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Enable forceRemoteSettingsRefresh in managed settings to ensure the CLI always starts with the latest policy. Combine with sandbox.failIfUnavailable for defense-in-depth. For air-gapped environments, maintain a local managed-settings.json as fallback.",
+      "code_example": "// managed-settings.json (enterprise deployment)\n{\n  \"forceRemoteSettingsRefresh\": true,\n  \"sandbox\": { \"failIfUnavailable\": true },\n  \"disableSkillShellExecution\": true,\n  \"allowedChannelPlugins\": [\"sentinel\"]\n}",
+      "references": [
+        "https://docs.anthropic.com/en/docs/claude-code/enterprise"
+      ]
+    },
+    "standards": ["CWE-1188", "OWASP-LLM09:2025", "NIST-AI-RMF-GV-1.1"],
+    "ai_specific": true,
+    "frameworks": ["claude-code", "enterprise"]
   }
 ]

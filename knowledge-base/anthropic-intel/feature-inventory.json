@@ -568,6 +568,34 @@
       "category": "hooks",
       "status": "stable",
       "description": "WorktreeCreate hook supports type http — return created worktree path via hookSpecificOutput.worktreePath in response JSON"
+    },
+    "force_remote_settings_refresh": {
+      "introduced": "2.1.92",
+      "date": "2026-04-04",
+      "category": "security",
+      "status": "stable",
+      "description": "forceRemoteSettingsRefresh policy setting — CLI blocks startup until remote managed settings are freshly fetched, exits if fetch fails (fail-closed)"
+    },
+    "bedrock_setup_wizard": {
+      "introduced": "2.1.92",
+      "date": "2026-04-04",
+      "category": "integrations",
+      "status": "stable",
+      "description": "Interactive Bedrock setup wizard on login screen — guides AWS authentication, region configuration, and credential verification"
+    },
+    "cost_breakdown_per_model": {
+      "introduced": "2.1.92",
+      "date": "2026-04-04",
+      "category": "cli",
+      "status": "stable",
+      "description": "Per-model and cache-hit breakdown in /cost for subscription users — shows cost split across opus, sonnet, haiku"
+    },
+    "release_notes_interactive": {
+      "introduced": "2.1.92",
+      "date": "2026-04-04",
+      "category": "cli",
+      "status": "stable",
+      "description": "/release-notes is now an interactive version picker — browse changelogs by version"
     }
   }
 }

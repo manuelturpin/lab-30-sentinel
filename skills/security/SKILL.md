@@ -110,6 +110,8 @@ Then map the detected files to agents using this table:
 
 **Security hardening** — set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` before dispatching agents to prevent credential leakage from subprocess environments during scans.
 
+**Cost monitoring** — Sentinel dispatches agents across multiple model tiers (haiku for light checks, opus for deep analysis). Use `/cost` to view the per-model breakdown and cache-hit ratio (v2.1.92+) — this helps optimize agent tier assignments and identify expensive scans.
+
 **Progress tracking** — before dispatching, create a task for each agent using TaskCreate so the user can see scan progress. Update each task to completed when the agent returns.
 
 For each detected agent, launch it in parallel using the Agent tool with **named subagents** for inter-agent coordination via `SendMessage`:
@@ -428,6 +430,8 @@ sentinel-index
 Users install with: `claude plugin install sentinel` — this deploys all skills, agents, MCP server, and KB automatically.
 
 **Offline environments** — set `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` to preserve the local marketplace cache when `git pull` fails (v2.1.90+). This prevents plugin install failures in air-gapped or restricted network environments.
+
+**Enterprise fail-closed policy** — for enterprise deployments, enable `forceRemoteSettingsRefresh` in managed settings (v2.1.92+). This blocks CLI startup until remote managed settings are freshly fetched — if the fetch fails, the CLI exits instead of running with stale or missing policy. This ensures Sentinel audits always run under the latest org security policy.
 
 ## Multi-Skill Orchestration (Agent Teams)
 
