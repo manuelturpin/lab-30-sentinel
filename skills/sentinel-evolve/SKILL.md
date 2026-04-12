@@ -27,9 +27,10 @@ If no mode specified, auto-detect:
 1. Read metadata.json — if `last_updated` is null or `total_indexed_docs` is 0: suggest **scan**
 2. If data is fresh but no recent EIR report exists: suggest **analyze**
 3. If user explicitly requested a mode: use that mode
-4. Default: **recommend**
+4. If user explicitly requested `audit`: use **audit** mode (does NOT auto-trigger from evolve workflow)
+5. Default: **recommend**
 
-Available modes: `scan`, `analyze`, `recommend`, `apply`, `maintain`, `auto`
+Available modes: `scan`, `analyze`, `recommend`, `apply`, `maintain`, `auto`, `audit`
 
 ---
 
@@ -98,6 +99,170 @@ In headless mode (`claude -p`), auto mode outputs a JSON summary to stdout:
   "exploitation_score_after": 95,
   "commit": "3a2f94f",
   "report": "EIR-2026-04-02.json"
+}
+```
+
+---
+
+## Mode: audit
+
+**Claude Code Health Audit** — analyzes how you use Claude Code across projects. Combines session history parsing, static config inspection, and CLAUDE.md quality grading to produce a health score with guided remediation.
+
+### Invocation
+
+```
+/sentinel-evolve audit              # Audit current project
+/sentinel-evolve audit --all        # Compare all projects
+/sentinel-evolve audit --global     # Full user profile (includes --all)
+```
+
+### Step 1: Detect Scope
+
+Parse the argument after `audit`:
+- `--global` → scope = `global` (all projects + user profile + global config)
+- `--all` → scope = `cross-project` (all projects, no user profile section)
+- No flag → scope = `project` (current working directory only)
+
+### Step 2: Run Session Analyzer
+
+```bash
+Bash: python3 /Users/manuelturpin/.sentinel/scripts/session-analyzer.py [--project "$(pwd)" | --all | --global]
+```
+
+Capture the JSON output. The analyzer returns a structured JSON with keys: `generated_at`, `period`, `global` (config), `projects` (dict keyed by project hash), `aggregated` (cross-project stats when `--all`/`--global`).
+
+If the script fails or returns invalid JSON, warn the user and fall back to static-only analysis (skip session-based metrics, still grade CLAUDE.md and check config).
+
+### Step 3: Feature Gap Analysis
+
+1. Read `/Users/manuelturpin/.sentinel/knowledge-base/anthropic-intel/feature-inventory.json`
+2. Read `audit_config` from `/Users/manuelturpin/.sentinel/config/evolve-targets.json`
+3. For each feature in the inventory:
+   - If `feature.key` is in `features_detected` (from analyzer JSON `aggregated.features_detected` or project-level) → **USED**
+   - If feature is partially present (e.g., Agent tool used but never with `isolation: worktree`) → **PARTIAL**
+   - If feature doesn't apply to the user's detected stack → **NOT_APPLICABLE**
+   - Otherwise → **NOT_USED**
+4. Compute exploitation score: `USED / (USED + PARTIAL + NOT_USED) * 100`
+
+**PARTIAL detection rules** (cross-reference `aggregated.tools` and per-project `agent_patterns`):
+- `git_worktrees`: Agent used but no `isolation: worktree` detected → PARTIAL
+- `named_subagents`: Agent used but no `name` param detected → PARTIAL
+- `background_agents`: Agent used but no `run_in_background` detected → PARTIAL
+- `model_alias_override`: Agent used but no `model` param detected → PARTIAL
+- `explore_subagent`/`plan_subagent`: Agent used but only `general-purpose` type → PARTIAL
+
+### Step 4: CLAUDE.md Grading
+
+For each project in scope, Read its CLAUDE.md and grade on 100 points:
+
+| Criterion | Full | Partial | Absent | Detection |
+|-----------|------|---------|--------|-----------|
+| Existence | 10 | — | 0 | File exists |
+| Role/Description | 10 | 5 | 0 | Grep for `## Role`, `## Description`, `## Projet` |
+| Structure | 10 | 5 | 0 | Directory tree in code block |
+| Conventions | 15 | 8 | 0 | Grep for `## Convention`, naming/language rules |
+| Commands | 15 | 8 | 0 | 3+ backtick command blocks = full, 1-2 = partial |
+| Relations | 10 | 5 | 0 | Links to deps/other projects |
+| Current state | 10 | 5 | 0 | Grep for `## Etat`, `## Statut`, `Actif`/`Dormant` |
+| Secrets/Security | 10 | 5 | 0 | Mentions `.gitignore` + env vars |
+| Adequate size | 10 | 5 | 0 | 30-300 lines = full, 10-29 or 301-500 = partial |
+
+Grade thresholds: A >= 85, B >= 70, C >= 55, D >= 40, F < 40.
+
+For the `project` scope, grade only the cwd CLAUDE.md. For `--all`/`--global`, iterate all detected projects — resolve each project path from the analyzer JSON `projects` keys and Read `{path}/CLAUDE.md`. Skip projects whose path doesn't exist on disk.
+
+### Step 5: Compute Dimension Scores
+
+Score each dimension 0-100 using analyzer JSON + static config:
+
+**Config & Context (15%):**
+- CLAUDE.md grade (normalized to 0-100) from Step 4
+- Has project `.claude/settings.json` → +20
+- Has `.gitignore` → +10
+
+**Tool Usage (15%):**
+- Tool diversity: uses >= 8 different tools → 100, 5-7 → 70, 3-4 → 40, <3 → 20
+- Grep usage > 0 → +15 (efficient searching)
+- Glob usage > 0 → +15 (efficient file finding)
+- Agent usage > 0 → +20 (leverages subagents)
+
+**Skills & Plugins (15%):**
+- Count `skills_used` from analyzer. If >= 5 unique skills → 60, 3-4 → 40, 1-2 → 20
+- If MCP tools used (`mcp__*` in tools) → +20
+- If browser tools used → +20
+
+**Hooks & Automation (15%):**
+- From `global.hooks_configured` in analyzer: count hook events × 15 (capped at 100)
+- CronCreate in tools → +20
+- FileChanged or ConfigChange hooks present → +20
+
+**Memory Hygiene (10%):**
+- Check if `memory/` exists in project dir (from analyzer `has_memory` or static check)
+- Memory files exist and count 2-20 → +40, >20 or 0 → +10
+- Recently updated (< 30 days) → +30
+
+**Agent Patterns (15%):**
+- From analyzer `agent_patterns` per project:
+  - Uses agents (total_dispatched > 0) → +20
+  - Uses specialized types (Explore/Plan) → +20
+  - Uses worktree isolation → +20
+  - Uses named agents → +20
+  - Uses model override → +20
+
+**Feature Exploitation (15%):**
+- Exploitation score from Step 3
+
+**Health Score** = weighted sum of all dimensions (weights from `audit_config.dimension_weights`).
+
+### Step 6: Generate Report
+
+Use the template at `/Users/manuelturpin/.sentinel/reports/templates/audit-report.md`.
+
+Fill in all sections:
+1. **Health Score** — weighted score + dimension table with grades (A/B/C/D/F per dimension)
+2. **Top Recommendations** — generate P1/P2/P3 based on lowest-scoring dimensions and NOT_USED features. Each recommendation includes estimated impact in points.
+3. **Project Ranking** — table sorted by score (cross-project/global only). Columns: project name, health score, CLAUDE.md grade, sessions count, feature exploitation %.
+4. **Feature Gap Analysis** — table of NOT_USED and PARTIAL features with descriptions and recommendations.
+5. **CLAUDE.md Grades** — per-project grades with top 3 specific improvement suggestions per project.
+6. **Temporal Analysis** — from analyzer `temporal` data: feature adoption/abandonment trends, weekly activity.
+7. **User Profile** (global only) — strengths (top dimensions), weaknesses (bottom dimensions), usage style characterization.
+
+Save to `/Users/manuelturpin/.sentinel/reports/archive/audit-{scope}-{date}.md`
+
+### Step 7: Guided Remediation
+
+Present numbered actions derived from the lowest-scoring dimensions:
+
+```
+Based on the audit, here are actions I can perform now:
+
+ [1] {action description} → estimated +{points} pts
+ [2] {action description} → estimated +{points} pts
+ ...
+
+Which ones? (e.g., 1,3 or "all")
+```
+
+Remediation types:
+- **Create/improve CLAUDE.md** — Read the project structure (Glob + Bash ls), generate a CLAUDE.md following the lab template from `/Users/manuelturpin/Desktop/bonsai974/claude/lab/CLAUDE.md` (Template CLAUDE.md minimal section)
+- **Add hooks** — propose specific hooks based on the user's usage patterns and write to `.claude/settings.json` or `~/.claude/settings.json`
+- **Create rules** — create `.claude/rules/*.md` files based on project conventions detected
+- **Optimize settings** — suggest env vars, permissions, MCP config adjustments
+- **Propagate patterns** — identify hooks/rules from highest-scoring project and offer to copy them to lower-scoring projects
+
+Each action requires explicit user confirmation before any file modification.
+
+### Step 8: Save Results
+
+1. Save report to `/Users/manuelturpin/.sentinel/reports/archive/audit-{scope}-{date}.md`
+2. Append score to metadata.json `audit_history` array:
+```json
+{
+  "date": "2026-04-12",
+  "scope": "global",
+  "health_score": 72,
+  "dimensions": { "config_context": 85, "tool_usage": 70, "...": "..." },
+  "projects_audited": 47
 }
 ```
 
