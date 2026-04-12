@@ -26,5 +26,39 @@
     "deploy_script": "/Users/manuelturpin/.sentinel/scripts/deploy.sh",
     "cron_orchestrator": "/Users/manuelturpin/.sentinel/scripts/sentinel-cron.sh",
     "mcp_server": "/Users/manuelturpin/.sentinel/mcp-servers/sentinel-scanner/"
+  },
+  "audit_config": {
+    "sessions_dir": "~/.claude/projects/",
+    "settings_global": "~/.claude/settings.json",
+    "skills_dir": "~/.claude/skills/",
+    "plugins_dir": "~/.claude/plugins/",
+    "analyzer_script": "~/.sentinel/scripts/session-analyzer.py",
+    "claude_md_grading": {
+      "max_score": 100,
+      "grade_thresholds": { "A": 85, "B": 70, "C": 55, "D": 40, "F": 0 }
+    },
+    "dimensions": [
+      "config_context",
+      "tool_usage",
+      "skills_plugins",
+      "hooks_automation",
+      "memory_hygiene",
+      "agent_patterns",
+      "feature_exploitation"
+    ],
+    "dimension_weights": {
+      "config_context": 0.15,
+      "tool_usage": 0.15,
+      "skills_plugins": 0.15,
+      "hooks_automation": 0.15,
+      "memory_hygiene": 0.10,
+      "agent_patterns": 0.15,
+      "feature_exploitation": 0.15
+    },
+    "temporal_thresholds": {
+      "active_days": 30,
+      "abandoned_days": 30,
+      "one_time_max_uses": 1
+    }
   }
 }
