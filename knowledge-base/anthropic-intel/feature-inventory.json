@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_built": "2026-03-26T06:00:00Z",
+  "last_built": "2026-04-08T10:00:00Z",
   "features": {
     "skills_system": {
       "introduced": "2.1.0",
@@ -596,6 +596,195 @@
       "category": "cli",
       "status": "stable",
       "description": "/release-notes is now an interactive version picker — browse changelogs by version"
+    },
+    "bedrock_mantle": {
+      "introduced": "2.1.94",
+      "date": "2026-04-07",
+      "category": "integrations",
+      "status": "stable",
+      "description": "Amazon Bedrock support via Mantle — CLAUDE_CODE_USE_MANTLE=1 enables native Bedrock integration"
+    },
+    "default_effort_high": {
+      "introduced": "2.1.94",
+      "date": "2026-04-07",
+      "category": "performance",
+      "status": "stable",
+      "description": "Default effort level increased from medium to high for API-key, Bedrock/Vertex/Foundry, Team, Enterprise users"
+    },
+    "plugin_name_invocation": {
+      "introduced": "2.1.94",
+      "date": "2026-04-07",
+      "category": "skills",
+      "status": "stable",
+      "description": "Plugin skill invocation names use frontmatter name field for stability across install methods"
+    },
+    "keep_coding_instructions": {
+      "introduced": "2.1.94",
+      "date": "2026-04-07",
+      "category": "skills",
+      "status": "stable",
+      "description": "keep-coding-instructions frontmatter field for plugin output styles"
+    },
+    "session_title_hook": {
+      "introduced": "2.1.94",
+      "date": "2026-04-07",
+      "category": "hooks",
+      "status": "stable",
+      "description": "hookSpecificOutput.sessionTitle in UserPromptSubmit hooks for customizing session titles"
+    },
+    "tag_command_removed": {
+      "introduced": "2.1.94",
+      "date": "2026-04-07",
+      "category": "cli",
+      "status": "removed",
+      "description": "/tag command removed"
+    },
+    "vim_command_removed": {
+      "introduced": "2.1.94",
+      "date": "2026-04-07",
+      "category": "cli",
+      "status": "removed",
+      "description": "/vim command removed — toggle via /config → Editor mode"
+    },
+    "bedrock_auth_fix": {
+      "introduced": "2.1.96",
+      "date": "2026-04-08",
+      "category": "integrations",
+      "status": "stable",
+      "description": "Fix Bedrock auth 403 regression with AWS_BEARER_TOKEN_BEDROCK or CLAUDE_CODE_SKIP_BEDROCK_AUTH"
+    },
+    "focus_view_toggle": {
+      "introduced": "2.1.97",
+      "date": "2026-04-08",
+      "category": "ui",
+      "status": "stable",
+      "description": "Ctrl+O focus view toggle in NO_FLICKER mode showing prompt, one-line tool summary with edit diffstats, and final response"
+    },
+    "statusline_refresh_interval": {
+      "introduced": "2.1.97",
+      "date": "2026-04-08",
+      "category": "ui",
+      "status": "stable",
+      "description": "refreshInterval status line setting to re-run the status line command every N seconds"
+    },
+    "monitor_tool": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "tools",
+      "status": "stable",
+      "description": "Monitor tool for streaming events from background scripts — each stdout line is a notification"
+    },
+    "subprocess_pid_sandbox": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "security",
+      "status": "stable",
+      "description": "Subprocess sandboxing with PID namespace isolation on Linux when CLAUDE_CODE_SUBPROCESS_ENV_SCRUB is set"
+    },
+    "script_caps_limit": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "security",
+      "status": "stable",
+      "description": "CLAUDE_CODE_SCRIPT_CAPS env var to limit per-session script invocations — prevents runaway execution"
+    },
+    "exclude_dynamic_system_prompt": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "cli",
+      "status": "stable",
+      "description": "--exclude-dynamic-system-prompt-sections flag for improved cross-user prompt caching in print mode"
+    },
+    "vertex_setup_wizard": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "integrations",
+      "status": "stable",
+      "description": "Interactive Google Vertex AI setup wizard on login screen — guides GCP authentication, project/region config"
+    },
+    "perforce_mode": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "tools",
+      "status": "stable",
+      "description": "CLAUDE_CODE_PERFORCE_MODE env var — Edit/Write fail on read-only files with p4 edit hint"
+    },
+    "traceparent_subprocess": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "performance",
+      "status": "stable",
+      "description": "W3C TRACEPARENT env var in Bash tool subprocesses when OTEL tracing is enabled — child spans parent correctly"
+    },
+    "agents_tabbed_layout": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "ui",
+      "status": "stable",
+      "description": "/agents tabbed layout — Running tab shows live subagents, Library tab adds Run/View actions"
+    },
+    "reload_plugins_hot": {
+      "introduced": "2.1.98",
+      "date": "2026-04-09",
+      "category": "skills",
+      "status": "stable",
+      "description": "/reload-plugins picks up plugin-provided skills without requiring a restart"
+    },
+    "team_onboarding": {
+      "introduced": "2.1.101",
+      "date": "2026-04-10",
+      "category": "cli",
+      "status": "stable",
+      "description": "/team-onboarding command generates a teammate ramp-up guide from local Claude Code usage"
+    },
+    "os_ca_cert_store": {
+      "introduced": "2.1.101",
+      "date": "2026-04-10",
+      "category": "security",
+      "status": "stable",
+      "description": "OS CA certificate store trust by default — enterprise TLS proxies work without extra setup (CLAUDE_CODE_CERT_STORE=bundled for bundled only)"
+    },
+    "ultraplan_auto_cloud": {
+      "introduced": "2.1.101",
+      "date": "2026-04-10",
+      "category": "sessions",
+      "status": "stable",
+      "description": "/ultraplan and remote-session features auto-create a default cloud environment — no web setup required"
+    },
+    "permissions_deny_override_fix": {
+      "introduced": "2.1.101",
+      "date": "2026-04-10",
+      "category": "security",
+      "status": "stable",
+      "description": "Fix permissions.deny not overriding PreToolUse hook permissionDecision 'ask' — deny now properly takes precedence"
+    },
+    "subagent_dynamic_mcp_inherit": {
+      "introduced": "2.1.101",
+      "date": "2026-04-10",
+      "category": "agents",
+      "status": "stable",
+      "description": "Subagents now inherit MCP tools from dynamically-injected servers — fixes missing tools in child agents"
+    },
+    "worktree_subagent_file_access": {
+      "introduced": "2.1.101",
+      "date": "2026-04-10",
+      "category": "isolation",
+      "status": "stable",
+      "description": "Sub-agents running in isolated worktrees can Read/Edit files inside their own worktree"
+    },
+    "resume_by_session_title": {
+      "introduced": "2.1.101",
+      "date": "2026-04-10",
+      "category": "cli",
+      "status": "stable",
+      "description": "claude -p --resume <name> accepts session titles set via /rename or --name — human-readable session resume"
+    },
+    "settings_hook_resilience": {
+      "introduced": "2.1.101",
+      "date": "2026-04-10",
+      "category": "config",
+      "status": "stable",
+      "description": "Unrecognized hook event name in settings.json no longer causes the entire file to be ignored — improved resilience"
     }
   }
 }

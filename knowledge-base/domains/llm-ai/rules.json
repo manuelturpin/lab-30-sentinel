@@ -886,5 +886,73 @@
     "standards": ["CWE-1188", "OWASP-LLM09:2025", "NIST-AI-RMF-GV-1.1"],
     "ai_specific": true,
     "frameworks": ["claude-code", "enterprise"]
+  },
+  {
+    "id": "LLM-PERM-002",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "llm-ai",
+    "subcategory": "permission-bypass",
+    "title": "PreToolUse hook permissionDecision 'ask' used as security gate",
+    "description": "A PreToolUse hook returns permissionDecision: 'ask' to gate dangerous tool calls. Prior to v2.1.101, permissions.deny rules did NOT override this — the hook could downgrade a deny into a prompt, creating a privilege escalation vector. After the fix, deny properly takes precedence, but projects relying on 'ask' as their primary security mechanism should add explicit permissions.deny rules for defense-in-depth.",
+    "detect": {
+      "patterns": [
+        "permissionDecision.*['\"]ask['\"]",
+        "permission_decision.*ask",
+        "PreToolUse.*ask"
+      ],
+      "negative_patterns": [
+        "permissions\\.deny",
+        "permissionDecision.*['\"]deny['\"]"
+      ],
+      "file_types": ["*.json", "*.md", "*.js", "*.ts"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Add explicit permissions.deny rules alongside PreToolUse hooks. Do not rely solely on hooks returning 'ask' for security gating — use deny rules as the primary enforcement and hooks as supplementary checks.",
+      "code_example": "// settings.json — defense-in-depth\n{\n  \"permissions\": {\n    \"deny\": [\"Bash(rm -rf *)\", \"Bash(curl * | bash)\"]\n  },\n  \"hooks\": {\n    \"PreToolUse\": [{\n      \"if\": \"Bash\",\n      \"hooks\": [{ \"type\": \"command\", \"command\": \"echo '{\\\"permissionDecision\\\": \\\"ask\\\"}'\"}]\n    }]\n  }\n}",
+      "references": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.101"
+      ]
+    },
+    "standards": ["CWE-863", "OWASP-LLM09:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code"]
+  },
+  {
+    "id": "LLM-CAPS-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.9,
+    "category": "llm-ai",
+    "subcategory": "resource-limits",
+    "title": "AI agent project without script invocation limits",
+    "description": "AI agent projects using Claude Code (skills, plugins, automated workflows) do not set CLAUDE_CODE_SCRIPT_CAPS to limit per-session script invocations. Without this limit, a compromised or runaway agent can execute an unlimited number of shell commands, potentially exhausting system resources or performing unauthorized operations at scale.",
+    "detect": {
+      "patterns": [
+        "SKILL\\.md",
+        "CLAUDE\\.md",
+        "AGENTS\\.md",
+        "claude.*--bare.*-p",
+        "CronCreate",
+        "RemoteTrigger"
+      ],
+      "negative_patterns": [
+        "CLAUDE_CODE_SCRIPT_CAPS",
+        "script_caps",
+        "maxTurns"
+      ],
+      "file_types": ["*.md", "*.json", "*.sh", "*.yaml", "*.yml"],
+      "exclude": ["node_modules", "dist"]
+    },
+    "remediation": {
+      "description": "Set CLAUDE_CODE_SCRIPT_CAPS environment variable to limit the maximum number of shell script invocations per session. Combine with maxTurns agent frontmatter for defense-in-depth. Recommended value: 100-500 depending on workflow complexity.",
+      "code_example": "# In CI/automation scripts:\nexport CLAUDE_CODE_SCRIPT_CAPS=500\nclaude --bare -p \"/my-skill\"\n\n# In agent frontmatter:\n# maxTurns: 15\n# disallowedTools: [\"Write\", \"Edit\"]",
+      "references": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.98"
+      ]
+    },
+    "standards": ["CWE-770", "OWASP-LLM10:2025", "NIST-AI-RMF-MS-2.6"],
+    "ai_specific": true,
+    "frameworks": ["claude-code"]
   }
 ]

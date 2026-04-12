@@ -27,7 +27,24 @@ You are Sentinel, an AI-powered cybersecurity auditing system. When invoked, you
 ```
 --name "sentinel-audit-{project}-{date}"
 ```
-This enables easy session lookup via `claude sessions list` for audit trail.
+This enables easy session lookup via `claude sessions list` for audit trail. Paused audits (deferred via CI hooks) can be resumed by title: `claude -p --resume "sentinel-audit-{project}-{date}"` (v2.1.101+).
+
+**Auto session title hook** — alternatively, configure a UserPromptSubmit hook to auto-name audit sessions when `/sentinel-security` is invoked:
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [{
+      "if": "Skill(sentinel-security)",
+      "matcher": "sentinel",
+      "hooks": [{
+        "type": "command",
+        "command": "echo '{\"hookSpecificOutput\": {\"sessionTitle\": \"sentinel-audit-'$(basename $(pwd))'-'$(date +%Y-%m-%d)'\"}}'"
+      }]
+    }]
+  }
+}
+```
+This uses the `sessionTitle` hook output (v2.1.94+) for zero-effort audit traceability.
 
 **Worktree sparse paths** — for large monorepos, use `worktree.sparsePaths` to checkout only relevant directories when dispatching agents in worktrees. This reduces clone time and disk usage.
 
@@ -108,13 +125,13 @@ Then map the detected files to agents using this table:
 | **Heavy** (complex analysis) | *inherit session model* | web-audit, api-audit, llm-ai-audit, supply-chain-audit, database-audit, infrastructure-audit, mobile-audit, data-privacy-audit |
 | **Light** (pattern checks) | `haiku` | cors-audit, ssl-tls-audit, static-site-audit, websocket-audit |
 
-**Security hardening** — set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` before dispatching agents to prevent credential leakage from subprocess environments during scans.
+**Security hardening** — set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` before dispatching agents to prevent credential leakage from subprocess environments during scans. On Linux, this also enables PID namespace isolation for subprocess sandboxing (v2.1.98+). Additionally, set `CLAUDE_CODE_SCRIPT_CAPS=500` to limit per-session script invocations — prevents runaway agent execution.
 
 **Cost monitoring** — Sentinel dispatches agents across multiple model tiers (haiku for light checks, opus for deep analysis). Use `/cost` to view the per-model breakdown and cache-hit ratio (v2.1.92+) — this helps optimize agent tier assignments and identify expensive scans.
 
 **Progress tracking** — before dispatching, create a task for each agent using TaskCreate so the user can see scan progress. Update each task to completed when the agent returns.
 
-For each detected agent, launch it in parallel using the Agent tool with **named subagents** for inter-agent coordination via `SendMessage`:
+**Real-time monitoring** — use the Monitor tool (v2.1.98+) to stream live output from background audit agents instead of waiting silently for completion. After dispatching all agents with `run_in_background: true`, attach a Monitor to each for real-time progress:
 
 ```
 For each agent in detected_agents:
@@ -130,13 +147,14 @@ For each agent in detected_agents:
       2. Read the common execution protocol at /Users/manuelturpin/.claude/skills/security/agents/_protocol.md
       3. Audit the project at {target_path} following your Execution Protocol
       4. Use Read + Grep + Bash for KB pattern scanning (read rules.json, grep patterns, enrich via RAG)
-      5. Only use MCP tools if your agent lists them (scan-dependencies for supply-chain, scan-headers for web/cors/ssl/static)
+      5. Only use MCP tools if your agent lists them (scan-dependencies for supply-chain, scan-headers for web/cors/ssl/static) — MCP tools are inherited automatically from the parent session (v2.1.101+)
       6. Return ONLY a JSON code block containing a Finding[] array — no other text",
     memory: "project",
     disallowedTools: ["Write", "Edit", "NotebookEdit"],
     maxTurns: 15,
     run_in_background: true
   )
+  // Monitor agent progress: Monitor("{agent}") — streams stdout events as notifications
   // When agent completes: TaskUpdate(status: "completed", summary: "{N} findings")
   // Named agents can coordinate: SendMessage(to: "web-audit", message: "compromised dep found in lodash")
 ```
@@ -326,7 +344,14 @@ When invoked via `claude -p`, produce structured SARIF output:
 **Use `--bare` flag** for faster CI cold starts — skips hooks, LSP, and plugin sync:
 ```bash
 # MCP_CONNECTION_NONBLOCKING skips MCP connection wait (v2.1.89+)
-MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-security" --output-format json > report.sarif.json
+# CLAUDE_CODE_SCRIPT_CAPS limits script invocations (v2.1.98+)
+# --exclude-dynamic-system-prompt-sections improves cross-user prompt caching (v2.1.98+)
+CLAUDE_CODE_SCRIPT_CAPS=500 MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-security" --output-format json --exclude-dynamic-system-prompt-sections > report.sarif.json
+```
+
+**Resume deferred audits by name** — if a CI audit was paused via `defer` hook decision, resume it using the session title instead of opaque ID (v2.1.101+):
+```bash
+claude -p --resume "sentinel-audit-myproject-2026-04-12"
 ```
 
 **Deep link for one-click audit launch** (v2.1.91 multi-line support):

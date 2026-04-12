@@ -50,11 +50,15 @@ For your domain ({domain}), load rules and apply them directly using native tool
 | `scan-dependencies` | Analyze dependencies for known CVEs (calls OSV API) | Supply chain agent only |
 | `scan-headers` | HTTP GET to check security headers on live URLs | Web, CORS, SSL/TLS, static-site agents |
 
+**MCP tool inheritance** — as of v2.1.101, subagents automatically inherit MCP tools from dynamically-injected servers in the parent session. You do NOT need to explicitly configure MCP access — `scan-dependencies` and `scan-headers` are available if the parent has the sentinel-scanner MCP server loaded.
+
 **How to call MCP tools** (only the two above):
 ```
 mcp__sentinel-scanner__scan-dependencies({ projectPath: "/path/to/project" })
 mcp__sentinel-scanner__scan-headers({ url: "https://example.com" })
 ```
+
+**Agent hardening** — on Linux, `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` enables PID namespace isolation for subprocess sandboxing (v2.1.98+), in addition to credential scrubbing. Set `CLAUDE_CODE_SCRIPT_CAPS` to limit script invocations per session.
 
 ### Step 2: Manual Grep Scan (Domain-Specific Patterns)
 

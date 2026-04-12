@@ -1,6 +1,51 @@
 {
   "releases": [
     {
+      "version": "2.1.96",
+      "tag": "v2.1.96",
+      "date": "2026-04-08",
+      "features": [
+        "Fixed Bedrock auth 403 'Authorization header is missing' regression from 2.1.94 when using AWS_BEARER_TOKEN_BEDROCK or CLAUDE_CODE_SKIP_BEDROCK_AUTH"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.96",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.94",
+      "tag": "v2.1.94",
+      "date": "2026-04-07",
+      "features": [
+        "Added Amazon Bedrock support via Mantle — set CLAUDE_CODE_USE_MANTLE=1 to enable",
+        "Default effort level increased from medium to high for API-key, Bedrock/Vertex/Foundry, Team, and Enterprise users",
+        "Plugin skill invocation names now use frontmatter name field for stability across install methods",
+        "Added keep-coding-instructions frontmatter field for plugin output styles",
+        "Added hookSpecificOutput.sessionTitle to UserPromptSubmit hooks for customizing session titles",
+        "Slack MCP compact channel headers",
+        "Write tool diff computation 60% faster",
+        "Fixed 429 rate-limit handling that caused agents to appear stuck with long Retry-After headers",
+        "Fixed Console login on macOS silently failing with locked keychains",
+        "Fixed YAML frontmatter skill hooks being silently ignored",
+        "Fixed Shift+Space inserting literal 'space' instead of space character",
+        "Fixed hyperlinks opening two tabs in tmux/xterm.js terminals",
+        "Fixed alt-screen rendering bugs with content height changes",
+        "Fixed FORCE_HYPERLINK environment variable being ignored",
+        "Fixed CJK and multibyte text corruption in stream-json processing",
+        "Improved ${CLAUDE_PLUGIN_ROOT} resolution for local-marketplace plugins",
+        "Reduced cold-open subprocess work in VSCode integration"
+      ],
+      "deprecations": [
+        "Removed /tag command",
+        "Removed /vim command — toggle vim mode via /config → Editor mode"
+      ],
+      "breaking_changes": [
+        "Default effort level changed from medium to high for API-key, Bedrock/Vertex/Foundry, Team, and Enterprise users — use /effort to adjust"
+      ],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.94",
+      "prerelease": false
+    },
+    {
       "version": "2.1.88",
       "tag": "v2.1.88",
       "date": "2026-03-30",
