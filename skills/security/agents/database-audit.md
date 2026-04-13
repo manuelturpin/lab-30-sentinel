@@ -82,8 +82,12 @@ Follow the common execution protocol defined in `_protocol.md`:
 
 1. **KB Pattern Scan**: Read `database/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`
 2. **Grep Scan**: Search for each pattern in Detection Patterns section. Check ORM raw queries, connection strings, and MongoDB-specific patterns
-3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
-4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact connection strings/passwords, return JSON
+3. **LSP Taint Analysis**: For SQL injection findings, use the `LSP` tool to trace data flow from user input to query execution:
+   - `LSP: findReferences` on the variable used in the SQL query to find where it originates
+   - `LSP: goToDefinition` on ORM model methods to verify parameterization
+   - If the data flow starts from `req.body`/`req.params`/`req.query` and reaches a raw SQL call without sanitization, escalate severity
+4. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
+5. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact connection strings/passwords, return JSON
 
 **Deduplication rule**: If Step 1 already reported a finding at the same file+line, do NOT report it again from Grep.
 

@@ -58,7 +58,11 @@ mcp__sentinel-scanner__scan-dependencies({ projectPath: "/path/to/project" })
 mcp__sentinel-scanner__scan-headers({ url: "https://example.com" })
 ```
 
+**MCP server env vars** (v2.1.85+) — if sentinel-scanner uses a `headersHelper` script for authentication (e.g., enterprise API gateway), the helper receives `CLAUDE_CODE_MCP_SERVER_NAME=sentinel-scanner` and `CLAUDE_CODE_MCP_SERVER_URL` automatically. This enables one helper script to serve multiple MCP servers with different credentials.
+
 **Agent hardening** — on Linux, `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` enables PID namespace isolation for subprocess sandboxing (v2.1.98+), in addition to credential scrubbing. Set `CLAUDE_CODE_SCRIPT_CAPS` to limit script invocations per session.
+
+**OTEL tracing** — when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, Bash subprocesses inherit a W3C `TRACEPARENT` env var (v2.1.98+). Combined with `OTEL_LOG_TOOL_DETAILS=1` (v2.1.101+), this provides per-agent performance traces for identifying slow KB queries and bottleneck agents.
 
 ### Step 2: Manual Grep Scan (Domain-Specific Patterns)
 

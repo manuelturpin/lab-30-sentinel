@@ -3,6 +3,7 @@ name: sentinel-evolve
 description: Meta-skill d'intelligence evolutive — surveille l'ecosysteme Anthropic, detecte les opportunites d'optimisation, et evolue les skills Sentinel automatiquement
 user_invocable: true
 effort: low
+keep-coding-instructions: true
 ---
 
 # /sentinel-evolve — Sentinel Evolution Intelligence

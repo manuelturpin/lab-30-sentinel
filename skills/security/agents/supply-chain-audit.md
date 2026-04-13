@@ -91,8 +91,12 @@ Follow the common execution protocol defined in `_protocol.md`:
 2. **KB Pattern Scan**: Read `supply-chain/rules.json`, Grep each rule's patterns, create Findings directly from rule fields
 3. **CVE Enrichment**: For flagged components, `Read` CVE cache files from `/Users/manuelturpin/.sentinel/knowledge-base/cve-feed/` — replaces `query-cve`
 4. **Grep Scan**: Search for each pattern in Detection Patterns section. Check for postinstall scripts, unpinned versions, and AI supply chain issues
-5. **KB Enrichment**: Steps 1-2 findings are already enriched. For Step 4 findings, use RAG via Bash or your own judgment
-6. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
+5. **LSP Import Chain Analysis**: For vulnerable dependencies, use the `LSP` tool to assess actual exposure:
+   - `LSP: findReferences` on the vulnerable package's import to find all usage sites
+   - `LSP: goToDefinition` to verify which specific functions/methods from the vulnerable package are called
+   - If the vulnerable function is never imported or called, downgrade severity to INFO with note "Dependency present but vulnerable path not used"
+6. **KB Enrichment**: Steps 1-2 findings are already enriched. For Step 4 findings, use RAG via Bash or your own judgment
+7. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, return JSON
 
 **Deduplication rule**: If `scan-dependencies` or KB Pattern Scan already reported a CVE for the same package, do NOT report it again from Grep.
 

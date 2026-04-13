@@ -85,8 +85,12 @@ Follow the common execution protocol defined in `_protocol.md`:
 
 1. **KB Pattern Scan**: Read `infrastructure/rules.json`, Grep each rule's patterns, create Findings directly from rule fields — replaces `scan-project`
 2. **Grep Scan**: Search for each pattern in Detection Patterns section (including secret patterns). Check Dockerfiles, K8s manifests, and Terraform files
-3. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
-4. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact secrets, return JSON
+3. **LSP Config Cross-Reference**: For Terraform and K8s findings, use the `LSP` tool to trace configuration references:
+   - `LSP: findReferences` on security group resources to verify all ingress/egress rules
+   - `LSP: goToDefinition` on Terraform module sources to check for pinned versions vs mutable refs
+   - If a security group referenced by multiple resources allows 0.0.0.0/0, escalate severity based on the referencing resource type
+4. **KB Enrichment**: Step 1 findings are already enriched. For Step 2 findings, use RAG via Bash or your own judgment
+5. **Deduplicate & Return**: Remove duplicates, sort by cvss_v4 desc, redact secrets, return JSON
 
 **Deduplication rule**: If Step 1 already reported a finding at the same file+line, do NOT report it again from Grep.
 

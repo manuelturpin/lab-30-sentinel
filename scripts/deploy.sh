@@ -104,6 +104,13 @@ deploy_local() {
   # Copy agents
   cp "$PROJECT_DIR/skills/security/agents/"*.md "$SKILL_DIR/agents/"
 
+  # Copy rules (project conventions shipped with plugin)
+  if [ -d "$PROJECT_DIR/skills/security/rules" ]; then
+    mkdir -p "$SKILL_DIR/rules"
+    cp "$PROJECT_DIR/skills/security/rules/"*.md "$SKILL_DIR/rules/"
+    info "Rules: OK ($(ls "$SKILL_DIR/rules/"*.md 2>/dev/null | wc -l | tr -d ' ') files)"
+  fi
+
   # --- 3b. Deploy sentinel-rag skill ---
   SENTINEL_RAG_SKILL_DIR="$HOME/.claude/skills/sentinel-rag"
   SENTINEL_RAG_HOME="$SENTINEL_HOME/skills/sentinel-rag"
@@ -212,6 +219,8 @@ deploy_local() {
   echo "  bash $SENTINEL_HOME/scripts/test-sentinel.sh  # System tests"
   echo "  python3 $SENTINEL_HOME/rag/indexer.py      # Re-index KB"
   echo "  claude mcp list                            # Verify MCP registration"
+  echo ""
+  echo "Note: Run /reload-plugins in active Claude Code sessions to pick up changes without restart (v2.1.98+)."
 }
 
 # ============================================================

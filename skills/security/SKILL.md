@@ -3,6 +3,7 @@ name: sentinel-security
 description: Audit de cybersecurite complet — detecte le stack, dispatche des agents specialises en parallele, et produit un rapport SARIF consolide avec scoring et remediations
 user_invocable: true
 effort: high
+keep-coding-instructions: true
 paths:
   - "**/package.json"
   - "**/requirements.txt"
@@ -122,7 +123,8 @@ Then map the detected files to agents using this table:
 
 | Tier | Model | Agents |
 |------|-------|--------|
-| **Heavy** (complex analysis) | *inherit session model* | web-audit, api-audit, llm-ai-audit, supply-chain-audit, database-audit, infrastructure-audit, mobile-audit, data-privacy-audit |
+| **Heavy** (complex analysis) | *inherit session model* | web-audit, api-audit, llm-ai-audit, supply-chain-audit, mobile-audit |
+| **Medium** (structured analysis) | `sonnet` | database-audit, infrastructure-audit, data-privacy-audit |
 | **Light** (pattern checks) | `haiku` | cors-audit, ssl-tls-audit, static-site-audit, websocket-audit |
 
 **Security hardening** — set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` before dispatching agents to prevent credential leakage from subprocess environments during scans. On Linux, this also enables PID namespace isolation for subprocess sandboxing (v2.1.98+). Additionally, set `CLAUDE_CODE_SCRIPT_CAPS=500` to limit per-session script invocations — prevents runaway agent execution.
@@ -139,7 +141,7 @@ For each agent in detected_agents:
   Launch Agent(
     subagent_type: "general-purpose",
     name: "{agent}",
-    model: "haiku" if agent in [cors-audit, ssl-tls-audit, static-site-audit, websocket-audit] else omit,
+    model: "haiku" if agent in [cors-audit, ssl-tls-audit, static-site-audit, websocket-audit] else "sonnet" if agent in [database-audit, infrastructure-audit, data-privacy-audit] else omit,
     initialPrompt: "Begin audit now.",
     prompt: "You are a security audit agent. Follow these steps exactly:
       0. Check your memory for known false positives in this project — skip any pattern/file combination you previously confirmed as false positive
@@ -341,6 +343,11 @@ When invoked via `claude -p`, produce structured SARIF output:
 2. Output the SARIF 2.1.0 JSON directly to stdout (no wrapping, no prose)
 3. Exit with code 0 (clean) or 1 (findings with CRITICAL/HIGH severity)
 
+**Sandbox hardening** — for enterprise CI, set `sandbox.failIfUnavailable: true` in settings to ensure audits fail-closed if the sandbox cannot start (v2.1.83+). Security-critical scans must never run unsandboxed:
+```json
+{ "sandbox": { "failIfUnavailable": true } }
+```
+
 **Use `--bare` flag** for faster CI cold starts — skips hooks, LSP, and plugin sync:
 ```bash
 # MCP_CONNECTION_NONBLOCKING skips MCP connection wait (v2.1.89+)
@@ -415,6 +422,48 @@ When triggered:
 
 This uses Claude Code's ConfigChange hook event (v2.1.50+) and eliminates forgetting to run `deploy.sh` after edits.
 
+## WorktreeCreate/Remove Hooks (Agent Lifecycle Tracking)
+
+When agents run with `isolation: worktree`, configure **WorktreeCreate/Remove hooks** for audit trail and lifecycle tracking:
+
+```json
+{
+  "hooks": {
+    "WorktreeCreate": [{
+      "hooks": [{
+        "type": "command",
+        "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%SZ) WORKTREE_CREATE: $WORKTREE_PATH\" >> ~/.sentinel/reports/audit-trail.log"
+      }]
+    }],
+    "WorktreeRemove": [{
+      "hooks": [{
+        "type": "command",
+        "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%SZ) WORKTREE_REMOVE: $WORKTREE_PATH\" >> ~/.sentinel/reports/audit-trail.log"
+      }]
+    }]
+  }
+}
+```
+
+This creates a timestamped record of every isolated agent workspace — useful for compliance audits (SOC-2, ISO 27001) and debugging orphaned worktrees.
+
+## OTEL Distributed Tracing (Audit Performance)
+
+For audit performance observability, enable OpenTelemetry tracing with fine-grained controls (v2.1.98+):
+
+```bash
+# Enable TRACEPARENT propagation to Bash subprocesses
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+# Fine-grained controls (v2.1.101+)
+export OTEL_LOG_TOOL_DETAILS=1    # Log tool parameters in spans
+export OTEL_LOG_TOOL_CONTENT=1    # Log tool results in spans
+```
+
+When enabled, each agent dispatch, KB query, and RAG enrichment call gets a proper span in the trace tree. Use this to identify:
+- Slow agents (high turn count or large context)
+- Expensive KB queries (RAG latency)
+- MCP tool bottlenecks (scan-dependencies, scan-headers)
+
 ## Important Notes
 
 - Never expose secrets or credentials found during scanning — redact them in reports
@@ -486,6 +535,26 @@ When the team is active, the audit workflow extends with a closed feedback loop:
 4. **Re-scan** — sentinel-security re-runs only the affected agents with updated KB
 5. **Evolve** — sentinel-evolve logs the improvement in its update_history for tracking
 
+### TeammateIdle Auto-Orchestration (v2.1.33+)
+
+Configure a **TeammateIdle hook** to automate the self-improving loop handoffs:
+
+```json
+{
+  "hooks": {
+    "TeammateIdle": [{
+      "matcher": "sentinel-security",
+      "hooks": [{
+        "type": "command",
+        "command": "echo 'Scan agent idle — triggering KB gap analysis via sentinel-rag'"
+      }]
+    }]
+  }
+}
+```
+
+When a scan agent completes and goes idle, TeammateIdle fires — the team lead (sentinel-security) then SendMessages to sentinel-rag to check for KB gaps, triggering step 2 of the self-improving loop without manual intervention.
+
 ### Activation
 
 Agent teams are experimental (v2.1.32+). The team is activated on demand — add this to Step 0 when the user requests "deep scan" or "self-improving scan":
@@ -495,4 +564,5 @@ If user requests deep/self-improving scan:
   TeamCreate("sentinel", members: ["sentinel-security", "sentinel-rag", "sentinel-evolve"])
   // Team members can now SendMessage to each other
   // Shared task board tracks cross-skill work
+  // TeammateIdle hook auto-triggers KB gap analysis when scan agents finish
 ```
