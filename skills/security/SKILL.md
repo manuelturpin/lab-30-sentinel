@@ -507,6 +507,81 @@ Users install with: `claude plugin install sentinel` — this deploys all skills
 
 **Enterprise fail-closed policy** — for enterprise deployments, enable `forceRemoteSettingsRefresh` in managed settings (v2.1.92+). This blocks CLI startup until remote managed settings are freshly fetched — if the fetch fails, the CLI exits instead of running with stale or missing policy. This ensures Sentinel audits always run under the latest org security policy.
 
+## Mode: evolve
+
+**Autonomous Threat Intelligence Pipeline** — keeps Sentinel's detection rules and coverage up-to-date by syncing threat feeds, measuring coverage, and producing a Threat Intelligence Report (TIR).
+
+This mode is the security counterpart to `/sentinel-evolve` (which optimizes Claude Code tooling). `/sentinel-security evolve` focuses on **what to detect** (rules, patterns, CVEs), not **how to detect** (tools, hooks, model tiers).
+
+### Invocation
+
+```
+/sentinel-security evolve        # Full pipeline (sync → score → report)
+/sentinel-security evolve sync   # Fetch all threat intel sources
+/sentinel-security evolve score  # Measure coverage vs standards
+/sentinel-security evolve report # Generate TIR
+```
+
+Phase 2 (future): `evolve gen` (LLM pattern generation), `evolve test` (rule validation), `evolve feedback` (FP/TP loop).
+
+### Step 1: sync — Fetch Threat Intel Sources
+
+Run the extended sync pipeline:
+```
+Bash: python3 /Users/manuelturpin/.sentinel/scripts/cve-sync.py
+```
+
+This fetches from 6 sources:
+1. **NVD API v2** — CVE data with CVSS scores
+2. **OSV API** — Open source vulnerabilities (300+ packages, 6 ecosystems)
+3. **GitHub Advisories** — Supply chain security advisories
+4. **EPSS** — Exploit Prediction Scoring (probability of exploitation)
+5. **CISA KEV** — Known Exploited Vulnerabilities (actively exploited in the wild)
+6. **OWASP/CWE Standards** — Checks GitHub for new versions of OWASP Top 10 lists
+
+After sync, report:
+- New CVEs added per source
+- New KEV entries (actively exploited — highlight these)
+- Standards updates available (flag if OWASP released a new version)
+
+### Step 2: score — Coverage Measurement
+
+Run the coverage scorer:
+```
+Bash: python3 /Users/manuelturpin/.sentinel/scripts/coverage-scorer.py --json
+```
+
+Parse the JSON output and present:
+- Coverage % for each standard (OWASP Web, API, LLM, Mobile, CWE-25, MITRE ATLAS)
+- Gaps: uncovered standard items with their IDs and names
+- Rule quality: manual vs auto-with-patterns vs auto-template-only
+
+### Step 3: report — Threat Intelligence Report (TIR)
+
+Generate the TIR using the template at `/Users/manuelturpin/.sentinel/reports/templates/threat-intel-report.md`.
+
+Fill in all placeholders with data from Steps 1-2:
+1. Sync summary (per-source status and counts)
+2. Rule quality breakdown
+3. Standards coverage table with grades (OK >= 90%, WARN >= 70%, GAP < 70%)
+4. Gap analysis (uncovered items per standard)
+5. KEV highlights (most critical actively-exploited vulns)
+6. Recommendations (based on gaps and new threats)
+
+Save to `/Users/manuelturpin/.sentinel/reports/archive/TIR-{date}.md` and `/Users/manuelturpin/.sentinel/reports/archive/TIR-{date}.json`.
+
+### Cron Schedule
+
+The evolve pipeline is designed for weekly automated runs:
+```
+Weekly  Mon 6:00 AM  — cve-sync.py (all 6 sources)
+Weekly  Mon 9:00 AM  — coverage-scorer.py + TIR generation
+```
+
+For manual runs, invoke `/sentinel-security evolve` anytime.
+
+---
+
 ## Multi-Skill Orchestration (Agent Teams)
 
 Sentinel skills can be orchestrated as an **agent team** with a shared task board for self-improving audit loops.
