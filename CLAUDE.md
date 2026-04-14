@@ -95,27 +95,37 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 ## Statut
 
+**Session 14 — Rule Quality Pipeline** (2026-04-14)
+
+- **Phase 3** : `rule-tester.py` — valide les patterns LLM contre un corpus de test (7 fichiers vulnérables + 6 safe). Precision gate >=70% pour promotion "active"
+- **Phase 4** : `feedback-loop.py` — 5 sous-commandes (seed, ingest, score, propagate, report). Confidence Bayesienne, propagation cross-domaine par CWE
+- **Pipeline CVE integre dans `/sentinel-evolve auto`** : cve-sync → pattern-gen → rule-tester → feedback-loop
+- **14 regles CVE actives** (patterns valides, precision >=70%), 5 needs-review, 37 no-matches
+- **100 feedback entries** seedees, 7 regles avec confidence recalculee (0.47→0.85)
+- **53 opportunites de propagation** cross-domaine detectees (686 patterns potentiels)
+- `/sentinel-evolve` default sur mode `auto` (pipeline complet sans argument)
+
 **Session 12 — MCP Bottleneck Elimination** (2026-03-15)
 
 - Suppression de 4 MCP tools redondants (scan-project, scan-secrets, query-kb, query-cve)
 - Agents utilisent Read/Grep/Bash natifs pour le scanning local
 - Conservation de scan-dependencies et scan-headers (appels reseau)
-- deploy.sh corrige (plus de double-path sed)
 - RAG indexe 4088 documents (115 regles domaine + 2273 NVD CVE + 1484 OSV + 100 GitHub + 94 standards)
-- Tests systeme : `bash scripts/test-sentinel.sh` — 31 checks
-- Tests E2E : `bash tests/e2e-session10.sh` — 27 checks
 
 ## Commandes
 
 - `/sentinel-security` : Lancer un audit complet du projet courant
 - `/sentinel-rag` : Expert RAG — diagnostic, optimisation, creation, evaluation
-- `/sentinel-evolve` : Intelligence evolutive — scan, analyze, recommend, apply, maintain, **auto**
-- `/sentinel-evolve auto` : Pipeline complet en une commande — scan→analyze→recommend→apply→deploy→commit (headless-ready pour cron)
-- `bash scripts/deploy.sh` : Deployer sur la machine locale (OBLIGATOIRE apres chaque modif). Executer `/reload-plugins` dans les sessions actives pour hot-reload (v2.1.98+)
+- `/sentinel-evolve` : Pipeline complet automatique (default: mode `auto`) — scan→CVE pipeline→analyze→recommend→apply→deploy→commit
+- `/sentinel-evolve audit` : Audit Claude Code health (project, --all, --global)
+- `bash scripts/deploy.sh` : Deployer sur la machine locale (OBLIGATOIRE apres chaque modif)
 - `bash scripts/setup.sh` : Installer les dependances et outils externes
 - `bash scripts/test-sentinel.sh` : Tester le systeme (structure, RAG, KB, templates)
 - `bash tests/e2e-session10.sh` : Tests E2E (RAG queries, schema validation, error handling)
 - `python3 scripts/cve-sync.py --days 90` : Sync CVE (NVD + OSV batch + GitHub + EPSS)
+- `python3 scripts/pattern-gen.py --limit 50` : Generer patterns de detection pour CVE rules vides (claude -p, Max subscription)
+- `python3 scripts/rule-tester.py` : Valider les patterns contre le corpus de test (precision gate 70%)
+- `python3 scripts/feedback-loop.py report` : Stats feedback, confidence, propagation cross-domaine
 - `python3 scripts/anthropic-sync.py` : Sync ecosysteme Anthropic (Claude Code, skills, SDKs, MCP)
 - `python3 rag/indexer.py` : Re-indexer la KB dans ChromaDB
 - `python3 rag/query.py --query "..." --domain all --limit 10` : Requete semantique KB
@@ -147,16 +157,21 @@ skills/sentinel-rag/SKILL.md          — Skill expert RAG
 skills/sentinel-rag/knowledge/        — KB vectorielle du skill RAG (indexer, query, sources)
 skills/sentinel-evolve/SKILL.md       — Skill meta-evolution
 skills/sentinel-evolve/knowledge/     — KB intelligence evolutive (indexer, query, sources, ChromaDB)
-knowledge-base/domains/*/             — Regles par domaine (115 regles)
+knowledge-base/domains/*/             — Regles par domaine (115 curated + 3390 CVE)
 knowledge-base/cve-feed/              — Caches NVD/OSV/GitHub (2273 CVE)
+knowledge-base/feedback/              — Feedback TP/FP pour confidence scoring
 knowledge-base/anthropic-intel/       — Feature inventory + releases cache ecosysteme Anthropic
 knowledge-base/standards/             — OWASP, MITRE, CWE, NIST (94 items)
 mcp-servers/sentinel-scanner/         — MCP Server TypeScript (2 tools actifs)
 rag/                                  — RAG ChromaDB (4088 docs indexes)
 scripts/deploy.sh                     — Script de deploiement local
+scripts/pattern-gen.py                — Generation LLM de patterns (claude -p)
+scripts/rule-tester.py                — Validation patterns (precision gate)
+scripts/feedback-loop.py              — Feedback loop (seed, ingest, score, propagate, report)
 scripts/anthropic-sync.py             — Pipeline sync ecosysteme Anthropic
 crons/                                — Taches automatisees (4 crons)
 reports/                              — Templates et archives
-tests/                                — E2E tests, vulnerable-app
+tests/fixtures/                       — Corpus de test vulnerable + safe (13 fichiers)
+tests/vulnerable-app/                 — App intentionnellement vulnerable (E2E)
 config/evolve-targets.json            — Skills cibles pour sentinel-evolve
 ```

@@ -1,0 +1,1005 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "rule_id": "CVE-2021-22054",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 16,
+      "pattern": "(?:fetch|axios)\\(.*(?:req|request)\\.(?:body|query|params).*url",
+      "context": "const response = await fetch(req.body.url);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2021-22054",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 23,
+      "pattern": "(?:fetch|axios)\\(.*(?:req|request)\\.(?:body|query|params).*url",
+      "context": "const response = await fetch(req.query.target_url);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2021-22054",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 24,
+      "pattern": "requests\\.post\\(.*(?:request|req)\\.",
+      "context": "response = requests.post(request.json['callback_url'], json=request.json['payload'])",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2021-22054",
+      "verdict": "tp",
+      "file": "server.js",
+      "line": 50,
+      "pattern": "(?:fetch|axios)\\(.*(?:req|request)\\.(?:body|query|params).*url",
+      "context": "const response = await fetch(req.body.url);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 16,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def fetch_url():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 23,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def send_webhook():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 29,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def load_session():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 35,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def parse_config():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 42,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def exec_code():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 48,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def read_file():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 56,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def compute():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 63,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def run_command():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 70,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def update_config():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 77,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def grant_admin():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 84,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def export_data():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 12,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def load_model(model_path):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 18,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def parse_pipeline_config(config_str):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 24,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def deserialize_task(data):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 28,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def extract_package(zip_path, dest_dir):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 33,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def extract_tarball(tar_path, dest_dir):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 38,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def load_plugin(plugin_name):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 43,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def fetch_remote(url):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 53,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def load_cache():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-supply-chain.py",
+      "line": 11,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def load_model(model_path):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-supply-chain.py",
+      "line": 18,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def parse_pipeline_config(config_str):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-supply-chain.py",
+      "line": 23,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def extract_package(zip_path, dest_dir):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-supply-chain.py",
+      "line": 33,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def extract_tarball(tar_path, dest_dir):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-supply-chain.py",
+      "line": 44,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def load_plugin(plugin_name):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-supply-chain.py",
+      "line": 54,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def get_version():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 16,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def fetch_url():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 26,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def load_session():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 33,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def parse_config():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 41,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def read_file():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 51,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def compute():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 59,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def health():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 64,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def require_auth(f):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 66,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def decorated(*args, **kwargs):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 75,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def update_config():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30412",
+      "verdict": "fp",
+      "file": "clean-api.py",
+      "line": 83,
+      "pattern": "def\\s+\\w+\\s*\\([^)]*\\)\\s*:\\s*(?!.*@login_required|.*@requires_auth)",
+      "context": "def grant_role():",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30416",
+      "verdict": "tp",
+      "file": "tls-auth.go",
+      "line": 40,
+      "pattern": "func\\s+\\w+\\s*\\(\\s*\\w+\\s+http\\.ResponseWriter\\s*,\\s*\\w+\\s+\\*http\\.Request\\s*\\)",
+      "context": "func adminHandler(w http.ResponseWriter, r *http.Request) {",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-30416",
+      "verdict": "fp",
+      "file": "clean-tls.go",
+      "line": 53,
+      "pattern": "func\\s+\\w+\\s*\\(\\s*\\w+\\s+http\\.ResponseWriter\\s*,\\s*\\w+\\s+\\*http\\.Request\\s*\\)",
+      "context": "func adminHandler(w http.ResponseWriter, r *http.Request) {",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-26954",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 33,
+      "pattern": "\\bFunction\\b.*constructor",
+      "context": "// CWE-94: Code injection via Function constructor",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-26954",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 35,
+      "pattern": "new\\s+Function\\s*\\(",
+      "context": "const fn = new Function('data', req.body.template);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "GHSA-4jpw-hj22-2xmc",
+      "verdict": "tp",
+      "file": "server.js",
+      "line": 44,
+      "pattern": "jwt\\.sign\\s*\\(.*req\\.(body|params|query)",
+      "context": "const token = jwt.sign({ user: req.body.username }, JWT_SECRET);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "GHSA-p224-6x5r-fjpm",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 48,
+      "pattern": "path\\.join\\s*\\(.*req\\.(params|query|body)",
+      "context": "const filePath = path.join('/uploads', req.query.filename);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-32169",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 45,
+      "pattern": "urllib(?:2|\\.request)?\\.(urlopen|Request)\\(.*(?:url|uri|endpoint|host|target)",
+      "context": "data = urllib.request.urlopen(url).read()",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 12,
+      "pattern": "\\bstrcpy\\s*\\(",
+      "context": "strcpy(buf, \"sensitive data\");",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 37,
+      "pattern": "\\bstrcpy\\s*\\(",
+      "context": "strcpy(buffer, input);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 41,
+      "pattern": "\\bgets\\s*\\(",
+      "context": "/* CWE-119: Buffer overflow \u2014 gets (always unsafe) */",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 44,
+      "pattern": "\\bgets\\s*\\(",
+      "context": "gets(name);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 51,
+      "pattern": "\\bsprintf\\s*\\(",
+      "context": "sprintf(output, \"User %s said: %s at %s\", user, msg, __TIME__);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 69,
+      "pattern": "\\bstrcpy\\s*\\(",
+      "context": "strcpy(result, a);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 70,
+      "pattern": "\\bstrcat\\s*\\(",
+      "context": "strcat(result, b);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 76,
+      "pattern": "\\bmemcpy\\s*\\([^,]+,\\s*[^,]+,\\s*(?!sizeof\\b)[^)]+\\)",
+      "context": "memcpy(dest, src, len);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-31277",
+      "verdict": "fp",
+      "file": "clean-native.c",
+      "line": 79,
+      "pattern": "\\bmemcpy\\s*\\([^,]+,\\s*[^,]+,\\s*(?!sizeof\\b)[^)]+\\)",
+      "context": "memcpy(dest, src, len);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 7,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$data = unserialize($_POST['data']);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 11,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$file = $_GET['file'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 15,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$user_id = $_GET['id'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 20,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$_SESSION['prefs'] = $_POST['preferences'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 20,
+      "pattern": "\\$_SESSION\\s*\\[.*\\]\\s*=\\s*\\$_(?:GET|POST|REQUEST|COOKIE)\\s*\\[",
+      "context": "$_SESSION['prefs'] = $_POST['preferences'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 21,
+      "pattern": "session(?:_id|_start|_regenerate_id)\\s*\\((?!.*regenerate)",
+      "context": "session_start();",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 24,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$page = $_GET['page'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 28,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$cookie_val = $_COOKIE['session_token'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 29,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$server_val = $_SERVER['HTTP_REFERER'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 33,
+      "pattern": "session(?:_id|_start|_regenerate_id)\\s*\\((?!.*regenerate)",
+      "context": "session_start();",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 34,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$_SESSION['user'] = $_POST['username'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 34,
+      "pattern": "\\$_SESSION\\s*\\[.*\\]\\s*=\\s*\\$_(?:GET|POST|REQUEST|COOKIE)\\s*\\[",
+      "context": "$_SESSION['user'] = $_POST['username'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 35,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$_SESSION['role'] = $_GET['role'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 35,
+      "pattern": "\\$_SESSION\\s*\\[.*\\]\\s*=\\s*\\$_(?:GET|POST|REQUEST|COOKIE)\\s*\\[",
+      "context": "$_SESSION['role'] = $_GET['role'];",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "fp",
+      "file": "clean-php.php",
+      "line": 22,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$data = json_decode($_POST['data'], true);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "fp",
+      "file": "clean-php.php",
+      "line": 30,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "$page = $_GET['page'] ?? 'home';",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "fp",
+      "file": "clean-php.php",
+      "line": 36,
+      "pattern": "session(?:_id|_start|_regenerate_id)\\s*\\((?!.*regenerate)",
+      "context": "session_start();",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-54236",
+      "verdict": "fp",
+      "file": "clean-php.php",
+      "line": 41,
+      "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+      "context": "if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3909",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 16,
+      "pattern": "\\w+\\[\\s*\\w+\\s*\\]\\s*=(?!=)(?!.*(?:size|len|bound|limit|max|cap))",
+      "context": "buf[0] = 'x';",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3909",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 59,
+      "pattern": "\\w+\\[\\s*\\w+\\s*\\]\\s*=(?!=)(?!.*(?:size|len|bound|limit|max|cap))",
+      "context": "arr[index] = value;",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3909",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 76,
+      "pattern": "memcpy\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*,\\s*(?!sizeof\\b)\\w+",
+      "context": "memcpy(dest, src, len);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3909",
+      "verdict": "fp",
+      "file": "clean-native.c",
+      "line": 35,
+      "pattern": "\\w+\\[\\s*\\w+\\s*\\]\\s*=(?!=)(?!.*(?:size|len|bound|limit|max|cap))",
+      "context": "arr[index] = value;",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3909",
+      "verdict": "fp",
+      "file": "clean-native.c",
+      "line": 70,
+      "pattern": "\\w+\\[\\s*\\w+\\s*\\]\\s*=(?!=)(?!.*(?:size|len|bound|limit|max|cap))",
+      "context": "result[0] = '\\0';",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3909",
+      "verdict": "fp",
+      "file": "clean-native.c",
+      "line": 79,
+      "pattern": "memcpy\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*,\\s*(?!sizeof\\b)\\w+",
+      "context": "memcpy(dest, src, len);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3910",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 29,
+      "pattern": "eval\\s*\\(",
+      "context": "const result = eval(req.body.expression);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3910",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 35,
+      "pattern": "new\\s+Function\\s*\\(",
+      "context": "const fn = new Function('data', req.body.template);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 30,
+      "pattern": "pickle\\.loads?\\s*\\(",
+      "context": "data = pickle.loads(request.data)",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 36,
+      "pattern": "yaml\\.load\\s*\\([^,)]+\\)",
+      "context": "config = yaml.load(request.data)",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 43,
+      "pattern": "marshal\\.loads?\\s*\\(",
+      "context": "code = marshal.loads(request.data)",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 7,
+      "pattern": "unserialize\\s*\\(\\s*\\$_(GET|POST|REQUEST|COOKIE)",
+      "context": "$data = unserialize($_POST['data']);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 14,
+      "pattern": "pickle\\.loads?\\s*\\(",
+      "context": "model = pickle.load(f)",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 14,
+      "pattern": "pickle\\.load\\s*\\(",
+      "context": "model = pickle.load(f)",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 19,
+      "pattern": "yaml\\.load\\s*\\([^,)]+\\)",
+      "context": "config = yaml.load(config_str)",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 25,
+      "pattern": "jsonpickle\\.decode\\s*\\(",
+      "context": "return jsonpickle.decode(data)",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20963",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 54,
+      "pattern": "shelve\\.open\\s*\\(",
+      "context": "db = shelve.open('cache.db')",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-32432",
+      "verdict": "tp",
+      "file": "supply-chain.php",
+      "line": 7,
+      "pattern": "unserialize\\s*\\(.*\\$_(?:GET|POST|REQUEST|COOKIE)",
+      "context": "$data = unserialize($_POST['data']);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20131",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 27,
+      "pattern": "deserializ",
+      "context": "# CWE-502: Unsafe deserialization \u2014 pickle",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20131",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 33,
+      "pattern": "deserializ",
+      "context": "# CWE-502: Unsafe deserialization \u2014 yaml.load without SafeLoader",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20131",
+      "verdict": "tp",
+      "file": "ssrf-deserialization.py",
+      "line": 39,
+      "pattern": "deserializ",
+      "context": "# CWE-502: Unsafe deserialization \u2014 marshal",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20131",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 11,
+      "pattern": "deserializ",
+      "context": "# CWE-502: Pickle deserialization from untrusted source",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-20131",
+      "verdict": "tp",
+      "file": "supply-chain.py",
+      "line": 24,
+      "pattern": "deserializ",
+      "context": "def deserialize_task(data):",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3055",
+      "verdict": "tp",
+      "file": "memory-safety.c",
+      "line": 76,
+      "pattern": "memcpy\\s*\\(.*,.*,\\s*(?:len|size|length|count)\\s*\\)",
+      "context": "memcpy(dest, src, len);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2026-3055",
+      "verdict": "fp",
+      "file": "clean-native.c",
+      "line": 79,
+      "pattern": "memcpy\\s*\\(.*,.*,\\s*(?:len|size|length|count)\\s*\\)",
+      "context": "memcpy(dest, src, len);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-68613",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 29,
+      "pattern": "eval\\s*\\(.*(?:req\\.|params|query|body|expression|expr|input|template|workflow)",
+      "context": "const result = eval(req.body.expression);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    },
+    {
+      "rule_id": "CVE-2025-68613",
+      "verdict": "tp",
+      "file": "ssrf-injection.js",
+      "line": 35,
+      "pattern": "new\\s+Function\\s*\\(.*(?:expression|expr|input|req\\.|params|query|body|template|workflow)",
+      "context": "const fn = new Function('data', req.body.template);",
+      "project": "sentinel-fixtures",
+      "timestamp": "2026-04-14T04:57:08.992166+00:00"
+    }
+  ]
+}

@@ -25,11 +25,10 @@ Before anything else, check your intelligence freshness:
 
 If no mode specified, auto-detect:
 
-1. Read metadata.json — if `last_updated` is null or `total_indexed_docs` is 0: suggest **scan**
-2. If data is fresh but no recent EIR report exists: suggest **analyze**
-3. If user explicitly requested a mode: use that mode
-4. If user explicitly requested `audit`: use **audit** mode (does NOT auto-trigger from evolve workflow)
-5. Default: **recommend**
+1. If user explicitly requested a mode: use that mode
+2. If user explicitly requested `audit`: use **audit** mode (does NOT auto-trigger from evolve workflow)
+3. Read metadata.json — if `last_updated` is null or `total_indexed_docs` is 0: suggest **scan**
+4. **Default: `auto`** — run the full pipeline (scan → CVE pipeline → analyze → recommend → apply → deploy → commit)
 
 Available modes: `scan`, `analyze`, `recommend`, `apply`, `maintain`, `auto`, `audit`
 
@@ -52,13 +51,29 @@ MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-evolve auto" --name 
 ### Pipeline steps
 
 1. **Scan** — run `anthropic-sync.py` + re-index evolve KB
-2. **Analyze** — cross-reference feature inventory vs current skills
-3. **Recommend** — generate EIR with prioritized recommendations
-4. **Auto-apply** — apply all P1 (quick wins) automatically. For P2/P3:
+2. **CVE Pipeline** — maintain rule quality (pattern generation + testing + feedback):
+   ```bash
+   # a. Sync latest CVEs
+   Bash: python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/cve-sync.py --days 7
+   # b. Generate patterns for new priority rules (KEV + CVSS>=9 only, limit 50)
+   Bash: python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/pattern-gen.py --limit 50 --workers 3
+   # c. Test generated patterns against corpus
+   Bash: python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/rule-tester.py
+   # d. Seed feedback from test results and recalculate confidence
+   Bash: python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/feedback-loop.py seed
+   Bash: python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/feedback-loop.py score
+   # e. Check cross-domain propagation opportunities (preview only in auto)
+   Bash: python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/feedback-loop.py propagate
+   ```
+   Report: new CVEs synced, patterns generated, rules promoted to active, confidence changes.
+   Skip this step if `cve-sync.py` is not found or if `--skip-cve` flag is passed.
+3. **Analyze** — cross-reference feature inventory vs current skills
+4. **Recommend** — generate EIR with prioritized recommendations
+5. **Auto-apply** — apply all P1 (quick wins) automatically. For P2/P3:
    - **Interactive mode**: ask the user which P2/P3 to apply
    - **Headless mode**: apply all P2 too, skip P3 (require explicit approval for strategic changes)
-5. **Deploy** — run `bash /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/deploy.sh`
-6. **Commit** — stage all modified files, commit with message `perf(evolve): apply EIR-{date} — {N} recommendations, score {before}%→{after}%`, push to origin
+6. **Deploy** — run `bash /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/deploy.sh`
+7. **Commit** — stage all modified files, commit with message `perf(evolve): apply EIR-{date} — {N} recommendations, score {before}%→{after}%`, push to origin
 
 ### Safety guardrails
 
@@ -477,11 +492,20 @@ KB housekeeping, history, and dashboard.
    - Pending recommendations count
    - Applied recommendations count
 
-4. **Prune**: Remove outdated entries from feature inventory (features from versions older than 6 months that are already fully adopted or not applicable)
+4. **CVE Pipeline**: Run the full CVE rule quality pipeline (same as auto mode step 2):
+   ```bash
+   python3 scripts/cve-sync.py --days 7
+   python3 scripts/pattern-gen.py --limit 50 --workers 3
+   python3 scripts/rule-tester.py
+   python3 scripts/feedback-loop.py seed && python3 scripts/feedback-loop.py score
+   python3 scripts/feedback-loop.py report
+   ```
 
-5. **Update inventory**: If user reports a new Claude Code feature not yet tracked, add it to `feature-inventory.json`
+5. **Prune**: Remove outdated entries from feature inventory (features from versions older than 6 months that are already fully adopted or not applicable)
 
-6. **Setup local crons**: Create native Claude Code scheduled tasks using CronCreate:
+6. **Update inventory**: If user reports a new Claude Code feature not yet tracked, add it to `feature-inventory.json`
+
+7. **Setup local crons**: Create native Claude Code scheduled tasks using CronCreate:
    ```
    CronCreate: "CVE sync"         schedule="0 6 * * *"     command="python3 ~/.sentinel/scripts/cve-sync.py"
    CronCreate: "KB update"        schedule="0 9 * * 1"     command="python3 ~/.sentinel/scripts/kb-update.py"
@@ -490,7 +514,7 @@ KB housekeeping, history, and dashboard.
    ```
    Use `CronList` to show active crons and `CronDelete` to remove them. This replaces external crontab configuration.
 
-7. **Setup cloud crons (remote)**: For 24/7 monitoring without requiring the local machine to be on, use **remote scheduled tasks** on Anthropic infrastructure:
+8. **Setup cloud crons (remote)**: For 24/7 monitoring without requiring the local machine to be on, use **remote scheduled tasks** on Anthropic infrastructure:
    ```
    RemoteTrigger: "Sentinel CVE Sync"      schedule="0 6 * * *"     prompt="Run python3 ~/.sentinel/scripts/cve-sync.py and report summary"
    RemoteTrigger: "Sentinel KB Update"      schedule="0 9 * * 1"     prompt="Run python3 ~/.sentinel/scripts/kb-update.py and report summary"
