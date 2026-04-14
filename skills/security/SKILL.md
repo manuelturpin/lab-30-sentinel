@@ -1,6 +1,6 @@
 ---
 name: sentinel-security
-description: Audit de cybersecurite complet — detecte le stack, dispatche des agents specialises en parallele, et produit un rapport SARIF consolide avec scoring et remediations
+description: Audit de cybersecurite complet pour tout projet (web, API, mobile, infra, DB, IA/LLM). Detecte le stack, dispatche 12 agents specialises en parallele, consulte une KB de 4000+ regles enrichie par RAG, et produit un rapport SARIF 2.1.0 avec scoring CVSS v4 + EPSS et remediations. Couvre OWASP Top 10 Web/API/LLM/Mobile, MITRE ATLAS, CWE-25, NIST AI RMF.
 user_invocable: true
 effort: high
 keep-coding-instructions: true
@@ -269,12 +269,13 @@ The `if` conditional (v2.1.85+) ensures the hook only spawns a process when the 
 
 This eliminates manual permission approval friction during audits for safe read operations.
 
-### PreCompact Finding Preservation (v2.1.76+)
+### PreCompact Finding Preservation (v2.1.76+, blocking v2.1.105+)
 
-Long multi-agent audits may hit context limits. Configure PreCompact/PostCompact hooks to preserve findings:
+Long multi-agent audits may hit context limits. Use **PreCompact blocking** to protect active scans:
 
-- **PreCompact**: Save in-progress findings, dispatched agent statuses, and scan metadata to a temp JSON file
-- **PostCompact**: Reload the saved state after compaction — zero finding loss
+- **Block compaction during active scans** (v2.1.105+): Return `{"decision":"block"}` from PreCompact when agents are still running — this prevents compaction from discarding in-progress findings. The hook checks for a sentinel lock file created when agents are dispatched and removed when all agents complete.
+- **Allow compaction when idle**: When no agents are running, allow compaction normally — findings are already aggregated.
+- **PostCompact fallback**: If compaction is allowed (all agents done), PostCompact reloads saved state after compaction — zero finding loss.
 
 ```json
 {
@@ -282,7 +283,7 @@ Long multi-agent audits may hit context limits. Configure PreCompact/PostCompact
     "PreCompact": [{
       "hooks": [{
         "type": "command",
-        "command": "echo 'Saving audit state before compaction...'"
+        "command": "if [ -f /tmp/sentinel-scan-active.lock ]; then echo '{\"decision\":\"block\"}'; else echo 'Compaction allowed — no active scan'; fi"
       }]
     }]
   }
@@ -446,6 +447,8 @@ When agents run with `isolation: worktree`, configure **WorktreeCreate/Remove ho
 ```
 
 This creates a timestamped record of every isolated agent workspace — useful for compliance audits (SOC-2, ISO 27001) and debugging orphaned worktrees.
+
+**Stale worktree auto-cleanup** (v2.1.105+) — worktrees from agents whose PR was squash-merged are now automatically removed instead of lingering indefinitely. This reduces disk usage for Sentinel's worktree-heavy multi-agent workflow without manual cleanup.
 
 ## OTEL Distributed Tracing (Audit Performance)
 

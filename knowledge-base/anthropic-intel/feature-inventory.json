@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_built": "2026-04-13T09:30:00Z",
+  "last_built": "2026-04-14T10:00:00Z",
   "features": {
     "skills_system": {
       "introduced": "2.1.0",
@@ -799,6 +799,69 @@
       "category": "security",
       "status": "stable",
       "description": "Plugin hooks from force-enabled managed plugins run when allowManagedHooksOnly is set — enterprise hook policy enforcement"
+    },
+    "enter_worktree_path": {
+      "introduced": "2.1.105",
+      "date": "2026-04-13",
+      "category": "isolation",
+      "status": "stable",
+      "description": "EnterWorktree tool accepts path parameter to switch into an existing worktree of the current repository"
+    },
+    "precompact_block": {
+      "introduced": "2.1.105",
+      "date": "2026-04-13",
+      "category": "hooks",
+      "status": "stable",
+      "description": "PreCompact hooks can block compaction by exiting with code 2 or returning {\"decision\":\"block\"}"
+    },
+    "plugin_monitors": {
+      "introduced": "2.1.105",
+      "date": "2026-04-13",
+      "category": "distribution",
+      "status": "stable",
+      "description": "Background monitor support for plugins via top-level monitors manifest key — auto-arms at session start or skill invoke"
+    },
+    "proactive_loop_alias": {
+      "introduced": "2.1.105",
+      "date": "2026-04-13",
+      "category": "cli",
+      "status": "stable",
+      "description": "/proactive is now an alias for /loop"
+    },
+    "skill_description_cap_1536": {
+      "introduced": "2.1.105",
+      "date": "2026-04-13",
+      "category": "skills",
+      "status": "stable",
+      "description": "Skill description listing cap raised from 250 to 1,536 characters — longer descriptions improve discoverability"
+    },
+    "webfetch_strip_style_script": {
+      "introduced": "2.1.105",
+      "date": "2026-04-13",
+      "category": "tools",
+      "status": "stable",
+      "description": "WebFetch strips <style> and <script> contents from fetched pages — CSS-heavy pages no longer exhaust content budget"
+    },
+    "stale_worktree_squash_cleanup": {
+      "introduced": "2.1.105",
+      "date": "2026-04-13",
+      "category": "isolation",
+      "status": "stable",
+      "description": "Stale agent worktree cleanup now removes worktrees whose PR was squash-merged instead of keeping them indefinitely"
+    },
+    "mcp_truncation_format_recipes": {
+      "introduced": "2.1.105",
+      "date": "2026-04-13",
+      "category": "mcp",
+      "status": "stable",
+      "description": "MCP large-output truncation prompt now gives format-specific recipes (e.g. jq for JSON, computed Read chunk sizes for text)"
+    },
+    "thinking_hints_sooner": {
+      "introduced": "2.1.107",
+      "date": "2026-04-14",
+      "category": "ui",
+      "status": "stable",
+      "description": "Show thinking hints sooner during long operations"
     }
   }
 }

@@ -1,6 +1,6 @@
 ---
 name: sentinel-evolve
-description: Meta-skill d'intelligence evolutive — surveille l'ecosysteme Anthropic, detecte les opportunites d'optimisation, et evolue les skills Sentinel automatiquement
+description: Meta-skill d'intelligence evolutive — surveille l'ecosysteme Anthropic (Claude Code releases, skills officiels, SDKs, MCP), detecte les opportunites d'optimisation, et evolue les skills Sentinel. 7 modes: auto (pipeline complet scan-apply-deploy-commit), scan, analyze, recommend (EIR), apply, maintain, audit (Claude Code health scoring par projet avec CLAUDE.md grading et feature gap analysis).
 user_invocable: true
 effort: low
 keep-coding-instructions: true
@@ -463,7 +463,7 @@ If worktree isolation is unavailable (e.g., uncommitted changes), fall back to d
 ### Step 5: Post-Apply
 
 After all changes:
-1. If worktree was used, review the diff and merge into main branch
+1. If worktree was used, use `EnterWorktree({path: "<worktree-path>"})` (v2.1.105+) to switch into the agent's worktree for direct review of changes before merging. This avoids reading diffs blindly — you can Read/Grep the modified files in-place.
 2. Suggest running `bash scripts/deploy.sh` to deploy changes
 3. Update the EIR JSON with applied statuses
 

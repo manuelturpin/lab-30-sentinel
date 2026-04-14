@@ -1,6 +1,6 @@
 ---
 name: sentinel-rag
-description: Expert RAG autonome et auto-evolutif — cree, diagnostique, optimise, evalue et securise les systemes RAG. Maintient sa propre base de connaissances vectorielle.
+description: Expert RAG autonome et auto-evolutif — cree, diagnostique, optimise, evalue et securise les systemes RAG (ChromaDB, Qdrant, LanceDB, pgvector). 5 modes: create (scaffolding), diagnose (health score), optimize (hybrid search, reranking, HNSW tuning), evaluate (Hit@5, MRR, NDCG), secure (poisoning, injection vs OWASP LLM Top 10). Maintient sa propre KB vectorielle avec auto-enrichissement.
 user_invocable: true
 effort: medium
 keep-coding-instructions: true
