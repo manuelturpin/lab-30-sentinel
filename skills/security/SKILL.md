@@ -2,7 +2,7 @@
 name: sentinel-security
 description: Audit de cybersecurite complet pour tout projet (web, API, mobile, infra, DB, IA/LLM). Detecte le stack, dispatche 12 agents specialises en parallele, consulte une KB de 4000+ regles enrichie par RAG, et produit un rapport SARIF 2.1.0 avec scoring CVSS v4 + EPSS et remediations. Couvre OWASP Top 10 Web/API/LLM/Mobile, MITRE ATLAS, CWE-25, NIST AI RMF.
 user_invocable: true
-effort: high
+effort: xhigh
 keep-coding-instructions: true
 paths:
   - "**/package.json"
@@ -129,7 +129,7 @@ Then map the detected files to agents using this table:
 
 **Security hardening** — set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` before dispatching agents to prevent credential leakage from subprocess environments during scans. On Linux, this also enables PID namespace isolation for subprocess sandboxing (v2.1.98+). Additionally, set `CLAUDE_CODE_SCRIPT_CAPS=500` to limit per-session script invocations — prevents runaway agent execution.
 
-**Cost monitoring** — Sentinel dispatches agents across multiple model tiers (haiku for light checks, opus for deep analysis). Use `/cost` to view the per-model breakdown and cache-hit ratio (v2.1.92+) — this helps optimize agent tier assignments and identify expensive scans.
+**Cost monitoring** — Sentinel dispatches agents across multiple model tiers (haiku 4.5 for light checks, sonnet 4.6 for mid-tier DB/infra/privacy, opus 4.7 for deep analysis — default unspecified tier resolves to Opus 4.7 since v2.1.111). Use `/cost` to view the per-model breakdown and cache-hit ratio (v2.1.92+) — this helps optimize agent tier assignments and identify expensive scans. Note: Opus 4.7's new tokenizer may use +35% tokens vs 4.6 — increase max_tokens headroom accordingly.
 
 **Progress tracking** — before dispatching, create a task for each agent using TaskCreate so the user can see scan progress. Update each task to completed when the agent returns.
 
@@ -226,6 +226,21 @@ After presenting the report, check if multiple findings share the same remediati
 > "I found {N} files with the same issue ({pattern}). You can use `/batch` to apply the fix across all files in parallel — want me to set that up?"
 
 This uses Claude Code's `/batch` skill which creates parallel worktrees for safe concurrent modifications.
+
+### Step 8: Cross-Validation (Optional)
+
+For CRITICAL/HIGH findings only, the model can now invoke the built-in `/security-review` skill as a second-pass validation (v2.1.108+ — built-in slash commands discoverable via Skill tool):
+
+```
+Skill("security-review")
+```
+
+This provides an independent review using Anthropic's official threat model. Use it when:
+- A CRITICAL finding could be a false positive (high-cost remediation)
+- The user explicitly requests independent verification
+- Before opening a GitHub Advisory
+
+For large-scale validation across the whole branch, invoke `/ultrareview` (v2.1.111+) instead — runs parallel cloud multi-agent analysis + critique.
 
 ---
 

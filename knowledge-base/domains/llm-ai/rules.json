@@ -954,5 +954,39 @@
     "standards": ["CWE-770", "OWASP-LLM10:2025", "NIST-AI-RMF-MS-2.6"],
     "ai_specific": true,
     "frameworks": ["claude-code"]
+  },
+  {
+    "id": "LLM-DEBUG-001",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "llm-ai",
+    "subcategory": "debug-leakage",
+    "title": "OTEL raw API body logging enabled — leaks prompts, thinking, and tool calls",
+    "description": "OTEL_LOG_RAW_API_BODIES=1 (Claude Code v2.1.111+) emits full request and response bodies as OpenTelemetry log events. In production telemetry pipelines this exposes user prompts, model thinking content, tool call arguments (including secrets passed to Bash/Write), and assistant responses to downstream log aggregators. Designed for local debugging only — enabling it in CI, shared dev environments, or any telemetry backend routed to SaaS observability platforms is a confidentiality breach.",
+    "detect": {
+      "patterns": [
+        "OTEL_LOG_RAW_API_BODIES\\s*=\\s*1",
+        "OTEL_LOG_RAW_API_BODIES\\s*=\\s*true",
+        "OTEL_LOG_RAW_API_BODIES:\\s*['\"]?1",
+        "export\\s+OTEL_LOG_RAW_API_BODIES"
+      ],
+      "negative_patterns": [
+        "OTEL_LOG_RAW_API_BODIES\\s*=\\s*0",
+        "# debug only",
+        "# local only"
+      ],
+      "file_types": [".env", ".env.*", "Dockerfile", "docker-compose.*", "*.yaml", "*.yml", "*.sh", "*.md"],
+      "exclude": ["node_modules", "dist", "test"]
+    },
+    "remediation": {
+      "description": "Never enable OTEL_LOG_RAW_API_BODIES in production, CI, or any environment exporting telemetry to a shared backend. Use it only in local debugging with ephemeral logs. If needed for incident response, scope it to a specific session via a command-line export and scrub logs immediately after.",
+      "code_example": "# WRONG — committed to repo or CI config\nOTEL_LOG_RAW_API_BODIES=1\n\n# RIGHT — local debug only, ephemeral shell\n$ OTEL_LOG_RAW_API_BODIES=1 claude --bare -p '/my-skill' 2>debug.log\n$ shred -u debug.log  # scrub after",
+      "references": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.111"
+      ]
+    },
+    "standards": ["CWE-532", "CWE-215", "OWASP-LLM02:2025", "OWASP-LLM06:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code"]
   }
 ]

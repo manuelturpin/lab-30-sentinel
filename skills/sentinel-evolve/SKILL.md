@@ -546,3 +546,20 @@ Available domains: `skills`, `agents`, `hooks`, `mcp`, `performance`, `config`, 
 - **Sync frequency**: Designed for bi-weekly sync (Monday + Thursday). Can be run manually anytime.
 - **Cross-session memory**: Use auto-memory to remember which recommendations were applied, which were rejected (and why), and user preferences for prioritization. This avoids re-suggesting rejected recommendations and builds institutional knowledge across sessions. Configure `autoMemoryDirectory: "~/.sentinel/memory/"` to keep Sentinel memory separate from user memory.
 - **Agent team role**: When part of a Sentinel team (`TeamCreate("sentinel")`), this skill acts as **intel analyst** — monitoring Claude Code updates and suggesting skill improvements via `SendMessage(to: "sentinel-security")` when new features are relevant to audit capabilities.
+
+---
+
+## Model Migration Notes
+
+### Opus 4.7 (released 2026-04-16)
+
+Opus 4.7 introduces breaking API changes. When evolving Sentinel skills or generating recommendations that touch model config, apply these rules:
+
+- **`temperature`, `top_p`, `top_k` removed** — passing them returns HTTP 400. Rely on prompting for determinism instead.
+- **`thinking.budget_tokens` removed** — use `thinking: {"type": "adaptive"}` plus `output_config: {"effort": "high" | "xhigh" | "max"}`. Adaptive outperforms bounded thinking.
+- **Thinking content omitted by default** — set `display: "summarized"` if reasoning output is required (e.g., for audit traceability).
+- **New `xhigh` effort level** — sits between `high` and `max`. Recommended default for Sentinel deep-dive audit agents (+13% coding, +14% agentic vs `high` on 4.6).
+- **Task budgets (beta)** — advisory token cap across full agentic loop (min 20k); useful for capping long audit sessions.
+- **New tokenizer: +35% tokens possible** — raise `max_tokens` headroom ~15-20% and re-tune MCP `maxResultSizeChars` (current 500K may need downsize).
+- **Cyber safeguards** — 4.7 adds real-time cybersecurity refusals on high-risk topics. Sentinel agents that analyze malware/exploit samples should apply for the [Cyber Verification Program](https://claude.com/form/cyber-use-case).
+- **Auto mode for Opus 4.7 Max** (v2.1.111) — `--enable-auto-mode` flag is no longer required; auto mode activates automatically when on Opus 4.7 with a Max subscription.

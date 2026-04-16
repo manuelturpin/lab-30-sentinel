@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_built": "2026-04-14T10:00:00Z",
+  "last_built": "2026-04-16",
   "features": {
     "skills_system": {
       "introduced": "2.1.0",
@@ -77,7 +77,7 @@
       "date": "2026-02-07",
       "category": "performance",
       "status": "stable",
-      "description": "Fast mode for Opus 4.6 \u2014 same model, faster output"
+      "description": "Fast mode for Opus 4.6 — same model, faster output"
     },
     "sonnet_4_6": {
       "introduced": "2.1.45",
@@ -140,7 +140,7 @@
       "date": "2026-02-28",
       "category": "hooks",
       "status": "stable",
-      "description": "HTTP hooks \u2014 POST JSON to URL, receive JSON response"
+      "description": "HTTP hooks — POST JSON to URL, receive JSON response"
     },
     "worktree_shared_config": {
       "introduced": "2.1.63",
@@ -161,7 +161,7 @@
       "date": "2026-03-14",
       "category": "mcp",
       "status": "stable",
-      "description": "MCP elicitation support \u2014 interactive dialogs for structured input"
+      "description": "MCP elicitation support — interactive dialogs for structured input"
     },
     "post_compact_hook": {
       "introduced": "2.1.76",
@@ -245,7 +245,7 @@
       "date": "2026-03-25",
       "category": "ui",
       "status": "stable",
-      "description": "Transcript search \u2014 press / in transcript mode (Ctrl+O)"
+      "description": "Transcript search — press / in transcript mode (Ctrl+O)"
     },
     "subprocess_env_scrub": {
       "introduced": "2.1.83",
@@ -294,21 +294,21 @@
       "date": "2026-01-07",
       "category": "agents",
       "status": "stable",
-      "description": "Explore subagent type \u2014 fast read-only codebase search (uses Haiku, cheaper)"
+      "description": "Explore subagent type — fast read-only codebase search (uses Haiku, cheaper)"
     },
     "plan_subagent": {
       "introduced": "2.1.0",
       "date": "2026-01-07",
       "category": "agents",
       "status": "stable",
-      "description": "Plan subagent type \u2014 research and design before implementation"
+      "description": "Plan subagent type — research and design before implementation"
     },
     "worktree_isolation_agents": {
       "introduced": "2.1.49",
       "date": "2026-02-19",
       "category": "isolation",
       "status": "stable",
-      "description": "isolation: worktree parameter on Agent calls \u2014 each agent gets isolated repo copy"
+      "description": "isolation: worktree parameter on Agent calls — each agent gets isolated repo copy"
     },
     "task_create_update": {
       "introduced": "2.1.0",
@@ -357,14 +357,14 @@
       "date": "2026-02-24",
       "category": "automation",
       "status": "stable",
-      "description": "Cloud scheduled tasks on Anthropic infrastructure \u2014 no local machine needed"
+      "description": "Cloud scheduled tasks on Anthropic infrastructure — no local machine needed"
     },
     "model_alias_override": {
       "introduced": "2.1.45",
       "date": "2026-02-17",
       "category": "models",
       "status": "stable",
-      "description": "model frontmatter in agents \u2014 use haiku for light agents, opus for critical"
+      "description": "model frontmatter in agents — use haiku for light agents, opus for critical"
     },
     "deep_links": {
       "introduced": "2.1.76",
@@ -378,28 +378,28 @@
       "date": "2026-02-24",
       "category": "security",
       "status": "stable",
-      "description": "Auto permission mode \u2014 classifier reviews actions for non-destructive workflows"
+      "description": "Auto permission mode — classifier reviews actions for non-destructive workflows"
     },
     "lsp_integration": {
       "introduced": "2.1.0",
       "date": "2026-01-07",
       "category": "tools",
       "status": "stable",
-      "description": "LSP tool for code intelligence \u2014 go to definition, find references, diagnostics"
+      "description": "LSP tool for code intelligence — go to definition, find references, diagnostics"
     },
     "simplify_skill": {
       "introduced": "2.1.63",
       "date": "2026-02-28",
       "category": "skills",
       "status": "stable",
-      "description": "/simplify bundled skill \u2014 review changed code for reuse, quality, efficiency"
+      "description": "/simplify bundled skill — review changed code for reuse, quality, efficiency"
     },
     "batch_parallel": {
       "introduced": "2.1.63",
       "date": "2026-02-28",
       "category": "skills",
       "status": "stable",
-      "description": "/batch skill \u2014 parallelize large codebase changes across worktrees"
+      "description": "/batch skill — parallelize large codebase changes across worktrees"
     },
     "session_naming": {
       "introduced": "2.1.76",
@@ -862,6 +862,202 @@
       "category": "ui",
       "status": "stable",
       "description": "Show thinking hints sooner during long operations"
+    },
+    "session_recap": {
+      "introduced": "2.1.108",
+      "date": "2026-04-14",
+      "category": "cli",
+      "status": "stable",
+      "description": "Session recap feature (/recap) for context when returning to a session; configurable, enabled by default."
+    },
+    "skill_builtin_slash_discovery": {
+      "introduced": "2.1.108",
+      "date": "2026-04-14",
+      "category": "skills",
+      "status": "stable",
+      "description": "Model can discover and invoke built-in slash commands like /init, /review, /security-review via the Skill tool."
+    },
+    "undo_alias_rewind": {
+      "introduced": "2.1.108",
+      "date": "2026-04-14",
+      "category": "cli",
+      "status": "stable",
+      "description": "/undo is now an alias for /rewind."
+    },
+    "model_switch_warn_uncached": {
+      "introduced": "2.1.108",
+      "date": "2026-04-14",
+      "category": "cli",
+      "status": "stable",
+      "description": "/model warns before switching mid-conversation since the next response re-reads the full history uncached."
+    },
+    "rate_limit_error_distinction": {
+      "introduced": "2.1.108",
+      "date": "2026-04-14",
+      "category": "cli",
+      "status": "stable",
+      "description": "Server rate limits distinguished from plan usage limits; 5xx/529 errors show status.claude.com link."
+    },
+    "enable_prompt_caching_1h_env": {
+      "introduced": "2.1.108",
+      "date": "2026-04-14",
+      "category": "config",
+      "status": "stable",
+      "description": "ENABLE_PROMPT_CACHING_1H env var to opt into 1-hour prompt cache TTL on API key, Bedrock, Vertex, Foundry."
+    },
+    "prompt_caching_disabled_warn": {
+      "introduced": "2.1.108",
+      "date": "2026-04-14",
+      "category": "performance",
+      "status": "stable",
+      "description": "Startup warning when prompt caching disabled via DISABLE_PROMPT_CACHING env vars."
+    },
+    "thinking_progress_hint_rotating": {
+      "introduced": "2.1.109",
+      "date": "2026-04-15",
+      "category": "ui",
+      "status": "stable",
+      "description": "Extended-thinking indicator with rotating progress hint."
+    },
+    "tui_fullscreen_flicker_free": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "ui",
+      "status": "stable",
+      "description": "/tui command and tui setting — switch to flicker-free fullscreen rendering in the same conversation."
+    },
+    "focus_command": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "cli",
+      "status": "stable",
+      "description": "/focus command toggles focus view (Ctrl+O now dedicated to verbose transcript toggle)."
+    },
+    "push_notification_tool": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "tools",
+      "status": "stable",
+      "description": "Push notification tool — Claude can send mobile push notifications when Remote Control and 'Push when Claude decides' config are enabled."
+    },
+    "auto_scroll_config": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "config",
+      "status": "stable",
+      "description": "autoScrollEnabled config to disable conversation auto-scroll in fullscreen mode."
+    },
+    "resume_resurrects_scheduled_tasks": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "cli",
+      "status": "stable",
+      "description": "--resume/--continue resurrects unexpired scheduled tasks."
+    },
+    "remote_control_slash_commands": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "remote",
+      "status": "stable",
+      "description": "/autocompact, /context, /exit, /reload-plugins now work from Remote Control (mobile/web) clients."
+    },
+    "ide_diff_edit_notification": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "tools",
+      "status": "stable",
+      "description": "Write tool informs the model when user edits proposed content in IDE diff before accepting."
+    },
+    "bash_tool_max_timeout_enforced": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "tools",
+      "status": "stable",
+      "description": "Bash tool enforces documented maximum timeout instead of accepting arbitrarily large values."
+    },
+    "traceparent_tracestate_env": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "observability",
+      "status": "stable",
+      "description": "SDK/headless sessions read TRACEPARENT/TRACESTATE from environment for distributed trace linking."
+    },
+    "session_recap_telemetry_disabled": {
+      "introduced": "2.1.110",
+      "date": "2026-04-15",
+      "category": "cli",
+      "status": "stable",
+      "description": "Session recap enabled for users with telemetry disabled (Bedrock, Vertex, Foundry)."
+    },
+    "opus_4_7_xhigh_effort": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "models",
+      "status": "stable",
+      "description": "Claude Opus 4.7 xhigh effort level (between high and max). Via /effort, --effort, model picker. Other models fall back to high."
+    },
+    "opus_4_7_auto_mode_max": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "models",
+      "status": "stable",
+      "description": "Auto mode available for Max subscribers when using Opus 4.7 (no --enable-auto-mode flag required)."
+    },
+    "effort_interactive_slider": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "cli",
+      "status": "stable",
+      "description": "/effort opens an interactive slider when called without arguments."
+    },
+    "theme_auto_match_terminal": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "ui",
+      "status": "stable",
+      "description": "'Auto (match terminal)' theme option matches terminal dark/light mode."
+    },
+    "less_permission_prompts_skill": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "skills",
+      "status": "stable",
+      "description": "/less-permission-prompts skill scans transcripts for common read-only Bash/MCP tool calls and proposes a prioritized allowlist for .claude/settings.json."
+    },
+    "ultrareview_skill": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "skills",
+      "status": "stable",
+      "description": "/ultrareview runs comprehensive code review in the cloud using parallel multi-agent analysis and critique. No args = current branch, or /ultrareview <PR#>."
+    },
+    "powershell_tool_cross_platform": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "tools",
+      "status": "stable",
+      "description": "PowerShell tool progressively rolling out. Opt in/out with CLAUDE_CODE_USE_POWERSHELL_TOOL (requires pwsh on PATH)."
+    },
+    "readonly_bash_glob_no_prompt": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "permissions",
+      "status": "stable",
+      "description": "Read-only bash commands with glob patterns (e.g. ls *.ts) and commands starting with 'cd <project-dir> &&' no longer trigger permission prompt."
+    },
+    "subcommand_typo_suggestion": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "cli",
+      "status": "stable",
+      "description": "Near-miss typo suggestions for claude <word> subcommands (e.g. claude udpate → 'Did you mean claude update?')."
+    },
+    "otel_log_raw_api_bodies": {
+      "introduced": "2.1.111",
+      "date": "2026-04-16",
+      "category": "observability",
+      "status": "stable",
+      "description": "OTEL_LOG_RAW_API_BODIES environment variable emits full API request/response bodies as OpenTelemetry log events for debugging. WARNING: leaks prompts, thinking, tool calls — local debug only."
     }
   }
 }
