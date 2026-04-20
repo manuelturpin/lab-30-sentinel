@@ -8,6 +8,7 @@ skills/sentinel-evolve/knowledge/chromadb/
 skills/sentinel-rag/knowledge/chromadb/
 reports/archive/*.sarif.json
 reports/archive/*.md
+!reports/archive/EIR-*.md
 knowledge-base/cve-feed/nvd-cache.json
 knowledge-base/cve-feed/osv-cache.json
 knowledge-base/cve-feed/github-advisories.json

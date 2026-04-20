@@ -3,10 +3,28 @@
 # Deploys Sentinel globally for all Claude Code instances
 #
 # Usage:
-#   bash scripts/deploy.sh              # Deploy locally
-#   bash scripts/deploy.sh --remote user@vps:/path  # Deploy to VPS
+#   bash scripts/deploy.sh                   # DRY RUN (default): simulate, no changes
+#   DRY_RUN=0 bash scripts/deploy.sh         # Apply deployment locally
+#   DRY_RUN=0 bash scripts/deploy.sh --remote user@vps:/path  # Apply to VPS
+#
+# Safety: DRY_RUN=1 by default since 2026-04-17 (H3 audit fix).
+# Previous behaviour of rsync -a --delete wiped runtime-generated files
+# (EIR reports, SARIF archives) when the source tree did not mirror them.
 
 set -euo pipefail
+
+# ============================================================
+# Safety: DRY RUN by default (H3 audit fix)
+# ============================================================
+DRY_RUN="${DRY_RUN:-1}"
+RSYNC_OPTS="-a --delete"
+REPORT_EXCLUDES=(
+  --exclude='archive/EIR-*.json'
+  --exclude='archive/EIR-*.md'
+  --exclude='archive/*.sarif.json'
+  --exclude='archive/*.sbom.json'
+  --exclude='audit-trail.log'
+)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -50,6 +68,17 @@ deploy_local() {
   echo "=== Sentinel Deployment ==="
   echo ""
 
+  if [ "$DRY_RUN" = "1" ]; then
+    RSYNC_OPTS="$RSYNC_OPTS --dry-run"
+    warn "DRY RUN mode — no files will be modified."
+    warn "rsync operations will be simulated; cp / npm / mcp / indexing steps will be skipped."
+    warn "Pass DRY_RUN=0 to apply: DRY_RUN=0 bash scripts/deploy.sh"
+    echo ""
+  else
+    warn "APPLY mode (DRY_RUN=0) — will write to $SENTINEL_HOME and $SKILL_DIR"
+    echo ""
+  fi
+
   # --- 1. Create directories ---
   info "Creating directories..."
   mkdir -p "$SENTINEL_HOME"
@@ -59,7 +88,7 @@ deploy_local() {
   info "Copying Sentinel runtime to $SENTINEL_HOME..."
 
   # KB
-  rsync -a --delete "$PROJECT_DIR/knowledge-base/" "$SENTINEL_HOME/knowledge-base/"
+  rsync $RSYNC_OPTS "$PROJECT_DIR/knowledge-base/" "$SENTINEL_HOME/knowledge-base/"
 
   # RAG (indexer + query + config, NOT chromadb data — will re-index)
   mkdir -p "$SENTINEL_HOME/rag"
@@ -68,7 +97,7 @@ deploy_local() {
   cp "$PROJECT_DIR/rag/config.json" "$SENTINEL_HOME/rag/"
 
   # MCP Server
-  rsync -a --delete \
+  rsync $RSYNC_OPTS \
     --exclude='node_modules' \
     "$PROJECT_DIR/mcp-servers/" "$SENTINEL_HOME/mcp-servers/"
 
@@ -84,12 +113,20 @@ deploy_local() {
     (cd "$SENTINEL_HOME/mcp-servers/sentinel-scanner" && npm run build 2>/dev/null) || warn "npm build failed — build manually"
   fi
 
-  # Reports, config, scripts, tests, crons
-  rsync -a --delete "$PROJECT_DIR/reports/" "$SENTINEL_HOME/reports/"
-  rsync -a --delete "$PROJECT_DIR/config/" "$SENTINEL_HOME/config/"
-  rsync -a --delete "$PROJECT_DIR/scripts/" "$SENTINEL_HOME/scripts/"
-  rsync -a --delete "$PROJECT_DIR/tests/" "$SENTINEL_HOME/tests/"
-  rsync -a --delete "$PROJECT_DIR/crons/" "$SENTINEL_HOME/crons/"
+  # Reports: preserve runtime-generated EIR / SARIF / SBOM archives
+  rsync $RSYNC_OPTS "${REPORT_EXCLUDES[@]}" "$PROJECT_DIR/reports/" "$SENTINEL_HOME/reports/"
+  rsync $RSYNC_OPTS "$PROJECT_DIR/config/" "$SENTINEL_HOME/config/"
+  rsync $RSYNC_OPTS "$PROJECT_DIR/scripts/" "$SENTINEL_HOME/scripts/"
+  rsync $RSYNC_OPTS "$PROJECT_DIR/tests/" "$SENTINEL_HOME/tests/"
+  rsync $RSYNC_OPTS "$PROJECT_DIR/crons/" "$SENTINEL_HOME/crons/"
+
+  # Early exit for DRY RUN — do not run cp / npm / mcp / indexing
+  if [ "$DRY_RUN" = "1" ]; then
+    echo ""
+    warn "DRY RUN complete. No changes were applied."
+    warn "Re-run with DRY_RUN=0 to perform the deployment."
+    return 0
+  fi
 
   # CLAUDE.md for reference
   cp "$PROJECT_DIR/CLAUDE.md" "$SENTINEL_HOME/CLAUDE.md"
@@ -234,6 +271,12 @@ deploy_remote() {
 
   if [ -z "$remote_path" ] || [ "$remote_path" = "$target" ]; then
     remote_path="\$HOME/.sentinel"
+  fi
+
+  if [ "$DRY_RUN" = "1" ]; then
+    warn "DRY RUN mode — remote deployment to $userhost:$remote_path skipped."
+    warn "Pass DRY_RUN=0 to apply: DRY_RUN=0 bash scripts/deploy.sh --remote $target"
+    return 0
   fi
 
   info "Deploying to $userhost:$remote_path ..."

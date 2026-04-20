@@ -30,9 +30,11 @@ OWASP Top 10 Web 2025, API 2023, LLM 2025, Mobile 2024 | MITRE ATLAS | NIST AI R
 
 ---
 
-## WORKFLOW DE SYNCHRONISATION (CRITIQUE)
+## Workflow de synchronisation
 
-Ce projet existe en **3 emplacements** qui doivent rester synchronises :
+Ce projet vit en **3 emplacements** qui doivent rester synchronises. Tout
+desync casse silencieusement les skills en runtime — relire cette
+section si un comportement parait bizarre apres une modif.
 
 ```
 1. REPO SOURCE (ce dossier)
@@ -73,10 +75,17 @@ bash scripts/deploy.sh
 
 ### Regles importantes
 
-- **Ne JAMAIS editer directement dans `~/.claude/skills/security/`** sans repercuter dans le repo — sinon le prochain `deploy.sh` ecrasera les changements
-- **Les paths dans SKILL.md et les agents sont absolus** (`/Users/manuelturpin/.sentinel/...`). Le `deploy.sh` copie le SKILL.md tel quel (pas de sed)
-- **Le MCP server sentinel-scanner reste installe** meme si les agents ne l'utilisent plus pour scan-project/scan-secrets/query-kb/query-cve — il est toujours necessaire pour `scan-dependencies` (OSV API) et `scan-headers` (HTTP GET)
-- **Apres modif des rules.json** dans `knowledge-base/`, il faut re-indexer le RAG : `python3 rag/indexer.py`
+- Editer uniquement dans le repo source — les edits directs dans
+  `~/.claude/skills/security/` sont ecrases au prochain `deploy.sh`
+  (utile pour du test rapide, pas comme workflow permanent)
+- Les paths dans SKILL.md et les agents sont absolus
+  (`/Users/manuelturpin/.sentinel/...`) ; `deploy.sh` copie SKILL.md tel
+  quel sans substitution
+- Le MCP server sentinel-scanner reste installe meme si les agents ont
+  bascule sur Read/Grep/Bash natifs pour le scan local — il sert encore
+  pour `scan-dependencies` (OSV API) et `scan-headers` (HTTP GET)
+- Apres modification de `knowledge-base/**/rules.json`, re-indexer le
+  RAG : `python3 rag/indexer.py`
 
 ---
 

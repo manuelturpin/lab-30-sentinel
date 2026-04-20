@@ -72,8 +72,20 @@ MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-evolve auto" --name 
 5. **Auto-apply** — apply all P1 (quick wins) automatically. For P2/P3:
    - **Interactive mode**: ask the user which P2/P3 to apply
    - **Headless mode**: apply all P2 too, skip P3 (require explicit approval for strategic changes)
-6. **Deploy** — run `bash /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/deploy.sh`
-7. **Commit** — stage all modified files, commit with message `perf(evolve): apply EIR-{date} — {N} recommendations, score {before}%→{after}%`, push to origin
+6. **Deploy** — run `DRY_RUN=0 bash /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/deploy.sh` (deploy.sh defaults to DRY_RUN=1 since 2026-04-17 — pass DRY_RUN=0 explicitly)
+7. **Commit** — in strict order, no shortcut:
+   ```bash
+   # a. Pre-commit assertion: EIR report must exist on disk in the source repo.
+   Bash: test -f reports/archive/EIR-{date}.json && test -f reports/archive/EIR-{date}.md || { echo "ABORT: EIR file missing — do not commit"; exit 1; }
+   # b. Stage the EIR explicitly (don't rely on "git add -A" — templates are gitignored, EIR-*.md uses a negation rule).
+   Bash: git add reports/archive/EIR-{date}.json reports/archive/EIR-{date}.md
+   # c. Stage the files touched by applied recommendations (SKILL.md edits, config JSON, scripts, etc.). Use "git add -u" to pick up only modifications — never stage untracked files blindly.
+   Bash: git add -u
+   # d. Commit with the canonical message.
+   Bash: git commit -m "perf(evolve): apply EIR-{date} — {N} recommendations, score {before}%→{after}%"
+   # e. Push.
+   Bash: git push
+   ```
 
 ### Safety guardrails
 
@@ -95,8 +107,8 @@ RemoteTrigger: "Sentinel Auto-Evolve" schedule="0 8 * * 1,4" prompt="/sentinel-e
 ```
 
 The cron runs every Monday and Thursday at 8am — matching the bi-weekly sync cadence. It produces:
-- EIR report in `/Users/manuelturpin/.sentinel/reports/archive/`
-- Git commit with all applied changes
+- EIR report in `lab-30-sentinel/reports/archive/` (source repo — tracked by git, then mirrored to `~/.sentinel/reports/archive/` by `deploy.sh`)
+- Git commit with all applied changes (including the EIR JSON and Markdown)
 - Updated metadata.json with exploitation score history
 
 ### Output (headless)
@@ -404,11 +416,20 @@ For each NOT_USED or PARTIAL feature, create a recommendation:
 
 ### Step 3: Save Report
 
-Save the EIR report as:
-- JSON: `/Users/manuelturpin/.sentinel/reports/archive/EIR-{date}.json`
-- Markdown: `/Users/manuelturpin/.sentinel/reports/archive/EIR-{date}.md`
+Save the EIR report **in the source repo** so it can be committed by git and mirrored to runtime by `deploy.sh`:
+
+- JSON: `/Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/reports/archive/EIR-{date}.json`
+- Markdown: `/Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/reports/archive/EIR-{date}.md`
 
 Use the template at `/Users/manuelturpin/.sentinel/reports/templates/evolve-report.md` for the Markdown version.
+
+**Verification (mandatory before Step 4)** — after Write, run:
+
+```bash
+Bash: ls -la /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/reports/archive/EIR-{date}.json /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/reports/archive/EIR-{date}.md
+```
+
+If either file is missing, **abort** and re-issue the Write. Never proceed to commit if the EIR files aren't on disk. Historical note: pre-2026-04-17, EIRs were written to `~/.sentinel/reports/archive/` which is wiped by `deploy.sh --delete`; this silently lost 9 reports (H4 audit finding).
 
 ### Step 4: Present Summary
 
@@ -425,7 +446,7 @@ Execute selected recommendations from the latest EIR report.
 
 ### Step 1: Load Latest Report
 
-Read the most recent `EIR-*.json` from `/Users/manuelturpin/.sentinel/reports/archive/`
+Read the most recent `EIR-*.json` from `/Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/reports/archive/` (source repo — authoritative location since 2026-04-17). Fall back to `/Users/manuelturpin/.sentinel/reports/archive/` only if the source repo location has no EIR files.
 
 ### Step 2: Present Pending Recommendations
 
