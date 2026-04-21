@@ -38,15 +38,15 @@
     },
     {
       "path": "skills/claude-api/SKILL.md",
-      "sha": "035491e76a4358bfa978dbc982ade734b664d323",
+      "sha": "8531740b7b548946b03164b2d160badf0182e14c",
       "name": "claude-api",
-      "description": "\"Build apps with the Claude API or Anthropic SDK. TRIGGER when: code imports `anthropic`/`@anthropic-ai/sdk`/`claude_agent_sdk`, or user asks to use Claude API, Anthropic SDKs, or Agent SDK. DO NOT TRIGGER when: code imports `openai`/other AI SDK, general programming, or ML/data-science tasks.\"",
+      "description": "\"Build, debug, and optimize Claude API / Anthropic SDK apps. Apps built with this skill should include prompt caching. Also handles migrating existing Claude API code between Claude model versions (4.5 \u2192 4.6, 4.6 \u2192 4.7, retired-model replacements). TRIGGER when: code imports `anthropic`/`@anthropic-ai/sdk`; user asks for the Claude API, Anthropic SDK, or Managed Agents; user adds/modifies/tunes a Claude feature (caching, thinking, compaction, tool use, batch, files, citations, memory) or model (Opus/Sonnet/Haiku) in a file; questions about prompt caching / cache hit rate in an Anthropic SDK project. SKIP: file imports `openai`/other-provider SDK, filename like `*-openai.py`/`*-generic.py`, provider-neutral code, general programming/ML.\"",
       "frontmatter_keys": [
         "name",
         "description",
         "license"
       ],
-      "size_bytes": 20548
+      "size_bytes": 32987
     },
     {
       "path": "skills/doc-coauthoring/SKILL.md",
@@ -214,6 +214,6 @@
       "size_bytes": 140
     }
   ],
-  "last_modified": "2026-03-31T03:57:43.710484+00:00",
+  "last_modified": "2026-04-21T14:02:33.767177+00:00",
   "total_skills": 18
 }

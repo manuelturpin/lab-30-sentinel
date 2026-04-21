@@ -3,6 +3,156 @@
 Auto-generated from GitHub releases for RAG indexing.
 
 
+## v2.1.116 (2026-04-20)
+
+
+### Features
+
+- /resume on large sessions is significantly faster (up to 67% on 40MB+ sessions) and handles sessions with many dead-fork entries more efficiently
+- Faster MCP startup when multiple stdio servers are configured; resources/templates/list is now deferred to first @-mention
+- Smoother fullscreen scrolling in VS Code, Cursor, and Windsurf terminals — /terminal-setup now configures the editor's scroll sensitivity
+- Thinking spinner now shows progress inline ("still thinking", "thinking more", "almost done thinking"), replacing the separate hint row
+- /config search now matches option values (e.g. searching "vim" finds the Editor mode setting)
+- /doctor can now be opened while Claude is responding, without waiting for the current turn to finish
+- /reload-plugins and background plugin auto-update now auto-install missing plugin dependencies from marketplaces you've already added
+- Bash tool now surfaces a hint when gh commands hit GitHub's API rate limit, so agents can back off instead of retrying
+- The Usage tab in Settings now shows your 5-hour and weekly usage immediately and no longer fails when the usage endpoint is rate-limited
+- Agent frontmatter hooks: now fire when running as a main-thread agent via --agent
+- Slash command menu now shows "No commands match" when your filter has zero results, instead of disappearing
+- Security: sandbox auto-allow no longer bypasses the dangerous-path safety check for rm/rmdir targeting /, $HOME, or other critical system directories
+
+## v2.1.113 (2026-04-17)
+
+
+### Features
+
+- Changed the CLI to spawn a native Claude Code binary (via a per-platform optional dependency) instead of bundled JavaScript
+- Added sandbox.network.deniedDomains setting to block specific domains even when a broader allowedDomains wildcard would otherwise permit them
+- Fullscreen mode: Shift+↑/↓ now scrolls the viewport when extending a selection past the visible edge
+- Ctrl+A and Ctrl+E now move to the start/end of the current logical line in multiline input, matching readline behavior
+- Windows: Ctrl+Backspace now deletes the previous word
+- Long URLs in responses and bash output stay clickable when they wrap across lines (in terminals with OSC 8 hyperlinks)
+- Improved /loop: pressing Esc now cancels pending wakeups, and wakeups display as "Claude resuming /loop wakeup" for clarity
+- /extra-usage now works from Remote Control (mobile/web) clients
+- Remote Control clients can now query @-file autocomplete suggestions
+- Improved /ultrareview: faster launch with parallelized checks, diffstat in the launch dialog, and animated launching state
+- Subagents that stall mid-stream now fail with a clear error after 10 minutes instead of hanging silently
+- Bash tool: multi-line commands whose first line is a comment now show the full command in the transcript, closing a UI-spoofing vector
+- Running cd <current-directory> && git … no longer triggers a permission prompt when the cd is a no-op
+- Security: on macOS, /private/{etc,var,tmp,home} paths are now treated as dangerous removal targets under Bash(rm:*) allow rules
+- Security: Bash deny rules now match commands wrapped in env/sudo/watch/ionice/setsid and similar exec wrappers
+- Security: Bash(find:*) allow rules no longer auto-approve find -exec/-delete
+
+### Breaking Changes
+
+- Fixed markdown tables breaking when a cell contains an inline code span with a pipe character
+
+## v2.1.111 (2026-04-16)
+
+
+### Features
+
+- Claude Opus 4.7 xhigh is now available! Use /effort to tune speed vs. intelligence
+- Auto mode is now available for Max subscribers when using Opus 4.7
+- Added xhigh effort level for Opus 4.7, sitting between high and max. Available via /effort, --effort, and the model picker; other models fall back to high
+- /effort now opens an interactive slider when called without arguments, with arrow-key navigation between levels and Enter to confirm
+- Added "Auto (match terminal)" theme option that matches your terminal's dark/light mode — select it from /theme
+- Added /less-permission-prompts skill — scans transcripts for common read-only Bash and MCP tool calls and proposes a prioritized allowlist for .claude/settings.json
+- Added /ultrareview for running comprehensive code review in the cloud using parallel multi-agent analysis and critique — invoke with no arguments to review your current branch, or /ultrareview <PR#> t
+- Auto mode no longer requires --enable-auto-mode
+- Windows: PowerShell tool is progressively rolling out. Opt in or out with CLAUDE_CODE_USE_POWERSHELL_TOOL. On Linux and macOS, enable with CLAUDE_CODE_USE_POWERSHELL_TOOL=1 (requires pwsh on PATH)
+- Read-only bash commands with glob patterns (e.g. ls *.ts) and commands starting with cd <project-dir> && no longer trigger a permission prompt
+- Suggest the closest matching subcommand when claude <word> is invoked with a near-miss typo (e.g. claude udpate → "Did you mean claude update?")
+- Added OTEL_LOG_RAW_API_BODIES environment variable to emit full API request and response bodies as OpenTelemetry log events for debugging
+- Suppressed spurious decompression, network, and transient error messages that could appear in the TUI during normal operation
+- Reverted the v2.1.110 cap on non-streaming fallback retries — it traded long waits for more outright failures during API overload
+
+## v2.1.110 (2026-04-15)
+
+
+### Features
+
+- Added /tui command and tui setting — run /tui fullscreen to switch to flicker-free rendering in the same conversation
+- Changed Ctrl+O to toggle between normal and verbose transcript only; focus view is now toggled separately with the new /focus command
+- Added push notification tool — Claude can send mobile push notifications when Remote Control and "Push when Claude decides" config are enabled
+- Added autoScrollEnabled config to disable conversation auto-scroll in fullscreen mode
+- Added option to show Claude's last response as commented context in the Ctrl+G external editor (enable via /config)
+- Improved /plugin Installed tab — items needing attention and favorites appear at the top, disabled items are hidden behind a fold, and f favorites the selected item
+- Improved /doctor to warn when an MCP server is defined in multiple config scopes with different endpoints
+- --resume/--continue now resurrects unexpired scheduled tasks
+- /autocompact, /context, /exit, and /reload-plugins now work from Remote Control (mobile/web) clients
+- Write tool now informs the model when you edit the proposed content in the IDE diff before accepting
+- Bash tool now enforces the documented maximum timeout instead of accepting arbitrarily large values
+- SDK/headless sessions now read TRACEPARENT/TRACESTATE from the environment for distributed trace linking
+- Session recap is now enabled for users with telemetry disabled (Bedrock, Vertex, Foundry, DISABLE_TELEMETRY). Opt out via /config or CLAUDE_CODE_ENABLE_AWAY_SUMMARY=0.
+
+### Deprecations
+
+- Fixed dropped keystrokes after the CLI relaunches (e.g. /tui, provider setup wizards)
+- Fixed PreToolUse hook additionalContext being dropped when the tool call fails
+
+## v2.1.109 (2026-04-15)
+
+
+### Features
+
+- Improved the extended-thinking indicator with a rotating progress hint
+
+## v2.1.108 (2026-04-14)
+
+
+### Features
+
+- Added recap feature to provide context when returning to a session, configurable in /config and manually invocable with /recap; force with CLAUDE_CODE_ENABLE_AWAY_SUMMARY if telemetry disabled.
+- The model can now discover and invoke built-in slash commands like /init, /review, and /security-review via the Skill tool
+- /undo is now an alias for /rewind
+- Improved /model to warn before switching models mid-conversation, since the next response re-reads the full history uncached
+- Improved /resume picker to default to sessions from the current directory; press Ctrl+A to show all projects
+- Improved error messages: server rate limits are now distinguished from plan usage limits; 5xx/529 errors show a link to status.claude.com; unknown slash commands suggest the closest match
+- Reduced memory footprint for file reads, edits, and syntax highlighting by loading language grammars on demand
+- Added "verbose" indicator when viewing the detailed transcript (Ctrl+O)
+- Added a warning at startup when prompt caching is disabled via DISABLE_PROMPT_CACHING* environment variables
+
+### Deprecations
+
+- Added ENABLE_PROMPT_CACHING_1H env var to opt into 1-hour prompt cache TTL on API key, Bedrock, Vertex, and Foundry (ENABLE_PROMPT_CACHING_1H_BEDROCK is deprecated but still honored), and FORCE_PROMPT
+- Fixed transcript write failures (e.g., disk full) being silently dropped instead of being logged
+- Fixed diacritical marks (accents, umlauts, cedillas) being dropped from responses when the language setting is configured
+
+## v2.1.107 (2026-04-14)
+
+
+### Features
+
+- Show thinking hints sooner during long operations
+
+## v2.1.105 (2026-04-13)
+
+
+### Features
+
+- Added path parameter to the EnterWorktree tool to switch into an existing worktree of the current repository
+- Added PreCompact hook support: hooks can now block compaction by exiting with code 2 or returning {"decision":"block"}
+- Added background monitor support for plugins via a top-level monitors manifest key that auto-arms at session start or on skill invoke
+- /proactive is now an alias for /loop
+- Improved stalled API stream handling: streams now abort after 5 minutes of no data and retry non-streaming instead of hanging indefinitely
+- Improved network error messages: connection errors now show a retry message immediately instead of a silent spinner
+- Improved file write display: long single-line writes (e.g. minified JSON) are now truncated in the UI instead of paginating across many screens
+- Improved skill description handling: raised the listing cap from 250 to 1,536 characters and added a startup warning when descriptions are truncated
+- Improved WebFetch to strip <style> and <script> contents from fetched pages so CSS-heavy pages no longer exhaust the content budget before reaching actual text
+- Improved stale agent worktree cleanup to remove worktrees whose PR was squash-merged instead of keeping them indefinitely
+- Improved MCP large-output truncation prompt to give format-specific recipes (e.g. jq for JSON, computed Read chunk sizes for text)
+- Fixed alt+enter not inserting a newline in terminals using ESC-prefix alt encoding, and Ctrl+J not inserting a newline (regression in 2.1.100)
+
+### Deprecations
+
+- Fixed images attached to queued messages (sent while Claude is working) being dropped
+- Fixed inbound channel notifications being silently dropped after the first message for Team/Enterprise users
+
+### Breaking Changes
+
+- Fixed leading whitespace being trimmed from assistant messages, breaking ASCII art and indented diagrams
+
 ## v2.1.96 (2026-04-08)
 
 
@@ -40,7 +190,7 @@ Auto-generated from GitHub releases for RAG indexing.
 
 ### Breaking Changes
 
-- Default effort level changed from medium to high for API-key, Bedrock/Vertex/Foundry, Team, and Enterprise users
+- Default effort level changed from medium to high for API-key, Bedrock/Vertex/Foundry, Team, and Enterprise users — use /effort to adjust
 
 ## v2.1.88 (2026-03-30)
 
