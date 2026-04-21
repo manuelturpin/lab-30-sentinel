@@ -18,6 +18,9 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib.url_guard import is_public_url
+
 # SSL context for HTTPS requests (macOS certificate compatibility)
 _SSL_CTX = ssl.create_default_context()
 try:
@@ -247,6 +250,13 @@ def generate_delta_report(project_name, delta, scan_date):
 def notify_webhook(webhook_url, project_name, delta):
     """Send notification to webhook if configured."""
     if not webhook_url:
+        return
+
+    if not is_public_url(webhook_url):
+        print(
+            f"  Refusing to POST to private/local webhook URL: {webhook_url}",
+            file=sys.stderr,
+        )
         return
 
     critical_new = [r for r in delta["new"] if severity_of(r) in ("CRITICAL", "HIGH")]

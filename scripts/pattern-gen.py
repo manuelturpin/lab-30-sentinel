@@ -207,8 +207,15 @@ Output JSON with this exact schema:
 # Claude CLI — pipe mode execution
 # ---------------------------------------------------------------------------
 
+_ALLOWED_MODELS = frozenset({"opus", "sonnet", "haiku"})
+
+
 def call_claude(prompt, system_prompt, model="sonnet"):
     """Call claude CLI in pipe mode and return the raw text output."""
+    if model not in _ALLOWED_MODELS:
+        raise ValueError(
+            f"Invalid model {model!r}; allowed: {sorted(_ALLOWED_MODELS)}"
+        )
     cmd = ["claude", "-p", "--output-format", "text", "--model", model]
     if system_prompt:
         cmd.extend(["--system-prompt", system_prompt])

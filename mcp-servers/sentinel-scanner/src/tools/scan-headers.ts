@@ -8,6 +8,7 @@
 import * as http from "http";
 import * as https from "https";
 import { URL } from "url";
+import { isPublicUrl } from "../utils/url-validator.js";
 
 export interface HeaderScanResult {
   url: string;
@@ -171,6 +172,10 @@ function scoreToGrade(score: number): "A+" | "A" | "B" | "C" | "D" | "F" {
 }
 
 export async function scanHeaders(url: string): Promise<HeaderScanResult> {
+  if (!isPublicUrl(url)) {
+    throw new Error(`Refusing to scan private/local URL: ${url}`);
+  }
+
   let responseHeaders: Record<string, string | string[]>;
 
   try {
