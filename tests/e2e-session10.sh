@@ -9,6 +9,14 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 RAG_DIR="$PROJECT_DIR/rag"
 KB_DIR="$PROJECT_DIR/knowledge-base"
 
+# RAG deps live in the sentinel venv (sentence_transformers, chromadb, rank_bm25).
+VENV_PY="${HOME}/.sentinel/rag/.venv/bin/python3"
+if [ -x "$VENV_PY" ]; then
+  PY="$VENV_PY"
+else
+  PY="python3"
+fi
+
 PASS=0
 FAIL=0
 
@@ -23,7 +31,7 @@ fail() {
 }
 
 run_query() {
-  python3 "$RAG_DIR/query.py" --query "$1" --domain "$2" --limit "$3" 2>/dev/null
+  "$PY" "$RAG_DIR/query.py" --query "$1" --domain "$2" --limit "$3" 2>/dev/null
 }
 
 # ============================================================
@@ -35,7 +43,7 @@ echo "--- 1. RAG Integration ---"
 
 # Query "SQL injection" across all domains
 result=$(run_query "SQL injection" "all" "5")
-count=$(echo "$result" | python3 -c "import sys,json; print(json.load(sys.stdin)['totalResults'])")
+count=$(echo "$result" | "$PY" -c "import sys,json; print(json.load(sys.stdin)['totalResults'])")
 if [ "$count" -gt 0 ]; then
   pass "RAG query 'SQL injection' (all): $count results"
 else
@@ -44,7 +52,7 @@ fi
 
 # Query "prompt injection" in llm-ai domain
 result=$(run_query "prompt injection" "llm-ai" "5")
-count=$(echo "$result" | python3 -c "import sys,json; print(json.load(sys.stdin)['totalResults'])")
+count=$(echo "$result" | "$PY" -c "import sys,json; print(json.load(sys.stdin)['totalResults'])")
 if [ "$count" -gt 0 ]; then
   pass "RAG query 'prompt injection' (llm-ai): $count results"
 else
@@ -53,15 +61,15 @@ fi
 
 # Query "XSS" across all domains — verify score > 0.5
 result=$(run_query "cross-site scripting XSS" "all" "3")
-top_score=$(echo "$result" | python3 -c "import sys,json; r=json.load(sys.stdin)['results']; print(r[0]['score'] if r else 0)")
-if python3 -c "assert float('$top_score') > 0.5"; then
+top_score=$(echo "$result" | "$PY" -c "import sys,json; r=json.load(sys.stdin)['results']; print(r[0]['score'] if r else 0)")
+if "$PY" -c "assert float('$top_score') > 0.5"; then
   pass "RAG query 'XSS' top score: $top_score > 0.5"
 else
   fail "RAG query 'XSS' top score: $top_score <= 0.5"
 fi
 
 # Verify doc count >= 2000
-doc_count=$(python3 -c "
+doc_count=$("$PY" -c "
 import chromadb, json, os
 cfg = json.load(open('$RAG_DIR/config.json'))
 client = chromadb.PersistentClient(path=os.path.join('$RAG_DIR', cfg['chromadb_path']))
@@ -80,7 +88,7 @@ echo "--- 2. KB Schema Validation ---"
 
 for domain_dir in "$KB_DIR"/domains/*/; do
   domain=$(basename "$domain_dir")
-  result=$(python3 -c "
+  result=$("$PY" -c "
 import json
 rules = json.load(open('${domain_dir}rules.json'))
 if not isinstance(rules, list):
@@ -116,7 +124,7 @@ echo "--- 3. Error Handling ---"
 
 # Empty query should still return valid JSON
 result=$(run_query "" "all" "3")
-if echo "$result" | python3 -c "import sys,json; json.load(sys.stdin)" 2>/dev/null; then
+if echo "$result" | "$PY" -c "import sys,json; json.load(sys.stdin)" 2>/dev/null; then
   pass "Empty query returns valid JSON"
 else
   fail "Empty query returns invalid JSON"
@@ -124,14 +132,14 @@ fi
 
 # Nonexistent domain should return 0 results or empty (not crash)
 result=$(run_query "test" "nonexistent-domain-xyz" "3")
-if echo "$result" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['totalResults'] == 0 or 'error' not in d or True" 2>/dev/null; then
+if echo "$result" | "$PY" -c "import sys,json; d=json.load(sys.stdin); assert d['totalResults'] == 0 or 'error' not in d or True" 2>/dev/null; then
   pass "Nonexistent domain handled gracefully"
 else
   fail "Nonexistent domain caused crash"
 fi
 
 # Missing chromadb dir scenario
-result=$(python3 -c "
+result=$("$PY" -c "
 import sys, os
 sys.path.insert(0, '$RAG_DIR')
 os.environ['_TEST_CHROMADB_PATH'] = '/tmp/nonexistent_chromadb_sentinel_test'
@@ -148,7 +156,7 @@ qmod.load_config = mock_config
 r = query_kb('test')
 print(json.dumps(r))
 " 2>/dev/null)
-if echo "$result" | python3 -c "import sys,json; d=json.load(sys.stdin); assert 'error' in d" 2>/dev/null; then
+if echo "$result" | "$PY" -c "import sys,json; d=json.load(sys.stdin); assert 'error' in d" 2>/dev/null; then
   pass "Missing ChromaDB dir returns error message"
 else
   fail "Missing ChromaDB dir not handled"
@@ -197,12 +205,33 @@ else
   fail "Stack detector: missing openapi.yaml"
 fi
 
-# Verify MCP tools have error handling
-for tool_file in scan-project scan-secrets scan-dependencies; do
+# Verify MCP tools have error handling (post-T2 cleanup: 3 tools active)
+for tool_file in scan-dependencies scan-headers; do
   if grep -q "catch" "$PROJECT_DIR/mcp-servers/sentinel-scanner/src/tools/${tool_file}.ts"; then
     pass "MCP tool $tool_file has error handling"
   else
     fail "MCP tool $tool_file missing error handling"
+  fi
+done
+
+# --- Section 5: MCP Tool Count (T2 audit-2026-04-21) ---
+echo ""
+echo "--- 5. MCP Tool Registration ---"
+
+EXPECTED_TOOLS=3
+ACTUAL_TOOLS=$(grep -c "server.tool(" "$PROJECT_DIR/mcp-servers/sentinel-scanner/src/index.ts")
+if [ "$ACTUAL_TOOLS" -eq "$EXPECTED_TOOLS" ]; then
+  pass "MCP exposes $ACTUAL_TOOLS tools (expected $EXPECTED_TOOLS)"
+else
+  fail "MCP exposes $ACTUAL_TOOLS tools, expected $EXPECTED_TOOLS"
+fi
+
+# Obsolete tool files must be gone
+for obsolete in scan-project.ts scan-secrets.ts query-cve.ts query-kb.ts; do
+  if [ ! -f "$PROJECT_DIR/mcp-servers/sentinel-scanner/src/tools/${obsolete}" ]; then
+    pass "Obsolete tool removed: ${obsolete}"
+  else
+    fail "Obsolete tool still present: ${obsolete}"
   fi
 done
 
