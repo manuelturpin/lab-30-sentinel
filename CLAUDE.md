@@ -12,8 +12,8 @@ Sentinel est un systeme de cybersecurite IA pour Claude Code. Il regroupe trois 
 - **12 Agents specialises** : web, api, llm-ai, mobile, infra, supply-chain, db, data-privacy, websocket, cors, ssl-tls, static-site
 - **Knowledge Base** : Regles JSON machine-readable par domaine, mappees aux standards OWASP/MITRE/CWE
 - **Anthropic Intel** : Feature inventory + releases cache pour le suivi des capacites Claude Code
-- **RAG (ChromaDB)** : 3 collections — securite (4088 docs), RAG expertise (100 docs), evolve intel (87 docs)
-- **MCP Server** : 2 outils reseau (scan-dependencies, scan-headers) — les 4 outils locaux ont ete remplaces par Read/Grep/Bash natifs
+- **RAG (ChromaDB)** : 3 collections — securite (36 804 docs), RAG expertise (100 docs), evolve intel (210 docs)
+- **MCP Server** : 3 outils (scan-dependencies, scan-headers, generate-sbom) — les 4 outils locaux ont ete supprimes Session 12 (2026-03-15), code nettoye T2 audit 2026-04-21 (voir docs/adr/2026-04-21-mcp-tools-removal.md)
 - **Crons** : Veille automatisee CVE, re-scan, mise a jour KB, sync ecosysteme Anthropic (bi-hebdo)
 
 ## Standards couverts
@@ -43,7 +43,7 @@ section si un comportement parait bizarre apres une modif.
    → Git repo: https://github.com/manuelturpin/lab-30-sentinel.git
 
 2. DEPLOIEMENT LOCAL (runtime)
-   ~/.claude/skills/security/          → Skills (SKILL.md + 12 agents + _protocol.md)
+   ~/.claude/skills/sentinel-security/          → Skills (SKILL.md + 12 agents + _protocol.md)
    ~/.sentinel/                        → Runtime (KB, RAG, MCP server, reports, scripts, tests)
 
 3. GITHUB REMOTE
@@ -66,8 +66,10 @@ bash scripts/deploy.sh
 
 | Source (repo)                    | Destination (local)                     |
 |----------------------------------|-----------------------------------------|
-| `skills/security/SKILL.md`      | `~/.claude/skills/security/SKILL.md`    |
-| `skills/security/agents/*.md`   | `~/.claude/skills/security/agents/`     |
+| `skills/security/SKILL.md`      | `~/.claude/skills/sentinel-security/SKILL.md`    |
+| `skills/security/agents/*.md`   | `~/.claude/skills/sentinel-security/agents/`     |
+| `skills/sentinel-rag/`          | `~/.claude/skills/sentinel-rag/`                 |
+| `skills/sentinel-evolve/`       | `~/.claude/skills/sentinel-evolve/`              |
 | `knowledge-base/`               | `~/.sentinel/knowledge-base/`           |
 | `rag/`                           | `~/.sentinel/rag/` + re-index ChromaDB  |
 | `mcp-servers/`                   | `~/.sentinel/mcp-servers/` + build      |
@@ -76,7 +78,7 @@ bash scripts/deploy.sh
 ### Regles importantes
 
 - Editer uniquement dans le repo source — les edits directs dans
-  `~/.claude/skills/security/` sont ecrases au prochain `deploy.sh`
+  `~/.claude/skills/sentinel-security/` sont ecrases au prochain `deploy.sh`
   (utile pour du test rapide, pas comme workflow permanent)
 - Les paths dans SKILL.md et les agents sont absolus
   (`/Users/manuelturpin/.sentinel/...`) ; `deploy.sh` copie SKILL.md tel
@@ -95,12 +97,13 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 | Ancien MCP Tool  | Remplace par                                           | Raison                        |
 |------------------|--------------------------------------------------------|-------------------------------|
-| `scan-project`   | `Read` rules.json + `Grep` patterns                   | Elimine serialisation MCP     |
-| `scan-secrets`   | `Grep` avec regex secrets                              | Elimine serialisation MCP     |
-| `query-kb`       | `Bash` python3 rag/query.py                            | Elimine serialisation MCP     |
-| `query-cve`      | `Read` fichiers cache CVE JSON                         | Elimine serialisation MCP     |
+| `scan-project`   | `Read` rules.json + `Grep` patterns                    | SUPPRIME T2 (2026-04-21)      |
+| `scan-secrets`   | `Grep` avec regex secrets                              | SUPPRIME T2 (2026-04-21)      |
+| `query-kb`       | `Bash ~/.sentinel/rag/.venv/bin/python3 rag/query.py`  | SUPPRIME T2 (2026-04-21)      |
+| `query-cve`      | `Read` fichiers cache CVE JSON                         | SUPPRIME T2 (2026-04-21)      |
 | `scan-dependencies` | **CONSERVE** (MCP)                                  | Appel reseau externe OSV API  |
-| `scan-headers`   | **CONSERVE** (MCP)                                     | Appel reseau externe HTTP GET |
+| `scan-headers`   | **CONSERVE** (MCP) + SSRF guard (T3)                   | Appel reseau externe HTTP GET |
+| `generate-sbom`  | **CONSERVE** (MCP)                                     | Utilitaire format SBOM CycloneDX |
 
 ## Statut
 
@@ -114,12 +117,23 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 - **53 opportunites de propagation** cross-domaine detectees (686 patterns potentiels)
 - `/sentinel-evolve` default sur mode `auto` (pipeline complet sans argument)
 
+**Session 15 — Audit Remediation** (2026-04-21)
+
+- **T1** : Runtime recovery — `scripts/install-crons.sh`, 4 crons installes, RAG venv deps completees (rank_bm25 + certifi), anthropic-intel refreshed (+54 entries)
+- **T2** : Suppression effective des 4 MCP tools (scan-project, scan-secrets, query-kb, query-cve) — ADR `docs/adr/2026-04-21-mcp-tools-removal.md`, MCP expose 3 tools (scan-dependencies, scan-headers, generate-sbom)
+- **T3** : SSRF guard `mcp-servers/.../src/utils/url-validator.ts` + `scripts/lib/url_guard.py`, model whitelist `{opus,sonnet,haiku}` dans `pattern-gen.py`, `tests/vulnerable-app/.env` renomme en `dummy-env.txt`
+
 **Session 12 — MCP Bottleneck Elimination** (2026-03-15)
 
-- Suppression de 4 MCP tools redondants (scan-project, scan-secrets, query-kb, query-cve)
+- Decision de supprimer 4 MCP tools redondants (scan-project, scan-secrets, query-kb, query-cve) — appliquee au code en T2 (2026-04-21)
 - Agents utilisent Read/Grep/Bash natifs pour le scanning local
-- Conservation de scan-dependencies et scan-headers (appels reseau)
-- RAG indexe 4088 documents (115 regles domaine + 2273 NVD CVE + 1484 OSV + 100 GitHub + 94 standards)
+- Conservation de scan-dependencies, scan-headers, generate-sbom (appels reseau / utilitaire SBOM)
+- RAG indexe 36 804 documents (130 regles domaine + 3390 CVE-rules + 32 515 NVD + 1560 OSV + 1035 GitHub + 8 standards)
+
+---
+
+**Last verified:** 2026-04-21 (audit complet — cf. `reports/audit-2026-04-21.md`)
+**Verification cmd:** `bash scripts/verify-audit-closure.sh`
 
 ## Commandes
 
@@ -131,13 +145,18 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 - `bash scripts/setup.sh` : Installer les dependances et outils externes
 - `bash scripts/test-sentinel.sh` : Tester le systeme (structure, RAG, KB, templates)
 - `bash tests/e2e-session10.sh` : Tests E2E (RAG queries, schema validation, error handling)
-- `python3 scripts/cve-sync.py --days 90` : Sync CVE (NVD + OSV batch + GitHub + EPSS)
-- `python3 scripts/pattern-gen.py --limit 50` : Generer patterns de detection pour CVE rules vides (claude -p, Max subscription)
-- `python3 scripts/rule-tester.py` : Valider les patterns contre le corpus de test (precision gate 70%)
-- `python3 scripts/feedback-loop.py report` : Stats feedback, confidence, propagation cross-domaine
-- `python3 scripts/anthropic-sync.py` : Sync ecosysteme Anthropic (Claude Code, skills, SDKs, MCP)
-- `python3 rag/indexer.py` : Re-indexer la KB dans ChromaDB
-- `python3 rag/query.py --query "..." --domain all --limit 10` : Requete semantique KB
+- `bash scripts/install-crons.sh` : Installer les 4 crons dans le crontab local (T1 audit)
+- `bash scripts/verify-audit-closure.sh` : Verifier que les findings de l'audit 2026-04-21 sont fermes
+
+> **Python** : les scripts RAG utilisent un venv a `~/.sentinel/rag/.venv/bin/python3` (sentence_transformers + chromadb + rank_bm25). Le deploy.sh le detecte automatiquement ; en CLI, preferer `~/.sentinel/rag/.venv/bin/python3` pour tout script touchant au RAG.
+
+- `~/.sentinel/rag/.venv/bin/python3 scripts/cve-sync.py --days 90` : Sync CVE (NVD + OSV batch + GitHub + EPSS)
+- `~/.sentinel/rag/.venv/bin/python3 scripts/pattern-gen.py --limit 50` : Generer patterns de detection pour CVE rules vides (claude -p, Max subscription)
+- `~/.sentinel/rag/.venv/bin/python3 scripts/rule-tester.py` : Valider les patterns contre le corpus de test (precision gate 70%)
+- `~/.sentinel/rag/.venv/bin/python3 scripts/feedback-loop.py report` : Stats feedback, confidence, propagation cross-domaine
+- `~/.sentinel/rag/.venv/bin/python3 scripts/anthropic-sync.py` : Sync ecosysteme Anthropic (Claude Code, skills, SDKs, MCP)
+- `~/.sentinel/rag/.venv/bin/python3 rag/indexer.py` : Re-indexer la KB dans ChromaDB
+- `~/.sentinel/rag/.venv/bin/python3 rag/query.py --query "..." --domain all --limit 10` : Requete semantique KB
 
 ## Configuration projet
 
