@@ -7,30 +7,23 @@ Usage:
     python3 scripts/project-rescan.py --project my-app    # Rescan a specific project
     python3 scripts/project-rescan.py --dry-run            # Preview without scanning
 """
+from __future__ import annotations
+
 
 import argparse
 import glob
 import json
 import os
-import ssl
 import subprocess
 import sys
 import urllib.request
 from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib.http_client import get_ssl_context
 from lib.url_guard import is_public_url
 
-# SSL context for HTTPS requests (macOS certificate compatibility)
-_SSL_CTX = ssl.create_default_context()
-try:
-    import certifi
-    _SSL_CTX.load_verify_locations(certifi.where())
-except ImportError:
-    print("WARNING: certifi not installed — SSL verification disabled for webhooks.",
-          file=sys.stderr)
-    _SSL_CTX.check_hostname = False
-    _SSL_CTX.verify_mode = ssl.CERT_NONE
+_SSL_CTX = get_ssl_context()
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)

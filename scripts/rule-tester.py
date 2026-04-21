@@ -12,6 +12,8 @@ Usage:
     python3 scripts/rule-tester.py --verbose         # Show match details
     python3 scripts/rule-tester.py --precision 0.8   # Custom precision gate
 """
+from __future__ import annotations
+
 
 import argparse
 import glob

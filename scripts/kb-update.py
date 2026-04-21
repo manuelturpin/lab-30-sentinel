@@ -7,6 +7,8 @@ Usage:
     python3 scripts/kb-update.py --dry-run     # Preview without writing
     python3 scripts/kb-update.py --skip-reindex # Generate rules only, skip ChromaDB
 """
+from __future__ import annotations
+
 
 import argparse
 import json

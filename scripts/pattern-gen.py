@@ -13,6 +13,8 @@ Usage:
     python3 scripts/pattern-gen.py --domain web-app  # Only generate for one domain
     python3 scripts/pattern-gen.py --workers 3       # Parallel workers (default: 1)
 """
+from __future__ import annotations
+
 
 import argparse
 import glob

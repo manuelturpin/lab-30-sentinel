@@ -20,6 +20,8 @@ Usage:
     python3 scripts/feedback-loop.py propagate --apply       # Apply propagation
     python3 scripts/feedback-loop.py report                  # Show stats
 """
+from __future__ import annotations
+
 
 import argparse
 import glob

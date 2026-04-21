@@ -12,29 +12,26 @@ Usage:
     python3 scripts/anthropic-sync.py --days 90     # Look back N days on first run
 """
 
+from __future__ import annotations
+
 import argparse
 import base64
 import json
 import os
 import re
-import ssl
 import sys
 import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
-# SSL context (reuse pattern from cve-sync.py)
-_SSL_CTX = ssl.create_default_context()
-try:
-    import certifi
-    _SSL_CTX.load_verify_locations(certifi.where())
-except ImportError:
-    print("WARNING: certifi not installed — SSL verification disabled.", file=sys.stderr)
-    _SSL_CTX.check_hostname = False
-    _SSL_CTX.verify_mode = ssl.CERT_NONE
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, SCRIPT_DIR)
+from lib.http_client import get_ssl_context  # noqa: E402
+from lib.url_guard import is_public_url  # noqa: E402
+
+_SSL_CTX = get_ssl_context()
+
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 INTEL_DIR = os.path.join(PROJECT_ROOT, "knowledge-base", "anthropic-intel")
 CONFIG_PATH = os.path.join(INTEL_DIR, "sync-config.json")
@@ -70,7 +67,10 @@ def save_cache(filename, data):
 
 
 def api_request(url, headers=None, timeout=30):
-    """Make a GitHub API request with auth and ETag support."""
+    """Make a GitHub API request with auth and ETag support (SSRF-guarded)."""
+    if not is_public_url(url):
+        print(f"  Refusing to request private/local URL: {url}", file=sys.stderr)
+        return None
     if headers is None:
         headers = {}
     headers.setdefault("User-Agent", "Sentinel-Evolve/1.0")
