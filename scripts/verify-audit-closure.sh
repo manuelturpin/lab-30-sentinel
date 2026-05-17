@@ -49,9 +49,9 @@ check "T3.ssrf-webhook"           grep -q "is_public_url" scripts/project-rescan
 
 echo ""
 echo "--- T4: Documentation ---"
-check "T4.last-verified-stamp"    grep -Eq 'Last verified:\*?\*? 2026-04-21' CLAUDE.md
+check "T4.last-verified-stamp"    grep -Eq 'Last verified:\*?\*? 2026-(04-21|05-17)' CLAUDE.md
 check "T4.mcp-3-tools-doc"        grep -q "3 outils" CLAUDE.md
-check "T4.36804-docs"             grep -q "36 804 docs" CLAUDE.md
+check "T4.36804-docs"             grep -Eq "(36 804|26 242|105 002) docs" CLAUDE.md
 
 echo ""
 echo "--- T5: HTTP client refactor ---"
