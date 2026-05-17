@@ -12,7 +12,7 @@ Sentinel est un systeme de cybersecurite IA pour Claude Code. Il regroupe trois 
 - **12 Agents specialises** : web, api, llm-ai, mobile, infra, supply-chain, db, data-privacy, websocket, cors, ssl-tls, static-site
 - **Knowledge Base** : Regles JSON machine-readable par domaine, mappees aux standards OWASP/MITRE/CWE
 - **Anthropic Intel** : Feature inventory + releases cache pour le suivi des capacites Claude Code
-- **RAG (ChromaDB)** : 3 collections — securite (36 804 docs), RAG expertise (100 docs), evolve intel (210 docs)
+- **RAG (ChromaDB)** : 3 collections — securite (26 242 docs en repo / 105 002 docs collectes en runtime post-cron), RAG expertise (100 docs), evolve intel (108 docs)
 - **MCP Server** : 3 outils (scan-dependencies, scan-headers, generate-sbom) — les 4 outils locaux ont ete supprimes Session 12 (2026-03-15), code nettoye T2 audit 2026-04-21 (voir docs/adr/2026-04-21-mcp-tools-removal.md)
 - **Crons** : Veille automatisee CVE, re-scan, mise a jour KB, sync ecosysteme Anthropic (bi-hebdo)
 
@@ -117,6 +117,14 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 - **53 opportunites de propagation** cross-domaine detectees (686 patterns potentiels)
 - `/sentinel-evolve` default sur mode `auto` (pipeline complet sans argument)
 
+**Session 16 — Update + Audit complet** (2026-05-17)
+
+- **Verify-audit-closure** : 25/25 passed (post-cleanup T2 regression — 4 fichiers `.ts` reapparus untracked, supprimes a nouveau)
+- **Crons** : 4 crons firing OK depuis 2026-04-21 (cve-sync quotidien, anthropic-sync bi-hebdo, kb-update + project-rescan hebdo). Anthropic-intel refreshed 2026-05-14
+- **Bug detecte (P1)** : `kb-update.py` crashe sur la phase ré-indexation ChromaDB (`RuntimeError: Cannot send a request, as the client has been closed` — httpx + huggingface_hub HEAD-check). Workaround : `HF_HUB_OFFLINE=1` force l'usage du cache local. Fix permanent à implémenter
+- **Drift KB repo↔runtime** : runtime a 12 535 CVE rules (vs 3390 repo) suite aux crons. Drift assumé : repo = snapshot validé (avec `test_precision` de rule-tester.py), runtime = état live
+- **Rapport** : `reports/audit-2026-05-17.md` (score Sentinel health 87/100, Claude Code usage composite 74/100)
+
 **Session 15 — Audit Remediation** (2026-04-21)
 
 - **T1** : Runtime recovery — `scripts/install-crons.sh`, 4 crons installes, RAG venv deps completees (rank_bm25 + certifi), anthropic-intel refreshed (+54 entries)
@@ -132,7 +140,7 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 ---
 
-**Last verified:** 2026-04-21 (audit complet — cf. `reports/audit-2026-04-21.md`)
+**Last verified:** 2026-05-17 (audit complet — cf. `reports/audit-2026-05-17.md` ; precedent : `reports/audit-2026-04-21.md`)
 **Verification cmd:** `bash scripts/verify-audit-closure.sh`
 
 ## Commandes
@@ -185,13 +193,13 @@ skills/sentinel-rag/SKILL.md          — Skill expert RAG
 skills/sentinel-rag/knowledge/        — KB vectorielle du skill RAG (indexer, query, sources)
 skills/sentinel-evolve/SKILL.md       — Skill meta-evolution
 skills/sentinel-evolve/knowledge/     — KB intelligence evolutive (indexer, query, sources, ChromaDB)
-knowledge-base/domains/*/             — Regles par domaine (115 curated + 3390 CVE)
-knowledge-base/cve-feed/              — Caches NVD/OSV/GitHub (2273 CVE)
+knowledge-base/domains/*/             — Regles par domaine (130 curated + 3390 CVE en repo, 12 535 CVE en runtime)
+knowledge-base/cve-feed/              — Caches NVD (99 085) + OSV (1 620) + GitHub (2 674) + KEV (1 592)
 knowledge-base/feedback/              — Feedback TP/FP pour confidence scoring
-knowledge-base/anthropic-intel/       — Feature inventory + releases cache ecosysteme Anthropic
-knowledge-base/standards/             — OWASP, MITRE, CWE, NIST (94 items)
-mcp-servers/sentinel-scanner/         — MCP Server TypeScript (2 tools actifs)
-rag/                                  — RAG ChromaDB (4088 docs indexes)
+knowledge-base/anthropic-intel/       — 6 fichiers : feature inventory + releases Claude Code + SDKs/MCP + skills + cookbooks
+knowledge-base/standards/             — OWASP, MITRE, CWE, NIST (119 items)
+mcp-servers/sentinel-scanner/         — MCP Server TypeScript (3 tools actifs)
+rag/                                  — RAG ChromaDB (26 242 docs en repo, 105 002 collectes en runtime)
 scripts/deploy.sh                     — Script de deploiement local
 scripts/pattern-gen.py                — Generation LLM de patterns (claude -p)
 scripts/rule-tester.py                — Validation patterns (precision gate)

@@ -1,0 +1,107 @@
+{
+  "commits": [
+    {
+      "sha": "3f8bf356",
+      "date": "2026-05-08",
+      "message": "Merge pull request #606 from anthropics/mnowicki/cma-category-tag\n\nfeat(registry): retag managed_agents notebooks with Claude Managed Agents category",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/3f8bf356e779d366ae7fcc0e84be12019747e5e3"
+    },
+    {
+      "sha": "c8b30f3b",
+      "date": "2026-05-08",
+      "message": "feat(schema): add Claude Managed Agents to registry category enum",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/c8b30f3b3a1be8f21f46e40fd69e1f77c6f52687"
+    },
+    {
+      "sha": "4f1bc38d",
+      "date": "2026-05-08",
+      "message": "feat(registry): retag managed_agents notebooks with Claude Managed Agents category",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/4f1bc38d9d58f641a6e07ca2941c9e10799009fe"
+    },
+    {
+      "sha": "93a262f1",
+      "date": "2026-05-06",
+      "message": "Merge pull request #600 from anthropics/mnowicki/managed-agents-render-fixes",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/93a262f1e00a9d48f58b4c6fe49241b612156452"
+    },
+    {
+      "sha": "250701ef",
+      "date": "2026-05-06",
+      "message": "fix(managed_agents): render outputs on docs site, retitle multiagent\n\n- Retitle CMA_coordinate_specialist_team to \"Multiagent: coordinate a\n  specialist team\" to match the Feature: pattern of sibling ",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/250701efb635bf57543ba1d0756fe2ea373b0b35"
+    },
+    {
+      "sha": "d28edf17",
+      "date": "2026-05-06",
+      "message": "Merge pull request #599 from anthropics/mnowicki/managed-agents-multiagent-outcomes\n\nfeat(managed_agents): add multiagent and outcomes cookbooks",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/d28edf1735dc27f3f2d19d17d403b9200dd50934"
+    },
+    {
+      "sha": "0c0645a7",
+      "date": "2026-05-06",
+      "message": "feat(managed_agents): add multiagent and outcomes cookbooks\n\n- CMA_coordinate_specialist_team.ipynb: heterogeneous team via the\n  multiagent coordinator config \u2014 coordinator runs three specialists\n  w",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/0c0645a7439d3d426dc51a5e47a70258aa8afe04"
+    },
+    {
+      "sha": "876d099d",
+      "date": "2026-05-05",
+      "message": "feat(claude_agent_sdk): add vulnerability detection agent cookbook (#595)\n\n* feat(claude_agent_sdk): add vulnerability detection agent cookbook\n\n06_The_vulnerability_detection_agent.ipynb runs threat-",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/876d099d2d11abadc6d02cb486946f5160c7ff36"
+    },
+    {
+      "sha": "33424c3e",
+      "date": "2026-04-27",
+      "message": "Merge pull request #573 from anthropics/claude/copy-memory-cookbook-pr-ZRx6N\n\nfeat(managed_agents): add Managed Agents Memory Cookbook",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/33424c3eb476cd56379435be086ccc228af1050d"
+    },
+    {
+      "sha": "869f7e76",
+      "date": "2026-04-25",
+      "message": "fix(managed_agents): round 5 of memory cookbook review feedback\n\n- Simplify status_idle handler to a single unconditional break\n- Document run_turn return value in the docstring\n- Restore inline 'Opti",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/869f7e76d9c2539a0831cf610fc85fbed41a88bb"
+    },
+    {
+      "sha": "293bd2a7",
+      "date": "2026-04-25",
+      "message": "fix(managed_agents): address remaining memory cookbook review items\n\n- Add wait_for_idle_status calls before session archive in cleanup\n- Break out of run_turn on any status_idle, not just end_turn\n- ",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/293bd2a7734aa69f693e826a9268d96838577c02"
+    },
+    {
+      "sha": "fd673f83",
+      "date": "2026-04-25",
+      "message": "fix(managed_agents): pin agent version in combine-stores snippet too\n\nThe illustrative markdown snippet under \"Combine per-customer and\nshared stores\" still passed agent=agent.id while the runnable ce",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/fd673f83bb8b0d293e8f3aed6f2e95de55349b33"
+    },
+    {
+      "sha": "53438944",
+      "date": "2026-04-25",
+      "message": "fix(managed_agents): pin agent version on sessions.create in memory cookbook\n\nPass agent={\"type\": \"agent\", \"id\": agent.id, \"version\": agent.version}\ninstead of the bare agent.id, matching every other ",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/534389445fbac11079b2336929bd8eb4cf811350"
+    },
+    {
+      "sha": "6c32b29f",
+      "date": "2026-04-25",
+      "message": "fix(managed_agents): round 3 of memory cookbook review feedback\n\n- run_turn: handle session.status_terminated and call\n  wait_for_idle_status before returning, mirroring\n  utilities.stream_until_end_t",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/6c32b29f7453a25835029d786962466789dd15e3"
+    },
+    {
+      "sha": "892f846d",
+      "date": "2026-04-25",
+      "message": "fix(managed_agents): align memory cookbook with CMA series conventions\n\n- Guard the session.status_idle break on stop_reason.type == \"end_turn\"\n  so the pattern is safe to copy into custom-tool agents",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/892f846d1a5e6034e3c1db5075e0837e193b955b"
+    },
+    {
+      "sha": "1016f8f3",
+      "date": "2026-04-25",
+      "message": "docs(managed_agents): address review feedback on memory cookbook\n\n- Prefer uv add over pip in the prerequisites\n- Clarify that the agent_toolset_20260401 type string identifies the\n  toolset, not a mo",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/1016f8f3527b8170e68a21c8396a7adfaf88cab2"
+    },
+    {
+      "sha": "3e44f8d4",
+      "date": "2026-04-25",
+      "message": "feat(managed_agents): add memory store cookbook\n\nA guided tutorial showing how to give a Managed Agent a memory store so\nit learns and recalls a customer's shopping preferences across separate\nsession",
+      "url": "https://github.com/anthropics/claude-cookbooks/commit/3e44f8d442bb0ec5ceda082408cebaa5b94d4155"
+    }
+  ],
+  "last_modified": "2026-05-11T05:00:07.324936+00:00"
+}

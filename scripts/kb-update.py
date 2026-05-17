@@ -344,11 +344,17 @@ def reindex_chromadb():
     indexer_path = os.path.join(RAG_DIR, "indexer.py")
     print(f"\n  Running: python3 {indexer_path}")
 
+    env = os.environ.copy()
+    hf_cache = os.path.expanduser("~/.cache/huggingface/hub/models--BAAI--bge-base-en-v1.5")
+    if os.path.isdir(hf_cache):
+        env.setdefault("HF_HUB_OFFLINE", "1")
+
     result = subprocess.run(
         [sys.executable, indexer_path],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
+        env=env,
     )
 
     if result.returncode != 0:

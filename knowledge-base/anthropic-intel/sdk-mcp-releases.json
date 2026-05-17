@@ -1303,7 +1303,167 @@
       "name": "@modelcontextprotocol/client@2.0.0-alpha.1",
       "url": "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/%40modelcontextprotocol/client%402.0.0-alpha.1",
       "prerelease": true
+    },
+    "anthropics/anthropic-sdk-python@v0.100.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.100.0",
+      "date": "2026-05-06",
+      "name": "v0.100.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.100.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.99.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.99.0",
+      "date": "2026-05-05",
+      "name": "v0.99.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.99.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.98.1": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.98.1",
+      "date": "2026-05-04",
+      "name": "v0.98.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.98.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.98.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.98.0",
+      "date": "2026-05-04",
+      "name": "v0.98.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.98.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.97.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.97.0",
+      "date": "2026-04-23",
+      "name": "v0.97.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.97.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.95.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.95.1",
+      "date": "2026-05-07",
+      "name": "sdk: v0.95.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.95.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.95.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.95.0",
+      "date": "2026-05-06",
+      "name": "sdk: v0.95.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.95.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.94.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.94.0",
+      "date": "2026-05-05",
+      "name": "sdk: v0.94.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.94.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.93.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.93.0",
+      "date": "2026-05-04",
+      "name": "sdk: v0.93.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.93.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.92.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.92.0",
+      "date": "2026-04-30",
+      "name": "sdk: v0.92.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.92.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@bedrock-sdk-v0.29.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "bedrock-sdk-v0.29.1",
+      "date": "2026-04-30",
+      "name": "bedrock-sdk: v0.29.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/bedrock-sdk-v0.29.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.91.1": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.91.1",
+      "date": "2026-04-24",
+      "name": "sdk: v0.91.1",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.91.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.91.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.91.0",
+      "date": "2026-04-23",
+      "name": "sdk: v0.91.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.91.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@bedrock-sdk-v0.29.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "bedrock-sdk-v0.29.0",
+      "date": "2026-04-23",
+      "name": "bedrock-sdk: v0.29.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/bedrock-sdk-v0.29.0",
+      "prerelease": false
+    },
+    "modelcontextprotocol/python-sdk@v1.27.1": {
+      "repo": "modelcontextprotocol/python-sdk",
+      "tag": "v1.27.1",
+      "date": "2026-05-08",
+      "name": "v1.27.1",
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.27.1",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.102.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.102.0",
+      "date": "2026-05-13",
+      "name": "v0.102.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.102.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-python@v0.101.0": {
+      "repo": "anthropics/anthropic-sdk-python",
+      "tag": "v0.101.0",
+      "date": "2026-05-11",
+      "name": "v0.101.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.101.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.96.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.96.0",
+      "date": "2026-05-13",
+      "name": "sdk: v0.96.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.96.0",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@sdk-v0.95.2": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "sdk-v0.95.2",
+      "date": "2026-05-11",
+      "name": "sdk: v0.95.2",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/sdk-v0.95.2",
+      "prerelease": false
+    },
+    "anthropics/anthropic-sdk-typescript@aws-sdk-v0.3.0": {
+      "repo": "anthropics/anthropic-sdk-typescript",
+      "tag": "aws-sdk-v0.3.0",
+      "date": "2026-05-11",
+      "name": "aws-sdk: v0.3.0",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases/tag/aws-sdk-v0.3.0",
+      "prerelease": false
     }
   },
-  "last_modified": "2026-04-21T14:02:39.193098+00:00"
+  "last_modified": "2026-05-14T03:00:48.051192+00:00"
 }
