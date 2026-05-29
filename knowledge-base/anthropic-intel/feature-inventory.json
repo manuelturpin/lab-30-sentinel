@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_built": "2026-04-16",
+  "last_built": "2026-05-29",
   "features": {
     "skills_system": {
       "introduced": "2.1.0",
@@ -1058,6 +1058,153 @@
       "category": "observability",
       "status": "stable",
       "description": "OTEL_LOG_RAW_API_BODIES environment variable emits full API request/response bodies as OpenTelemetry log events for debugging. WARNING: leaks prompts, thinking, tool calls — local debug only."
+    },
+    "opus_4_8": {
+      "introduced": "2.1.154",
+      "date": "2026-05-28",
+      "category": "models",
+      "status": "stable",
+      "description": "Opus 4.8 — defaults to high effort; /effort xhigh for hardest tasks. Fast mode at 2x standard rate for 2.5x speed."
+    },
+    "dynamic_workflows": {
+      "introduced": "2.1.154",
+      "date": "2026-05-28",
+      "category": "agents",
+      "status": "stable",
+      "description": "Workflow tool / dynamic workflows — orchestrate work across tens-to-hundreds of agents in the background via /workflows; pipeline()/parallel() in JS scripts."
+    },
+    "lean_system_prompt_default": {
+      "introduced": "2.1.154",
+      "date": "2026-05-28",
+      "category": "performance",
+      "status": "stable",
+      "description": "Lean system prompt is now default for all models except Haiku, Sonnet, and Opus 4.7-and-earlier — frees context budget."
+    },
+    "mcp_subprocess_session_env": {
+      "introduced": "2.1.154",
+      "date": "2026-05-28",
+      "category": "mcp",
+      "status": "stable",
+      "description": "Stdio MCP server subprocesses now receive CLAUDE_CODE_SESSION_ID and CLAUDECODE=1 in their environment."
+    },
+    "automode_exfil_classifier": {
+      "introduced": "2.1.154",
+      "date": "2026-05-28",
+      "category": "security",
+      "status": "stable",
+      "description": "Auto-mode classifier improved detection of data exfiltration, particularly bulk transfers of repository contents."
+    },
+    "askuserquestion_genuine_only": {
+      "introduced": "2.1.154",
+      "date": "2026-05-28",
+      "category": "agents",
+      "status": "stable",
+      "description": "Claude reserves the multiple-choice question prompt for decisions it genuinely cannot make itself, instead of asking when it has enough context."
+    },
+    "reload_skills": {
+      "introduced": "2.1.152",
+      "date": "2026-05-27",
+      "category": "skills",
+      "status": "stable",
+      "description": "/reload-skills re-scans skill directories without restarting the session; SessionStart hooks can return reloadSkills:true."
+    },
+    "sessionstart_session_title": {
+      "introduced": "2.1.152",
+      "date": "2026-05-27",
+      "category": "hooks",
+      "status": "stable",
+      "description": "SessionStart hooks can set the session title via hookSpecificOutput.sessionTitle on startup and resume."
+    },
+    "message_display_hook": {
+      "introduced": "2.1.152",
+      "date": "2026-05-27",
+      "category": "hooks",
+      "status": "stable",
+      "description": "MessageDisplay hook event lets hooks transform or hide assistant message text as it is displayed (e.g. secret redaction in audit output)."
+    },
+    "fallback_model_switch": {
+      "introduced": "2.1.152",
+      "date": "2026-05-27",
+      "category": "models",
+      "status": "stable",
+      "description": "Switches to configured --fallback-model for the rest of the session when the primary model is not found, instead of failing every request."
+    },
+    "usage_per_category": {
+      "introduced": "2.1.149",
+      "date": "2026-05-22",
+      "category": "observability",
+      "status": "stable",
+      "description": "/usage shows a per-category breakdown of limit usage — skills, subagents, plugins, and per-MCP-server cost."
+    },
+    "gfm_task_checkboxes": {
+      "introduced": "2.1.149",
+      "date": "2026-05-22",
+      "category": "cli",
+      "status": "stable",
+      "description": "Markdown output renders GFM task list checkboxes (- [ ] / - [x]) instead of plain bullets."
+    },
+    "code_review_rename": {
+      "introduced": "2.1.146",
+      "date": "2026-05-21",
+      "category": "cli",
+      "status": "stable",
+      "description": "/simplify renamed to /code-review with optional effort level (e.g. /code-review high); --comment posts findings as inline GitHub PR comments."
+    },
+    "claude_agents_json": {
+      "introduced": "2.1.145",
+      "date": "2026-05-19",
+      "category": "cli",
+      "status": "stable",
+      "description": "claude agents --json lists live Claude sessions as JSON for scripting (status bars, session pickers)."
+    },
+    "otel_agent_id_spans": {
+      "introduced": "2.1.145",
+      "date": "2026-05-19",
+      "category": "observability",
+      "status": "stable",
+      "description": "agent_id/parent_agent_id attributes on claude_code.tool OTEL spans; x-claude-code-agent-id/parent headers on subagent API requests (v2.1.139)."
+    },
+    "stop_hook_bg_tasks": {
+      "introduced": "2.1.145",
+      "date": "2026-05-19",
+      "category": "hooks",
+      "status": "stable",
+      "description": "Stop and SubagentStop hook input now includes background_tasks and session_crons fields."
+    },
+    "hook_args_exec_form": {
+      "introduced": "2.1.139",
+      "date": "2026-05-11",
+      "category": "hooks",
+      "status": "stable",
+      "description": "Hook args:string[] exec form spawns the command directly without a shell, so path placeholders never need quoting (avoids shell injection)."
+    },
+    "hook_continue_on_block": {
+      "introduced": "2.1.139",
+      "date": "2026-05-11",
+      "category": "hooks",
+      "status": "stable",
+      "description": "PostToolUse continueOnBlock feeds the hook's rejection reason back to Claude and continues the turn."
+    },
+    "mcp_project_dir_env": {
+      "introduced": "2.1.139",
+      "date": "2026-05-11",
+      "category": "mcp",
+      "status": "stable",
+      "description": "MCP stdio servers receive CLAUDE_PROJECT_DIR; plugin configs can reference ${CLAUDE_PROJECT_DIR} in commands."
+    },
+    "automode_hard_deny": {
+      "introduced": "2.1.136",
+      "date": "2026-05-08",
+      "category": "security",
+      "status": "stable",
+      "description": "settings.autoMode.hard_deny — auto-mode classifier rules that block unconditionally regardless of user intent or allow exceptions."
+    },
+    "hook_effort_level": {
+      "introduced": "2.1.133",
+      "date": "2026-05-07",
+      "category": "hooks",
+      "status": "stable",
+      "description": "Hooks receive the active effort level via effort.level JSON input and the $CLAUDE_EFFORT env var; Bash tool commands can read $CLAUDE_EFFORT."
     }
   }
 }

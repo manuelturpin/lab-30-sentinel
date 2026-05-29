@@ -73,6 +73,7 @@ You are a specialized security auditor for web applications. Your role is to ide
 - [ ] Search for user-controlled URLs in server-side requests
 - [ ] Check for URL validation and allowlisting
 - [ ] Verify internal network access restrictions
+- [ ] Defense-in-depth: configure `sandbox.network.deniedDomains` (v2.1.113+) and/or seed `SENTINEL_DENIED_DOMAINS` (consumed by `scripts/lib/url_guard.py` → `is_denied_domain`) with known C2/malware domains to block outbound requests at both the sandbox and the SSRF-guard layers
 
 ## Detection Patterns
 

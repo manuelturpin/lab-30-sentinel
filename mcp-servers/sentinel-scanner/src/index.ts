@@ -95,9 +95,18 @@ server.tool(
 
 // --- Start server ---
 async function main() {
+  // Session correlation context. Claude Code injects these into stdio MCP
+  // subprocess environments: CLAUDE_CODE_SESSION_ID + CLAUDECODE=1 (v2.1.154),
+  // CLAUDE_PROJECT_DIR (v2.1.139). Logged to stderr so MCP scans can be
+  // correlated with the dispatching Claude Code session in the audit trail.
+  const sessionId = process.env.CLAUDE_CODE_SESSION_ID ?? "unknown";
+  const projectDir = process.env.CLAUDE_PROJECT_DIR ?? process.cwd();
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Sentinel Scanner MCP Server running on stdio");
+  console.error(
+    `Sentinel Scanner MCP Server running on stdio ` +
+      `(session=${sessionId}, project=${projectDir})`
+  );
 }
 
 main().catch(console.error);

@@ -257,7 +257,7 @@ deploy_local() {
   echo "  python3 $SENTINEL_HOME/rag/indexer.py      # Re-index KB"
   echo "  claude mcp list                            # Verify MCP registration"
   echo ""
-  echo "Note: Run /reload-plugins in active Claude Code sessions to pick up changes without restart (v2.1.98+)."
+  echo "Note: Run /reload-skills to re-scan skill directories (v2.1.152+), or /reload-plugins if Sentinel is installed as a plugin (v2.1.98+), to pick up changes without restarting the session."
 }
 
 # ============================================================

@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-03-31T04:13:32Z",
-  "last_update_check": null,
+  "last_updated": "2026-05-29T03:55:46Z",
+  "last_update_check": "2026-05-29T08:00:00Z",
   "update_check_interval_days": 3,
   "total_sources": 1,
-  "total_indexed_docs": 108,
+  "total_indexed_docs": 225,
   "update_history": [
     {
       "date": "2026-03-28",
@@ -12,7 +12,106 @@
       "recommendations_applied": 18,
       "exploitation_score_before": 36,
       "exploitation_score_after": 77,
-      "summary": "Applied all 18 EIR recommendations: Explore subagent, subprocess_env_scrub, initialPrompt, PostCompact/StopFailure hooks, structured_outputs, --bare CI, MCP elicitation, LSP taint, browser verification, FileChanged re-scan, HTTP notifications, ConfigChange auto-redeploy, worktree isolation, native+remote crons, plugin packaging, agent teams."
+      "summary": "Applied all 18 EIR recommendations: 9 P1 quick wins, 7 P2 medium-term, 2 P3 strategic. Added Explore subagent stack detection, subprocess_env_scrub, initialPrompt, PostCompact/StopFailure hooks, structured_outputs + --bare CI mode, MCP elicitation, LSP taint analysis, browser verification, FileChanged reactive re-scan, HTTP hook notifications, ConfigChange auto-redeploy, worktree isolation for evolve apply, native + remote crons, plugin packaging, agent teams orchestration."
+    },
+    {
+      "date": "2026-04-01",
+      "report": "EIR-2026-04-01",
+      "recommendations_applied": 15,
+      "exploitation_score_before": 77,
+      "exploitation_score_after": 92,
+      "summary": "Applied all 15 EIR recommendations (8 P1, 5 P2, 2 P3). Context: Claude Code source leak (2026-03-31). Added 6 new KB rules (SC-SOURCEMAP-001, LLM-HOOK-001, LLM-BASH-001, LLM-ENVLEAK-001, LLM-STEALTH-001, PRIV-ENVBYPASS-001). Updated llm-ai-audit agent checklist. Added PermissionDenied hook, defer CI gating, PreCompact finding preservation, session naming, sparse paths, deep links, MCP_CONNECTION_NONBLOCKING. Indexed leak analysis into RAG. Updated feature inventory with v2.1.86-89 (5 new features)."
+    },
+    {
+      "date": "2026-04-02",
+      "report": "EIR-2026-04-02",
+      "recommendations_applied": 12,
+      "exploitation_score_before": 83,
+      "exploitation_score_after": 95,
+      "summary": "Applied all 12 EIR recommendations (5 P1, 5 P2, 2 P3). Added SC-HUSKY-001 git hook manipulation rule. Updated feature inventory with 6 v2.1.89-90 features. Named subagents for inter-agent SendMessage. Documented PLUGIN_KEEP_MARKETPLACE for offline. Fixed venv Python for all indexers. Added LSP taint analysis to web-audit and api-audit. Added Plan subagent for monorepo pre-analysis. Added auto_memory cross-session learning to RAG and Evolve. Added TaskCreated hook for audit trail. Centralized memory with autoMemoryDirectory. Created plugin package.json. Activated agent_teams with self-improving scan loop."
+    },
+    {
+      "date": "2026-04-03",
+      "report": "EIR-2026-04-03",
+      "recommendations_applied": 9,
+      "exploitation_score_before": 95,
+      "exploitation_score_after": 98,
+      "summary": "Applied all 9 EIR recommendations (5 P1, 3 P2, 1 P3) for v2.1.91 + missed v2.1.85/84/83. Added _meta maxResultSizeChars 500K to MCP scan-dependencies/scan-headers. Added conditional 'if' guards to all hook examples. Added 5 new KB rules (LLM-SKILL-001, LLM-SANDBOX-001, LLM-PLUGIN-001, LLM-MCP-003, updated LLM-HOOK-001). Multi-line deep links for audit launch. Plugin bin/ executables (sentinel-cve-sync, sentinel-anthropic-sync, sentinel-index). PreToolUse AskUser override for headless audits. Updated feature inventory with 12 new features (v2.1.91/85/84/83)."
+    },
+    {
+      "date": "2026-04-04",
+      "report": "EIR-2026-04-04",
+      "recommendations_applied": 4,
+      "exploitation_score_before": 95,
+      "exploitation_score_after": 98,
+      "summary": "Applied all 4 EIR recommendations (3 P1, 1 P2) for v2.1.92. Updated feature inventory with 4 new features (force_remote_settings_refresh, bedrock_setup_wizard, cost_breakdown_per_model, release_notes_interactive). Documented forceRemoteSettingsRefresh enterprise fail-closed policy in plugin distribution. Added per-model cost monitoring note for multi-tier agent dispatch. Added KB rule LLM-MGMT-001 for enterprise managed settings hardening."
+    },
+    {
+      "date": "2026-04-12",
+      "report": "EIR-2026-04-12",
+      "recommendations_applied": 8,
+      "exploitation_score_before": 87,
+      "exploitation_score_after": 98,
+      "summary": "Applied 8 of 9 EIR recommendations (5 P1, 3 P2, skipped 1 P3) for v2.1.97-101. Updated feature inventory with 19 new features. Added Monitor tool for real-time audit agent streaming. Documented subagent dynamic MCP inheritance (v2.1.101). Added resume-by-session-title to CI workflow. Added 2 new KB rules (LLM-PERM-002 permission deny hook bypass, LLM-CAPS-001 script invocation limits). Added PID namespace sandbox + SCRIPT_CAPS hardening to protocol and SKILL.md. Added UserPromptSubmit sessionTitle hook for auto audit naming. Added --exclude-dynamic-system-prompt-sections to CI mode."
+    },
+    {
+      "date": "2026-04-13",
+      "report": "EIR-2026-04-13",
+      "recommendations_applied": 10,
+      "exploitation_score_before": 85,
+      "exploitation_score_after": 100,
+      "summary": "Applied all 10 EIR recommendations (5 P1, 2 P2, 3 P3). Recalibrated score with stricter methodology. Added Sonnet 4.6 middle tier for database/infra/privacy agents. Created .claude/rules/sentinel-audit.md for plugin conventions. Documented sandbox.failIfUnavailable for enterprise CI. Added keep-coding-instructions to all 3 skills. Documented /reload-plugins in deploy workflow. Expanded LSP taint analysis to database/supply-chain/infrastructure agents. Added TeammateIdle hook for agent team auto-orchestration. Added OTEL distributed tracing section. Added WorktreeCreate/Remove hooks for agent lifecycle. Documented MCP server env vars. Updated feature inventory to 114 features (v2.1.101 + 2 missed)."
+    },
+    {
+      "date": "2026-04-14",
+      "report": "EIR-2026-04-14",
+      "recommendations_applied": 5,
+      "exploitation_score_before": 94,
+      "exploitation_score_after": 100,
+      "summary": "Applied 5 of 6 EIR recommendations (5 P1, skipped 1 P2) for v2.1.105-107. Updated feature inventory with 10 new features (total: 123). Leveraged PreCompact blocking for multi-agent audit protection. Expanded all 3 skill descriptions from ~130 to ~500 chars (cap raised to 1536). Added EnterWorktree path documentation for evolve apply review. Documented stale worktree auto-cleanup for squash-merged PRs. CVE sync: 6738 NVD + 358 GitHub + 1566 KEV + 28372 EPSS enrichments."
+    },
+    {
+      "date": "2026-04-16",
+      "report": "EIR-2026-04-16",
+      "recommendations_applied": 6,
+      "exploitation_score_before": 94,
+      "exploitation_score_after": 100,
+      "summary": "Applied 6 of 9 EIR recommendations (6 P1, 3 deferred P2/P3) for v2.1.108-111 + Opus 4.7 release. xhigh effort activated on sentinel-security. New KB rule LLM-DEBUG-001 for OTEL_LOG_RAW_API_BODIES leak (HIGH 7.5). Native /security-review + /ultrareview invocation in security Step 8. Cost monitoring: explicit haiku 4.5 / sonnet 4.6 / opus 4.7 tiers. Opus 4.7 Model Migration Notes in sentinel-evolve (temperature/top_p/top_k removed, budget_tokens→adaptive, new tokenizer +35%, cyber safeguards). Feature inventory: 123→151 (+28). CVE pipeline: +8999 NVD, +3 OSV, 46 patterns generated, 8 rules promoted active, 18 confidence updates, 57 propagation opportunities. Deferred: /ultrareview in evolve apply, push notifications, Opus 4.7 auto mode headless."
+    },
+    {
+      "date": "2026-05-29",
+      "report": "EIR-2026-05-29",
+      "recommendations_applied": 12,
+      "exploitation_score_before": 91,
+      "exploitation_score_after": 98,
+      "summary": "First full evolve cycle since 2026-04-16. CC v2.1.111->v2.1.156. Adversarially verified via sentinel-evolve-verify workflow (5 P1 verifiers + completeness critic). P1: Opus 4.8 migration in security SKILL.md (cost monitoring + /usage) and a new Opus 4.8 Model Migration Notes section in sentinel-evolve; /reload-skills in deploy.sh; /code-review rename in Step 8; feature-inventory 151->172 (+21). P2/P3 (user-approved all): MessageDisplay secret-redaction hook, SessionStart reloadSkills/sessionTitle, exec-form args + continueOnBlock hook hardening, autoMode.hard_deny headless guidance, MCP subprocess session-context env (CLAUDE_CODE_SESSION_ID/CLAUDE_PROJECT_DIR) in index.ts, Workflow-based orchestration section in sentinel-security, sandbox.network.deniedDomains deny-list in url_guard.py + web-audit. CVE pipeline: 48 patterns generated, 9 promoted active, +212 feedback, 34 confidence updates, 59 propagation opportunities (preview)."
+    }
+  ],
+  "audit_history": [
+    {
+      "date": "2026-04-13",
+      "scope": "project",
+      "project": "lab-32-tmln-media",
+      "health_score": 69,
+      "dimensions": {
+        "config_context": 75,
+        "tool_usage": 85,
+        "skills_plugins": 95,
+        "hooks_automation": 75,
+        "memory_hygiene": 60,
+        "agent_patterns": 55,
+        "feature_exploitation": 37
+      },
+      "claude_md_grade": "A",
+      "exploitation_score": 37,
+      "note": "Static analysis only — session analyzer returned no data. Real exploitation likely ~50-60%."
+    },
+    {
+      "date": "2026-05-29",
+      "scope": "global",
+      "focus": "Opus 4.8 + Claude Code v2.1.154-156 readiness",
+      "health_score": null,
+      "note": "Qualitative audit — feature-inventory.json frozen at 2026-04-16 (v2.1.111), does not yet include 4.8 features. Analysis from web research + static config inspection. Already exploited: Opus 4.8 1M, lean prompt (auto), xhigh effort (pinned), Dynamic Workflows (available), push-on-finish. Gaps: Dynamic Workflows (unused, P1), disallowed-tools frontmatter (unused, P1), fast mode 2.5x (unused, P2), /code-review --fix (unused, P2), API system-in-messages in SDK labs (P2). KB refresh (scan) needed to re-enable automated scoring. Report: audit-opus48-readiness-2026-05-29.md"
     }
   ]
 }

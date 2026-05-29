@@ -129,7 +129,7 @@ Then map the detected files to agents using this table:
 
 **Security hardening** — set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` before dispatching agents to prevent credential leakage from subprocess environments during scans. On Linux, this also enables PID namespace isolation for subprocess sandboxing (v2.1.98+). Additionally, set `CLAUDE_CODE_SCRIPT_CAPS=500` to limit per-session script invocations — prevents runaway agent execution.
 
-**Cost monitoring** — Sentinel dispatches agents across multiple model tiers (haiku 4.5 for light checks, sonnet 4.6 for mid-tier DB/infra/privacy, opus 4.7 for deep analysis — default unspecified tier resolves to Opus 4.7 since v2.1.111). Use `/cost` to view the per-model breakdown and cache-hit ratio (v2.1.92+) — this helps optimize agent tier assignments and identify expensive scans. Note: Opus 4.7's new tokenizer may use +35% tokens vs 4.6 — increase max_tokens headroom accordingly.
+**Cost monitoring** — Sentinel dispatches agents across multiple model tiers (haiku 4.5 for light checks, sonnet 4.6 for mid-tier DB/infra/privacy, Opus 4.8 for deep analysis — the default unspecified tier inherits the session model, i.e. Opus 4.8 when running on the current default, which itself defaults to **high** effort since v2.1.154). Use `/cost` for the per-model breakdown and cache-hit ratio (v2.1.92+), or `/usage` for a per-category breakdown across skills, subagents, plugins, and per-MCP-server cost (v2.1.149+) — this helps optimize agent tier assignments and identify expensive scans. Note: the Opus 4.7+ tokenizer may use +35% tokens vs 4.6 — increase max_tokens headroom accordingly.
 
 **Progress tracking** — before dispatching, create a task for each agent using TaskCreate so the user can see scan progress. Update each task to completed when the agent returns.
 
@@ -172,6 +172,23 @@ For each agent in detected_agents:
 1. Log the failure: agent name, error type, turn count at failure
 2. Retry the agent once with `maxTurns: 10` (reduced scope)
 3. If retry fails, mark the agent as failed and continue — do NOT block the entire audit
+
+### Step 2c: Workflow-Based Orchestration (v2.1.154+)
+
+For large monorepos or wide agent fan-outs, the dynamic **Workflow tool** can orchestrate the audit deterministically instead of manual `Agent` dispatch. Author a workflow (or call `Workflow` directly) that fans the detected agents out as a `pipeline`, then adversarially verifies each finding before aggregation:
+
+```js
+// one stage per detected agent, then a verify pass per finding (no barrier between agents)
+const findings = await pipeline(
+  detectedAgents,                                   // e.g. [web-audit, api-audit, ...]
+  a => agent(a.prompt, { phase: 'Scan', schema: FINDINGS }),
+  scan => parallel(scan.findings.map(f => () =>
+    agent(`Adversarially verify: ${f.title}`, { phase: 'Verify', schema: VERDICT })
+      .then(v => ({ ...f, verdict: v }))))
+)
+```
+
+Benefits: background execution across tens-to-hundreds of agents, built-in worktree isolation per stage, and per-finding adversarial verification that drops false positives before they reach the SARIF report. The manual Step 2 dispatch (`run_in_background` + Monitor) remains the fallback for small projects or when a deterministic script is overkill.
 
 ### Step 3: Collect & Parse Results
 
@@ -240,7 +257,7 @@ This provides an independent review using Anthropic's official threat model. Use
 - The user explicitly requests independent verification
 - Before opening a GitHub Advisory
 
-For large-scale validation across the whole branch, invoke `/ultrareview` (v2.1.111+) instead — runs parallel cloud multi-agent analysis + critique.
+For large-scale validation across the whole branch, invoke `/code-review ultra` — the deep multi-agent cloud review that runs parallel analysis + critique. (The `/simplify` command was renamed to `/code-review` with optional effort levels — e.g. `/code-review high` — in v2.1.146; `/ultrareview` still works as the alias for the ultra tier.)
 
 ---
 
@@ -325,6 +342,59 @@ Configure a TaskCreated hook to automatically log every scan task to a persisten
 ```
 
 This creates a timestamped record of every agent dispatched during a scan — useful for SOC-2 and ISO 27001 compliance.
+
+### MessageDisplay Hook — Secret Redaction (v2.1.152+)
+
+Audit findings may echo secrets, tokens, or PII captured from the scanned project. Configure a `MessageDisplay` hook to redact them from assistant output as it is displayed (the underlying finding in the SARIF report is unaffected):
+
+```json
+{
+  "hooks": {
+    "MessageDisplay": [{
+      "hooks": [{
+        "type": "command",
+        "command": "sed -E 's/(AKIA|ghp_|sk-)[A-Za-z0-9_-]+/[REDACTED]/g'"
+      }]
+    }]
+  }
+}
+```
+
+### SessionStart reloadSkills + sessionTitle (v2.1.152+)
+
+After `deploy.sh` updates the Sentinel skills, a `SessionStart` hook can return `reloadSkills: true` to re-scan skill directories in the *same* session (no restart — complements `/reload-skills`), and set the session title for audit traceability:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [{
+      "hooks": [{
+        "type": "command",
+        "command": "echo '{\"hookSpecificOutput\":{\"reloadSkills\":true,\"sessionTitle\":\"sentinel-audit\"}}'"
+      }]
+    }]
+  }
+}
+```
+
+### Hook Hardening — Exec-form args + continueOnBlock (v2.1.139+)
+
+Sentinel's own hooks should use the **exec form** `args: [...]` so commands run without a shell — path placeholders never need quoting and shell-injection via interpolated values is impossible. For `PostToolUse`, set `continueOnBlock: true` so a blocked tool call feeds its rejection reason back to Claude and the audit continues instead of aborting:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "continueOnBlock": true,
+      "hooks": [{ "type": "command", "args": ["sentinel-hook", "${TOOL_NAME}"] }]
+    }]
+  }
+}
+```
+
+### autoMode.hard_deny for Headless Audits (v2.1.136+)
+
+When running headless audits in auto mode, set `settings.autoMode.hard_deny` rules to block dangerous classes of operations *unconditionally* — regardless of inferred intent or allow exceptions (e.g. bulk repository exfiltration, destructive shell commands). This pairs with the improved data-exfiltration classifier (v2.1.154) to keep an autonomous Sentinel scan from being coerced into leaking the very repo it audits.
 
 ### Defer Decision for CI Gating (v2.1.89+)
 

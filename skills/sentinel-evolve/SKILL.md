@@ -572,6 +572,17 @@ Available domains: `skills`, `agents`, `hooks`, `mcp`, `performance`, `config`, 
 
 ## Model Migration Notes
 
+### Opus 4.8 (released 2026-05-28)
+
+Opus 4.8 is the current default model (v2.1.154). When evolving Sentinel skills or dispatching audit agents:
+
+- **Defaults to `high` effort** — use `/effort xhigh` for the hardest deep-dive audits (sentinel-security already sets `effort: xhigh` in its frontmatter). `xhigh` sits between `high` and `max`.
+- **Fast mode** on Opus 4.8 is now available at 2x the standard rate for 2.5x the speed (down from its previous premium) — useful for light/breadth scans.
+- **Lean system prompt is now the default** for all models except Haiku, Sonnet, and Opus 4.7-and-earlier — this frees context budget for audit findings; keep agent prompts tight.
+- **AskUserQuestion is reserved for genuine decisions** — Claude no longer asks when it already has enough context to proceed. Headless audits should drive behaviour from `.sentinel.json` rather than relying on interactive prompts.
+- **4.7→4.8 migration guidance** was added to the built-in `/claude-api` skill — consult it when evolving Sentinel code that calls the Anthropic API directly.
+- All the Opus 4.7 breaking API changes below (no `temperature`/`top_p`/`top_k`, `budget_tokens`→adaptive, new tokenizer) still apply on 4.8.
+
 ### Opus 4.7 (released 2026-04-16)
 
 Opus 4.7 introduces breaking API changes. When evolving Sentinel skills or generating recommendations that touch model config, apply these rules:

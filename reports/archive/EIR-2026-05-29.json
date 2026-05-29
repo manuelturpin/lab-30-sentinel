@@ -1,0 +1,303 @@
+{
+  "report_id": "EIR-2026-05-29",
+  "date": "2026-05-29",
+  "claude_code_version": "2.1.156",
+  "previous_report": "EIR-2026-04-16",
+  "context": "First full evolve cycle since 2026-04-16. Crons kept data fresh (cve-sync/anthropic-sync 2026-05-28, kb-update 2026-05-25) but no analyze->recommend cycle had run. Changelog advanced ~v2.1.111 -> v2.1.156, headlined by Opus 4.8 (v2.1.154, 2026-05-28) and dynamic workflows. Verified adversarially via the sentinel-evolve-verify workflow (5 P1 verifiers + completeness critic) before auto-apply.",
+  "exploitation_score": {
+    "current": 98,
+    "potential": 99,
+    "new_features_tracked": 21,
+    "new_features_used_after_p1": 6,
+    "new_features_not_used_applicable": 12,
+    "new_features_not_applicable": 3,
+    "feature_inventory_total": 172
+  },
+  "cve_pipeline": {
+    "patterns_generated": 48,
+    "rules_promoted_active": 9,
+    "rules_needs_review": 8,
+    "rules_no_matches": 30,
+    "feedback_seeded": 212,
+    "confidence_updates": 34,
+    "propagation_opportunities": 59,
+    "propagation_preview_patterns": 955,
+    "propagation_applied": false
+  },
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Migrer le tier deep-analysis vers Opus 4.8",
+      "description": "skills/security/SKILL.md (Cost monitoring) referencait 'opus 4.7 for deep analysis' + 'resolves to Opus 4.7 since v2.1.111' + tokenizer 4.7. Migre vers Opus 4.8 (inherit session model), defaut high effort, et ajoute /usage per-category cost.",
+      "source": {
+        "feature": "opus_4_8",
+        "introduced": "2.1.154"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "skills/security/SKILL.md"
+        ]
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 10
+      },
+      "verification": "verified valid (sentinel-evolve-verify REC-001)",
+      "status": "applied"
+    },
+    {
+      "id": "REC-002",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Section Model Migration Notes Opus 4.8",
+      "description": "Ajoute une section 'Opus 4.8 (released 2026-05-28)' dans skills/sentinel-evolve/SKILL.md : defaut high effort + /effort xhigh, fast mode 2x/2.5x, lean system prompt par defaut, AskUserQuestion reserve aux vraies decisions, migration 4.7->4.8 via /claude-api skill.",
+      "source": {
+        "feature": "opus_4_8",
+        "introduced": "2.1.154"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "skills/sentinel-evolve/SKILL.md"
+        ]
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 15
+      },
+      "verification": "verified valid (sentinel-evolve-verify REC-002)",
+      "status": "applied"
+    },
+    {
+      "id": "REC-003",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "/reload-skills dans le message post-deploy",
+      "description": "scripts/deploy.sh ne mentionnait que /reload-plugins. Sentinel deploie des SKILLS -> ajoute /reload-skills (v2.1.152) qui re-scanne les dirs de skills sans restart.",
+      "source": {
+        "feature": "reload_skills",
+        "introduced": "2.1.152"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "scripts/deploy.sh"
+        ]
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 5
+      },
+      "verification": "verified valid (sentinel-evolve-verify REC-003)",
+      "status": "applied"
+    },
+    {
+      "id": "REC-004",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "/code-review (ex /simplify) dans Step 8",
+      "description": "skills/security/SKILL.md Step 8 ne citait que /ultrareview. Documente le rename /simplify -> /code-review avec effort levels (v2.1.146, sourced changelog) ; /ultrareview garde le role d'alias ultra (source: harness, non changelog).",
+      "source": {
+        "feature": "code_review_rename",
+        "introduced": "2.1.146"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "skills/security/SKILL.md"
+        ]
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 5
+      },
+      "verification": "revised post-verification: verifier flagged the /ultrareview-deprecation claim as unsupported by changelog; rename kept (sourced), /ultrareview phrased as still-working alias",
+      "status": "applied"
+    },
+    {
+      "id": "REC-005",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Mise a jour feature-inventory.json (v2.1.112 -> v2.1.156)",
+      "description": "Inventory stoppait a v2.1.111 (151 features, last_built 2026-04-16). Ajout de 21 features (opus_4_8, dynamic_workflows, reload_skills, message_display_hook, mcp_subprocess_session_env, code_review_rename, usage_per_category, automode_hard_deny, hook_args_exec_form, hook_effort_level, etc.) avec versions par-feature exactes. Total 172.",
+      "source": {
+        "feature": "feature_inventory",
+        "introduced": "2.1.145-154"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "knowledge-base/anthropic-intel/feature-inventory.json"
+        ]
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 20
+      },
+      "verification": "verified valid (sentinel-evolve-verify REC-005); version range corrected to per-feature accurate values",
+      "status": "applied"
+    },
+    {
+      "id": "REC-006",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Hook MessageDisplay — redaction secrets dans la sortie d'audit",
+      "description": "Le hook MessageDisplay (v2.1.152) peut transformer/masquer le texte des messages affiches. Utiliser pour rediger les secrets/PII detectes avant affichage des findings d'audit. Ajout d'un exemple dans la section hooks de skills/security/SKILL.md.",
+      "source": {
+        "feature": "message_display_hook",
+        "introduced": "2.1.152"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "skills/security/SKILL.md"
+        ]
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 30
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-007",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Variables d'env MCP subprocess (session_id + project_dir)",
+      "description": "Les subprocess MCP stdio recoivent CLAUDE_CODE_SESSION_ID + CLAUDECODE=1 (v2.1.154) et CLAUDE_PROJECT_DIR (v2.1.139). Documenter/exploiter dans le MCP server sentinel-scanner (scan-dependencies/headers/sbom) pour correler les scans a la session et scoper les chemins.",
+      "source": {
+        "feature": "mcp_subprocess_session_env",
+        "introduced": "2.1.154"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "mcp-servers/sentinel-scanner/src",
+          "skills/security/SKILL.md"
+        ]
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 40
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-008",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "SessionStart reloadSkills + sessionTitle",
+      "description": "Les hooks SessionStart peuvent retourner reloadSkills:true (recharge auto post-deploy dans la meme session) et fixer sessionTitle (v2.1.152). Utile pour le workflow deploy->reload et le nommage auto des sessions d'audit.",
+      "source": {
+        "feature": "sessionstart_session_title",
+        "introduced": "2.1.152"
+      },
+      "impact": {
+        "score": 2,
+        "affected_files": [
+          "skills/security/SKILL.md",
+          "scripts/deploy.sh"
+        ]
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 30
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-009",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Durcir les hooks Sentinel (args exec-form + continueOnBlock)",
+      "description": "hook args:string[] exec form (v2.1.139) lance la commande sans shell -> elimine l'injection via placeholders ; PostToolUse continueOnBlock (v2.1.139) renvoie la raison du refus au modele. Mettre a jour les exemples de hooks Sentinel.",
+      "source": {
+        "feature": "hook_args_exec_form",
+        "introduced": "2.1.139"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "skills/security/SKILL.md",
+          "skills/security/agents/_protocol.md"
+        ]
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 30
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-010",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "autoMode.hard_deny pour audits headless",
+      "description": "settings.autoMode.hard_deny (v2.1.136) bloque inconditionnellement certaines actions du classifier auto-mode quel que soit l'intent. Documenter pour les audits headless/cron Sentinel (bloquer exfiltration / commandes destructrices).",
+      "source": {
+        "feature": "automode_hard_deny",
+        "introduced": "2.1.136"
+      },
+      "impact": {
+        "score": 2,
+        "affected_files": [
+          "skills/security/SKILL.md"
+        ]
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 25
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-011",
+      "priority": "P3",
+      "category": "strategic",
+      "title": "Adopter le Workflow tool pour l'orchestration sentinel-security",
+      "description": "Les dynamic workflows (v2.1.154) orchestrent N agents en arriere-plan via des scripts JS (pipeline/parallel). Remplacer le dispatch manuel des 12 agents + worktree par un script Workflow deterministe (fan-out par agent, verification adversariale des findings). Gros refactor du coeur de sentinel-security.",
+      "source": {
+        "feature": "dynamic_workflows",
+        "introduced": "2.1.154"
+      },
+      "impact": {
+        "score": 5,
+        "affected_files": [
+          "skills/security/SKILL.md",
+          "skills/security/agents/_protocol.md"
+        ]
+      },
+      "effort": {
+        "level": "high",
+        "estimate_minutes": 180
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-012",
+      "priority": "P3",
+      "category": "strategic",
+      "title": "sandbox.network.deniedDomains pour web-audit (defense-in-depth)",
+      "description": "sandbox.network.deniedDomains (v2.1.113) bloque des domaines specifiques avec allow par wildcard. Enrichir le SSRF guard de web-audit avec une deny-list de domaines C2/malware connus pour un sandbox reseau defense-in-depth. Source: completeness critic.",
+      "source": {
+        "feature": "sandbox_network_denied_domains",
+        "introduced": "2.1.113"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "skills/security/agents/web-audit.md",
+          "scripts/lib/url_guard.py"
+        ]
+      },
+      "effort": {
+        "level": "high",
+        "estimate_minutes": 90
+      },
+      "status": "applied"
+    }
+  ]
+}
