@@ -961,17 +961,27 @@
     "cvss_v4": 7.5,
     "category": "llm-ai",
     "subcategory": "debug-leakage",
-    "title": "OTEL raw API body logging enabled — leaks prompts, thinking, and tool calls",
-    "description": "OTEL_LOG_RAW_API_BODIES=1 (Claude Code v2.1.111+) emits full request and response bodies as OpenTelemetry log events. In production telemetry pipelines this exposes user prompts, model thinking content, tool call arguments (including secrets passed to Bash/Write), and assistant responses to downstream log aggregators. Designed for local debugging only — enabling it in CI, shared dev environments, or any telemetry backend routed to SaaS observability platforms is a confidentiality breach.",
+    "title": "OTEL debug logging enabled — leaks prompts, thinking, tool parameters, and tool results",
+    "description": "Claude Code OTEL debug-logging env vars emit sensitive content as OpenTelemetry log events / span attributes. OTEL_LOG_RAW_API_BODIES=1 (v2.1.111+) emits full request and response bodies (prompts, thinking, assistant responses). OTEL_LOG_TOOL_DETAILS=1 (v2.1.101+) logs tool parameters into spans — and since v2.1.157 also into tool_decision events — exposing Bash command lines, Write/Edit file paths and contents, and any secret passed as a tool argument. OTEL_LOG_TOOL_CONTENT=1 logs full tool results (file contents, command output, query results). In production telemetry pipelines or any backend routed to a SaaS observability platform, enabling any of these is a confidentiality breach. Designed for local debugging only.",
     "detect": {
       "patterns": [
         "OTEL_LOG_RAW_API_BODIES\\s*=\\s*1",
         "OTEL_LOG_RAW_API_BODIES\\s*=\\s*true",
         "OTEL_LOG_RAW_API_BODIES:\\s*['\"]?1",
-        "export\\s+OTEL_LOG_RAW_API_BODIES"
+        "export\\s+OTEL_LOG_RAW_API_BODIES",
+        "OTEL_LOG_TOOL_DETAILS\\s*=\\s*1",
+        "OTEL_LOG_TOOL_DETAILS\\s*=\\s*true",
+        "OTEL_LOG_TOOL_DETAILS:\\s*['\"]?1",
+        "export\\s+OTEL_LOG_TOOL_DETAILS",
+        "OTEL_LOG_TOOL_CONTENT\\s*=\\s*1",
+        "OTEL_LOG_TOOL_CONTENT\\s*=\\s*true",
+        "OTEL_LOG_TOOL_CONTENT:\\s*['\"]?1",
+        "export\\s+OTEL_LOG_TOOL_CONTENT"
       ],
       "negative_patterns": [
         "OTEL_LOG_RAW_API_BODIES\\s*=\\s*0",
+        "OTEL_LOG_TOOL_DETAILS\\s*=\\s*0",
+        "OTEL_LOG_TOOL_CONTENT\\s*=\\s*0",
         "# debug only",
         "# local only"
       ],
@@ -979,10 +989,11 @@
       "exclude": ["node_modules", "dist", "test"]
     },
     "remediation": {
-      "description": "Never enable OTEL_LOG_RAW_API_BODIES in production, CI, or any environment exporting telemetry to a shared backend. Use it only in local debugging with ephemeral logs. If needed for incident response, scope it to a specific session via a command-line export and scrub logs immediately after.",
-      "code_example": "# WRONG — committed to repo or CI config\nOTEL_LOG_RAW_API_BODIES=1\n\n# RIGHT — local debug only, ephemeral shell\n$ OTEL_LOG_RAW_API_BODIES=1 claude --bare -p '/my-skill' 2>debug.log\n$ shred -u debug.log  # scrub after",
+      "description": "Never enable OTEL_LOG_RAW_API_BODIES, OTEL_LOG_TOOL_DETAILS, or OTEL_LOG_TOOL_CONTENT in production, CI, or any environment exporting telemetry to a shared backend — they leak prompts, tool parameters (command lines, file paths, secrets), and tool results. Use them only in local debugging with ephemeral logs. If needed for incident response, scope to a specific session via a command-line export and scrub logs immediately after. Note: Sentinel's own performance-tracing guidance uses OTEL_LOG_TOOL_DETAILS=1 in a trusted local/ephemeral context only — annotate such usage with `# local only`.",
+      "code_example": "# WRONG — committed to repo or CI config\nOTEL_LOG_RAW_API_BODIES=1\nOTEL_LOG_TOOL_DETAILS=1\nOTEL_LOG_TOOL_CONTENT=1\n\n# RIGHT — local debug only, ephemeral shell\n$ OTEL_LOG_TOOL_DETAILS=1 claude --bare -p '/my-skill' 2>debug.log  # local only\n$ shred -u debug.log  # scrub after",
       "references": [
-        "https://github.com/anthropics/claude-code/releases/tag/v2.1.111"
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.111",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.157"
       ]
     },
     "standards": ["CWE-532", "CWE-215", "OWASP-LLM02:2025", "OWASP-LLM06:2025"],

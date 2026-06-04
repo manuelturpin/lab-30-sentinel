@@ -1,0 +1,106 @@
+{
+  "date": "2026-06-04",
+  "cc_version": "2.1.162",
+  "previous_eir": "2026-05-29",
+  "version_range": "2.1.157 → 2.1.162",
+  "context": "Incremental cycle covering the 6 Claude Code releases since EIR-2026-05-29 (v2.1.156). The anthropic-sync cron already refreshed the releases cache (2026-06-04 07:00, success). This batch is dominated by `claude agents` UX, Windows/WSL/Linux fixes, and performance work — little touching Sentinel's security mission. Candidate findings were validated against the live skill files before recommending; most apparent gaps (OTEL section, LSP, Workflow orchestration) were already covered by EIR-2026-05-29.",
+  "exploitation_score_before": 98,
+  "exploitation_score_after": 98,
+  "exploitation_note": "Maintained. The one genuinely applicable new security surface (tool-level OTEL leakage) is now covered (REC-001). Remaining new features are NOT_APPLICABLE (claude agents UX, plugin scaffolding) or auto-benefit (LSP fix, parallel-bash isolation).",
+  "scan": {
+    "source": "anthropic-sync cron 2026-06-04T03:00Z (success)",
+    "new_cc_releases": 6,
+    "releases": [
+      "2.1.157 (2026-05-29)",
+      "2.1.158 (2026-05-30)",
+      "2.1.159 (2026-05-31, internal)",
+      "2.1.160 (2026-06-02)",
+      "2.1.161 (2026-06-02)",
+      "2.1.162 (2026-06-03)"
+    ],
+    "feature_inventory": "172 → 179 (+7)"
+  },
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Extend LLM-DEBUG-001 to OTEL tool-level logging leaks",
+      "description": "LLM-DEBUG-001 only detected OTEL_LOG_RAW_API_BODIES. v2.1.157 surfaces tool_parameters into tool_decision telemetry events when OTEL_LOG_TOOL_DETAILS=1. Added detection for OTEL_LOG_TOOL_DETAILS=1 and OTEL_LOG_TOOL_CONTENT=1 (leak tool parameters: command lines, file paths, secrets; and tool results: file contents, command output). Title/description/remediation broadened; +8 patterns, +3 negative patterns. Dual-use note added: Sentinel's own perf-tracing guidance uses OTEL_LOG_TOOL_DETAILS=1 in a local/ephemeral context only.",
+      "source": {
+        "feature": "otel_tool_params_in_decision",
+        "introduced": "2.1.157",
+        "reference": "https://github.com/anthropics/claude-code/releases/tag/v2.1.157"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "knowledge-base/domains/llm-ai/rules.json"
+        ],
+        "description": "Closes a real detection gap in tool-parameter/result telemetry leakage (CWE-532, OWASP-LLM02/06:2025)."
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 10
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-002",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Refresh feature-inventory.json with v2.1.157→162",
+      "description": "The analyze mode's source-of-truth was frozen at v2.1.156 (172 features). Added 7 features: auto_load_skills_dir, plugin_init, enterprise_auto_mode_providers, otel_tool_params_in_decision, otel_resource_attr_labels, parallel_bash_failure_isolation, lsp_workspacesymbol_fix. last_built → 2026-06-04.",
+      "source": {
+        "feature": "feature_inventory_maintenance",
+        "introduced": "2.1.162",
+        "reference": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "knowledge-base/anthropic-intel/feature-inventory.json"
+        ],
+        "description": "Keeps automated gap analysis accurate for the next cycle."
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 10
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-003",
+      "priority": "P3",
+      "category": "strategic",
+      "title": "OTEL_RESOURCE_ATTRIBUTES as metric labels (v2.1.161)",
+      "description": "Per-agent/session metric attribution via OTEL_RESOURCE_ATTRIBUTES labels could enrich Sentinel's OTEL distributed-tracing section. Low value for a security suite; deferred.",
+      "source": {
+        "feature": "otel_resource_attr_labels",
+        "introduced": "2.1.161",
+        "reference": "https://github.com/anthropics/claude-code/releases/tag/v2.1.161"
+      },
+      "impact": {
+        "score": 2,
+        "affected_files": [
+          "skills/security/SKILL.md"
+        ],
+        "description": "Marginal observability polish."
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 10
+      },
+      "status": "deferred"
+    }
+  ],
+  "informational": [
+    "v2.1.162 LSP workspaceSymbol fix → Sentinel LSP taint analysis (api/web/supply-chain/infra/database) more reliable automatically; no change needed.",
+    "v2.1.161 parallel Bash failure isolation → a failed Bash no longer cancels sibling calls; multi-agent dispatch more robust, free.",
+    "v2.1.161 Workflow isolation:worktree edit fix → validates the Workflow-Based Orchestration section added in EIR-2026-05-29 (REC-011) now works end-to-end.",
+    "v2.1.158 enterprise auto mode (Bedrock/Vertex/Foundry) → relevant only if headless audits run on enterprise providers; noted, not applied."
+  ],
+  "applied_count": 2,
+  "deferred_count": 1,
+  "verification": "Candidate recommendations grepped against live skill files; OTEL/LSP/Workflow apparent gaps confirmed already-covered by prior EIR and excluded."
+}

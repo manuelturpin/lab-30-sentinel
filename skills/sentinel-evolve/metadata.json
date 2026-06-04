@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-05-29T03:55:46Z",
-  "last_update_check": "2026-05-29T08:00:00Z",
+  "last_updated": "2026-06-04T00:00:00Z",
+  "last_update_check": "2026-06-04T00:00:00Z",
   "update_check_interval_days": 3,
   "total_sources": 1,
   "total_indexed_docs": 225,
@@ -85,6 +85,14 @@
       "exploitation_score_before": 91,
       "exploitation_score_after": 98,
       "summary": "First full evolve cycle since 2026-04-16. CC v2.1.111->v2.1.156. Adversarially verified via sentinel-evolve-verify workflow (5 P1 verifiers + completeness critic). P1: Opus 4.8 migration in security SKILL.md (cost monitoring + /usage) and a new Opus 4.8 Model Migration Notes section in sentinel-evolve; /reload-skills in deploy.sh; /code-review rename in Step 8; feature-inventory 151->172 (+21). P2/P3 (user-approved all): MessageDisplay secret-redaction hook, SessionStart reloadSkills/sessionTitle, exec-form args + continueOnBlock hook hardening, autoMode.hard_deny headless guidance, MCP subprocess session-context env (CLAUDE_CODE_SESSION_ID/CLAUDE_PROJECT_DIR) in index.ts, Workflow-based orchestration section in sentinel-security, sandbox.network.deniedDomains deny-list in url_guard.py + web-audit. CVE pipeline: 48 patterns generated, 9 promoted active, +212 feedback, 34 confidence updates, 59 propagation opportunities (preview)."
+    },
+    {
+      "date": "2026-06-04",
+      "report": "EIR-2026-06-04",
+      "recommendations_applied": 2,
+      "exploitation_score_before": 98,
+      "exploitation_score_after": 98,
+      "summary": "Incremental cycle for CC v2.1.157->v2.1.162 (6 releases since EIR-2026-05-29). anthropic-sync cron already fresh (06-04 07:00). Light batch (mostly claude agents UX + platform fixes). Applied 2: REC-001 extend LLM-DEBUG-001 detection to OTEL_LOG_TOOL_DETAILS=1 + OTEL_LOG_TOOL_CONTENT=1 (tool-parameter/result telemetry leak, v2.1.157 surfaces tool_parameters in tool_decision events; +8 patterns, +3 negative, dual-use note); REC-002 refresh feature-inventory 172->179 (+7 features). Deferred REC-003 (OTEL_RESOURCE_ATTRIBUTES metric labels, P3). Informational no-action: LSP workspaceSymbol fix (taint analysis reliability), parallel-bash failure isolation, Workflow worktree-edit fix validates EIR-05-29 REC-011, enterprise auto mode Bedrock/Vertex/Foundry."
     }
   ],
   "audit_history": [

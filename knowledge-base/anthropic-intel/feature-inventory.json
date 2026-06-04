@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_built": "2026-05-29",
+  "last_built": "2026-06-04",
   "features": {
     "skills_system": {
       "introduced": "2.1.0",
@@ -1205,6 +1205,55 @@
       "category": "hooks",
       "status": "stable",
       "description": "Hooks receive the active effort level via effort.level JSON input and the $CLAUDE_EFFORT env var; Bash tool commands can read $CLAUDE_EFFORT."
+    },
+    "auto_load_skills_dir": {
+      "introduced": "2.1.157",
+      "date": "2026-05-29",
+      "category": "skills",
+      "status": "stable",
+      "description": "Plugins placed in .claude/skills directories are auto-loaded without a marketplace; settings.json 'agent' field is honored for dispatched sessions."
+    },
+    "plugin_init": {
+      "introduced": "2.1.157",
+      "date": "2026-05-29",
+      "category": "cli",
+      "status": "stable",
+      "description": "claude plugin init <name> scaffolds a new plugin in .claude/skills; /plugin arguments gain autocomplete."
+    },
+    "enterprise_auto_mode_providers": {
+      "introduced": "2.1.158",
+      "date": "2026-05-30",
+      "category": "models",
+      "status": "stable",
+      "description": "Auto mode is available on Bedrock, Vertex, and Foundry for Opus 4.7 and Opus 4.8 (previously first-party API only)."
+    },
+    "otel_tool_params_in_decision": {
+      "introduced": "2.1.157",
+      "date": "2026-05-29",
+      "category": "config",
+      "status": "stable",
+      "description": "tool_decision OTEL telemetry events include tool_parameters when OTEL_LOG_TOOL_DETAILS=1 — broadens the tool-parameter leak surface (covered by KB rule LLM-DEBUG-001)."
+    },
+    "otel_resource_attr_labels": {
+      "introduced": "2.1.161",
+      "date": "2026-06-02",
+      "category": "config",
+      "status": "stable",
+      "description": "OTEL_RESOURCE_ATTRIBUTES values are attached as labels on metric datapoints, enabling per-agent/session metric attribution."
+    },
+    "parallel_bash_failure_isolation": {
+      "introduced": "2.1.161",
+      "date": "2026-06-02",
+      "category": "performance",
+      "status": "stable",
+      "description": "A failed Bash command in a parallel tool-call batch no longer cancels the other calls in the same batch — more robust multi-agent dispatch."
+    },
+    "lsp_workspacesymbol_fix": {
+      "introduced": "2.1.162",
+      "date": "2026-06-03",
+      "category": "cli",
+      "status": "stable",
+      "description": "LSP tool workspaceSymbol operation returns results again (was returning none) — improves reliability of Sentinel LSP taint/symbol analysis across api/web/supply-chain/infra/database agents."
     }
   }
 }
