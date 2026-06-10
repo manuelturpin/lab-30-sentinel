@@ -209,7 +209,7 @@ Output JSON with this exact schema:
 # Claude CLI — pipe mode execution
 # ---------------------------------------------------------------------------
 
-_ALLOWED_MODELS = frozenset({"opus", "sonnet", "haiku"})
+_ALLOWED_MODELS = frozenset({"opus", "sonnet", "haiku", "fable", "claude-fable-5"})
 
 
 def call_claude(prompt, system_prompt, model="sonnet"):
@@ -446,7 +446,7 @@ def main():
     parser.add_argument("--domain", type=str, default=None,
                         help="Only process rules from this domain")
     parser.add_argument("--model", type=str, default="sonnet",
-                        help="Claude model to use: sonnet, opus, haiku (default: sonnet)")
+                        help="Claude model to use: sonnet, opus, haiku, fable, claude-fable-5 (default: sonnet)")
     parser.add_argument("--workers", type=int, default=1,
                         help="Parallel claude processes (default: 1)")
     parser.add_argument("--dry-run", action="store_true",

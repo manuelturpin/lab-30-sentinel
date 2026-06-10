@@ -962,7 +962,7 @@
     "category": "llm-ai",
     "subcategory": "debug-leakage",
     "title": "OTEL debug logging enabled — leaks prompts, thinking, tool parameters, and tool results",
-    "description": "Claude Code OTEL debug-logging env vars emit sensitive content as OpenTelemetry log events / span attributes. OTEL_LOG_RAW_API_BODIES=1 (v2.1.111+) emits full request and response bodies (prompts, thinking, assistant responses). OTEL_LOG_TOOL_DETAILS=1 (v2.1.101+) logs tool parameters into spans — and since v2.1.157 also into tool_decision events — exposing Bash command lines, Write/Edit file paths and contents, and any secret passed as a tool argument. OTEL_LOG_TOOL_CONTENT=1 logs full tool results (file contents, command output, query results). In production telemetry pipelines or any backend routed to a SaaS observability platform, enabling any of these is a confidentiality breach. Designed for local debugging only.",
+    "description": "Claude Code OTEL debug-logging env vars emit sensitive content as OpenTelemetry log events / span attributes. OTEL_LOG_RAW_API_BODIES=1 (v2.1.111+) emits full request and response bodies (prompts, thinking, assistant responses). OTEL_LOG_TOOL_DETAILS=1 (v2.1.101+) logs tool parameters into spans — and since v2.1.157 also into tool_decision events — exposing Bash command lines, Write/Edit file paths and contents, and any secret passed as a tool argument. OTEL_LOG_TOOL_CONTENT=1 logs full tool results (file contents, command output, query results). OTEL_LOG_USER_PROMPTS=1 emits user_system_prompt and user_prompt span/event content (full user prompts and the system prompt, plus slash-command names and sources) — direct leakage of user input and instructions. In production telemetry pipelines or any backend routed to a SaaS observability platform, enabling any of these is a confidentiality breach. Designed for local debugging only.",
     "detect": {
       "patterns": [
         "OTEL_LOG_RAW_API_BODIES\\s*=\\s*1",
@@ -976,12 +976,17 @@
         "OTEL_LOG_TOOL_CONTENT\\s*=\\s*1",
         "OTEL_LOG_TOOL_CONTENT\\s*=\\s*true",
         "OTEL_LOG_TOOL_CONTENT:\\s*['\"]?1",
-        "export\\s+OTEL_LOG_TOOL_CONTENT"
+        "export\\s+OTEL_LOG_TOOL_CONTENT",
+        "OTEL_LOG_USER_PROMPTS\\s*=\\s*1",
+        "OTEL_LOG_USER_PROMPTS\\s*=\\s*true",
+        "OTEL_LOG_USER_PROMPTS:\\s*['\"]?1",
+        "export\\s+OTEL_LOG_USER_PROMPTS"
       ],
       "negative_patterns": [
         "OTEL_LOG_RAW_API_BODIES\\s*=\\s*0",
         "OTEL_LOG_TOOL_DETAILS\\s*=\\s*0",
         "OTEL_LOG_TOOL_CONTENT\\s*=\\s*0",
+        "OTEL_LOG_USER_PROMPTS\\s*=\\s*0",
         "# debug only",
         "# local only"
       ],
@@ -997,6 +1002,48 @@
       ]
     },
     "standards": ["CWE-532", "CWE-215", "OWASP-LLM02:2025", "OWASP-LLM06:2025"],
+    "ai_specific": true,
+    "frameworks": ["claude-code"]
+  },
+  {
+    "id": "LLM-CCHARDEN-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 5.9,
+    "category": "llm-ai",
+    "subcategory": "control-bypass",
+    "title": "Claude Code defensive controls disabled (safe-mode / bundled-skills / idle-timeout)",
+    "description": "Claude Code settings that weaken the agent's own security posture, dangerous when set in shared, CI, or committed environments rather than ad-hoc local troubleshooting. CLAUDE_CODE_SAFE_MODE=1 (or --safe-mode, v2.1.169+) starts Claude Code with ALL customizations disabled — CLAUDE.md, plugins, skills, hooks, and MCP servers — which silently bypasses any hook-based audit, guardrail skill, or MCP policy control. CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1 (or disableBundledSkills) hides bundled skills, workflows, and built-in slash commands from the model, shrinking the defensive surface. API_FORCE_IDLE_TIMEOUT=0 (v2.1.163+) disables the 5-minute idle-stream timeout, allowing indefinite stream hangs (DoS / slow data exfiltration). These belong in an ephemeral local shell, never in .env, CI config, Dockerfiles, or managed settings.",
+    "detect": {
+      "patterns": [
+        "CLAUDE_CODE_SAFE_MODE\\s*=\\s*1",
+        "CLAUDE_CODE_SAFE_MODE\\s*=\\s*true",
+        "export\\s+CLAUDE_CODE_SAFE_MODE",
+        "--safe-mode\\b",
+        "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS\\s*=\\s*1",
+        "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS\\s*=\\s*true",
+        "export\\s+CLAUDE_CODE_DISABLE_BUNDLED_SKILLS",
+        "\"disableBundledSkills\"\\s*:\\s*true",
+        "API_FORCE_IDLE_TIMEOUT\\s*=\\s*0"
+      ],
+      "negative_patterns": [
+        "CLAUDE_CODE_SAFE_MODE\\s*=\\s*0",
+        "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS\\s*=\\s*0",
+        "\"disableBundledSkills\"\\s*:\\s*false",
+        "# troubleshooting only",
+        "# local only"
+      ],
+      "file_types": [".env", ".env.*", "Dockerfile", "docker-compose.*", "*.yaml", "*.yml", "*.sh", "settings.json", "managed-settings.json", "*.md"],
+      "exclude": ["node_modules", "dist", "test"]
+    },
+    "remediation": {
+      "description": "Never persist CLAUDE_CODE_SAFE_MODE, CLAUDE_CODE_DISABLE_BUNDLED_SKILLS, or API_FORCE_IDLE_TIMEOUT=0 in committed config, CI, Dockerfiles, or managed settings — they disable hooks/MCP/skill-based controls and idle-timeout protections that your security posture relies on. Use --safe-mode only as an interactive, one-off troubleshooting flag in a local shell. If a hook or MCP server misbehaves, fix or scope it rather than globally disabling all customizations. For managed deployments, enforce policy via requiredMinimumVersion and glob deny rules instead of safe-mode.",
+      "code_example": "# WRONG — committed / CI / Docker: silently disables hooks, MCP, skills\nENV CLAUDE_CODE_SAFE_MODE=1\nAPI_FORCE_IDLE_TIMEOUT=0\n\n# RIGHT — interactive, local, one-off troubleshooting only\n$ claude --safe-mode   # then exit; never export it",
+      "references": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.169",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.163"
+      ]
+    },
+    "standards": ["CWE-693", "CWE-16", "CWE-400", "OWASP-LLM06:2025"],
     "ai_specific": true,
     "frameworks": ["claude-code"]
   }

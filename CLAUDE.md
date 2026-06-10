@@ -107,6 +107,14 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 ## Statut
 
+**Cycle Evolve — Fable 5 + Claude Code v2.1.163→170** (2026-06-10)
+
+- **Intégration Claude Fable 5** (`claude-fable-5`, classe Mythos au-dessus d'Opus 4.8, GA 2026-06-09, ajouté à Claude Code en v2.1.170, 1M/128K, $10/$50). Tokens CLI `--model` : `fable` et `claude-fable-5`. Breaking : thinking adaptatif toujours actif (`thinking:disabled`→400). `feature-inventory.json` 179→188 ; whitelist `pattern-gen.py` (+`fable`/`claude-fable-5`) ; notes modèle dans `security/SKILL.md` + `sentinel-evolve/SKILL.md`.
+- **Base de preuve** : `/deep-research` L4 → `reports/claude-code-fable5-2026-06-10.md` (tournée sur Opus 4.8, claims load-bearing triangulés vs install locale + GHSA/NVD, 2 corrections).
+- **⚠️ Finding empirique** : le **classifieur cyber/bio de Fable 5 auto-switche la session vers Opus 4.8** sur le contenu sécurité de Sentinel (faux positifs fréquents). **Ne pas orchestrer Sentinel sur Fable 5** — pin Opus 4.8 (projet `.claude/settings.json`) ou candidater au [Cyber Verification Program](https://claude.com/form/cyber-use-case). Documenté REC-003/004.
+- **2 règles KB** : `LLM-DEBUG-001` étendue (`OTEL_LOG_USER_PROMPTS`, 16 patterns) ; nouvelle `LLM-CCHARDEN-001` (MEDIUM 5.9 — `CLAUDE_CODE_SAFE_MODE`/`disableBundledSkills`/`API_FORCE_IDLE_TIMEOUT=0`). CVE-2026-0621 (MCP TS SDK ReDoS) laissée au feed `cve-sync`.
+- **EIR-2026-06-10** : 6 recos appliquées (4 P1, 2 P2), score d'exploitation 98 maintenu. `metadata.json` update_history +1 (12 entrées).
+
 **Session 14 — Rule Quality Pipeline** (2026-04-14)
 
 - **Phase 3** : `rule-tester.py` — valide les patterns LLM contre un corpus de test (7 fichiers vulnérables + 6 safe). Precision gate >=70% pour promotion "active"
@@ -140,7 +148,7 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 ---
 
-**Last verified:** 2026-05-17 (audit complet — cf. `reports/audit-2026-05-17.md` ; precedent : `reports/audit-2026-04-21.md`)
+**Last verified:** 2026-06-10 (evolve Fable 5 — cf. `reports/archive/EIR-2026-06-10.md` ; dernier audit complet : `reports/audit-2026-05-17.md`)
 **Verification cmd:** `bash scripts/verify-audit-closure.sh`
 
 ## Commandes

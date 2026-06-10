@@ -1,0 +1,104 @@
+{
+  "date": "2026-06-10",
+  "cc_version": "2.1.170",
+  "previous_eir": "2026-06-04",
+  "version_range": "2.1.163 → 2.1.170",
+  "context": "Major cycle: integrate the new Anthropic model Claude Fable 5 (claude-fable-5, Mythos-class above Opus 4.8, GA 2026-06-09, added to Claude Code in v2.1.170) and the security-relevant features of the v2.1.163→170 Claude Code releases. Evidence base is a dedicated /deep-research L4 report (reports/claude-code-fable5-2026-06-10.md) run on Opus 4.8; load-bearing claims (CLI --model token, env var names, CVE) were triangulated against the local install (claude --help, ~/.claude/cache/changelog.md) and GHSA/NVD — 2 Wave-1 claims were corrected. NOTE: this cycle was intended to run on Fable 5 (dogfood) but Fable 5's real-time cyber/biology safety classifier auto-switched the session to Opus 4.8 on Sentinel's security content — an empirical finding folded into REC-003/004.",
+  "exploitation_score_before": 98,
+  "exploitation_score_after": 98,
+  "exploitation_note": "Maintained at 98. The new model (Fable 5) is now tracked and usable across the toolchain (feature-inventory, pattern-gen whitelist, skill model-tier guidance), and the genuinely new security surfaces (OTEL user-prompt telemetry leak, Claude Code control-disable env vars) are now covered by KB rules. The CVE (MCP TS SDK ReDoS) is left to the cve-sync feed.",
+  "scan": {
+    "source": "anthropic-sync 2026-06-10 (manual, 68 entries) + deep-research L4 report claude-code-fable5-2026-06-10.md",
+    "new_cc_releases": 7,
+    "releases": [
+      "2.1.163 (2026-06-04)",
+      "2.1.165 (2026-06-05)",
+      "2.1.166 (2026-06-06)",
+      "2.1.167 (2026-06-06)",
+      "2.1.168 (2026-06-06)",
+      "2.1.169 (2026-06-08)",
+      "2.1.170 (2026-06-09, Fable 5)"
+    ],
+    "skipped": ["2.1.164 (not released)"],
+    "feature_inventory": "179 → 188 (+9)"
+  },
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Integrate Claude Fable 5 + v2.1.163-169 security features into feature-inventory.json",
+      "description": "Added fable_5 (claude-fable-5, Mythos-class above Opus 4.8, 1M/128K, $10/$50, CLI aliases fable + claude-fable-5, thinking always-on / thinking:disabled->400, cyber/bio safety classifier note) plus 8 security/config features from the window: claude_code_safe_mode, disable_bundled_skills, fallback_model_chain, glob_deny_rules, cross_session_authority_strip, required_version_range, api_force_idle_timeout, otel_cert_trust_gate. last_built 2026-06-04 -> 2026-06-10.",
+      "source": {"feature": "fable_5", "introduced": "2.1.170", "reference": "reports/claude-code-fable5-2026-06-10.md"},
+      "impact": {"score": 4, "affected_files": ["knowledge-base/anthropic-intel/feature-inventory.json"], "description": "Keeps gap analysis current and registers the new top-tier model + new security surfaces."},
+      "effort": {"level": "low", "estimate_minutes": 15},
+      "status": "applied"
+    },
+    {
+      "id": "REC-002",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Extend pattern-gen.py model whitelist with Fable 5",
+      "description": "_ALLOWED_MODELS now includes 'fable' (alias) and 'claude-fable-5' (full id) — the exact tokens accepted by `claude -p --model` (verified via claude --help v2.1.170). --model help text updated. Lets pattern generation run on the top-tier model when desired.",
+      "source": {"feature": "fable_5_cli_token", "introduced": "2.1.170", "reference": "claude --help v2.1.170 (local)"},
+      "impact": {"score": 3, "affected_files": ["scripts/pattern-gen.py"], "description": "Unblocks Fable 5 in the headless pattern-gen pipeline without weakening the model-injection guard."},
+      "effort": {"level": "low", "estimate_minutes": 5},
+      "status": "applied"
+    },
+    {
+      "id": "REC-003",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Document Fable 5 cyber-classifier caveat in security SKILL.md",
+      "description": "Added a 'Model choice' note to the cost-monitoring section: do NOT default-orchestrate Sentinel on Fable 5 — its real-time cyber/biology safety classifier flags security content and auto-switches the session to Opus 4.8 (false positives common). Keep the orchestrator on Opus 4.8 (project-level .claude/settings.json model) or apply to the Cyber Verification Program for defensive use. Empirically verified this cycle.",
+      "source": {"feature": "fable_5_cyber_classifier", "introduced": "2.1.170", "reference": "https://www.anthropic.com/news/claude-fable-5-mythos-5"},
+      "impact": {"score": 4, "affected_files": ["skills/security/SKILL.md"], "description": "Prevents continuous classifier interruptions and silent model downgrades during Sentinel runs."},
+      "effort": {"level": "low", "estimate_minutes": 10},
+      "status": "applied"
+    },
+    {
+      "id": "REC-004",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Add Fable 5 Model Migration Notes to sentinel-evolve SKILL.md",
+      "description": "New '### Fable 5' section: model facts, the new thinking:disabled->400 break, HTTP-200 refusals, 512-token cache min, and the do-NOT-orchestrate-Sentinel-on-Fable-5 finding (mirrors REC-003). Keeps the evolve skill's model guidance authoritative.",
+      "source": {"feature": "fable_5", "introduced": "2.1.170", "reference": "reports/claude-code-fable5-2026-06-10.md"},
+      "impact": {"score": 3, "affected_files": ["skills/sentinel-evolve/SKILL.md"], "description": "Future evolve cycles inherit correct Fable 5 model guidance and the classifier constraint."},
+      "effort": {"level": "low", "estimate_minutes": 10},
+      "status": "applied"
+    },
+    {
+      "id": "REC-005",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Extend LLM-DEBUG-001 to OTEL_LOG_USER_PROMPTS",
+      "description": "OTEL_LOG_USER_PROMPTS=1 emits user_system_prompt and user_prompt span/event content (full user prompts, system prompt, slash-command names/sources) — direct prompt leakage in telemetry, same family as the already-covered OTEL_LOG_TOOL_DETAILS/CONTENT. Description extended; +4 patterns, +1 negative pattern (now 16 patterns total).",
+      "source": {"feature": "otel_log_user_prompts", "introduced": "2.1.x", "reference": "~/.claude/cache/changelog.md"},
+      "impact": {"score": 3, "affected_files": ["knowledge-base/domains/llm-ai/rules.json"], "description": "Closes the user-prompt/system-prompt telemetry-leak gap (CWE-532, OWASP-LLM02/06:2025)."},
+      "effort": {"level": "low", "estimate_minutes": 8},
+      "status": "applied"
+    },
+    {
+      "id": "REC-006",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "New rule LLM-CCHARDEN-001 — Claude Code defensive controls disabled",
+      "description": "Detects CLAUDE_CODE_SAFE_MODE=1 / --safe-mode (disables CLAUDE.md, plugins, skills, hooks, MCP — a monitoring/guardrail bypass), CLAUDE_CODE_DISABLE_BUNDLED_SKILLS / disableBundledSkills (shrinks defensive surface), and API_FORCE_IDLE_TIMEOUT=0 (indefinite stream hang — DoS / slow exfil) when set in committed/CI/managed config. MEDIUM, cvss_v4 5.9, CWE-693/16/400, OWASP-LLM06:2025.",
+      "source": {"feature": "claude_code_safe_mode", "introduced": "2.1.169", "reference": "https://github.com/anthropics/claude-code/releases/tag/v2.1.169"},
+      "impact": {"score": 3, "affected_files": ["knowledge-base/domains/llm-ai/rules.json"], "description": "Detects self-disabling of Claude Code's own security controls — a new misconfiguration surface from v2.1.163-169."},
+      "effort": {"level": "low", "estimate_minutes": 15},
+      "status": "applied"
+    }
+  ],
+  "informational": [
+    "CVE-2026-0621 — ReDoS in MCP TypeScript SDK UriTemplate (@modelcontextprotocol/sdk <= 1.25.1, fix v1.25.2, CWE-1333, GHSA-8r9q-7v3j-jr4g). Left to the cve-sync feed (auto-ingested from GHSA/OSV) rather than a hand-authored feed rule.",
+    "v2.1.166 cross-session authority strip (Confused Deputy mitigation) — defensive hardening, tracked in feature-inventory; documents a cross-session privilege-escalation threat pattern.",
+    "v2.1.166 glob deny rules + v2.1.163 requiredMinimumVersion/Maximum — hardening primitives Sentinel can recommend (least-privilege, anti-downgrade); tracked, no rule needed.",
+    "v2.1.163 OTEL client-cert trust gate — closes a repo-supplied cert-injection vector; tracked.",
+    "MCP spec 2025-11-25 SEP-1036 URL elicitation is an SSRF-PREVENTION mechanism (HTTPS-only + URL validation required), NOT a vector — Wave-1 mischaracterization corrected; no rule.",
+    "Fable 5 is intended to run on non-security labs; for Sentinel keep Opus 4.8 orchestrator or apply to the Cyber Verification Program (https://claude.com/form/cyber-use-case)."
+  ],
+  "applied_count": 6,
+  "deferred_count": 0,
+  "verification": "Edits applied directly (surgical, known locations). JSON validated: feature-inventory 188 features (fable_5 present), llm-ai/rules.json 29 rules (LLM-DEBUG-001 16 patterns, LLM-CCHARDEN-001 present). CLI --model token, env var names, and CVE verified against local install + GHSA/NVD in the deep-research triangulation pass (2 corrections applied). Deploy DRY_RUN=0 + HF_HUB_OFFLINE=1, RAG re-indexed."
+}

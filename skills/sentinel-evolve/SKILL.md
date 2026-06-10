@@ -572,6 +572,14 @@ Available domains: `skills`, `agents`, `hooks`, `mcp`, `performance`, `config`, 
 
 ## Model Migration Notes
 
+### Fable 5 (released 2026-06-09, Claude Code v2.1.170)
+
+Claude **Fable 5** (`claude-fable-5`) is a **Mythos-class model above Opus 4.8** — the most capable GA model (1M context, 128K output, **$10/$50 per MTok**). CLI accepts both `fable` (alias) and `claude-fable-5` (full id) for `--model` / `/model`. SDK support landed in anthropic-sdk-python v0.108.0 (+ server-side fallbacks on refusal).
+
+- **Same breaking-change surface as Opus 4.7/4.8** (no `temperature`/`top_p`/`top_k`, `budget_tokens`→adaptive) **plus one new break**: adaptive thinking is **always-on**, so `thinking:{type:"disabled"}` returns **HTTP 400** — omit the `thinking` param entirely. Refusals return `stop_reason:"refusal"` as **HTTP 200** (not an error) — handle accordingly. Cache minimum prefix is 512 tokens (vs 4096 on Opus).
+- **⚠️ Do NOT default-orchestrate Sentinel on Fable 5.** Fable 5 has a **real-time cyber/biology safety classifier** that flags security content and **auto-switches the session to Opus 4.8** (false positives common). Sentinel's domain *is* cybersecurity, so it trips the classifier continuously. Keep the orchestrator on **Opus 4.8** (project-level `.claude/settings.json` `"model"`), or apply to the [Cyber Verification Program](https://claude.com/form/cyber-use-case) for legitimate defensive use. Verified empirically during EIR-2026-06-10 (the cycle integrating Fable 5 itself auto-switched off Fable 5).
+- Fable 5 is still the right pick for **non-security** labs and for individual non-flagged subtasks.
+
 ### Opus 4.8 (released 2026-05-28)
 
 Opus 4.8 is the current default model (v2.1.154). When evolving Sentinel skills or dispatching audit agents:

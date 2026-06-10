@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-06-04T00:00:00Z",
-  "last_update_check": "2026-06-04T00:00:00Z",
+  "last_updated": "2026-06-10T00:00:00Z",
+  "last_update_check": "2026-06-10T00:00:00Z",
   "update_check_interval_days": 3,
   "total_sources": 1,
   "total_indexed_docs": 225,
@@ -93,6 +93,14 @@
       "exploitation_score_before": 98,
       "exploitation_score_after": 98,
       "summary": "Incremental cycle for CC v2.1.157->v2.1.162 (6 releases since EIR-2026-05-29). anthropic-sync cron already fresh (06-04 07:00). Light batch (mostly claude agents UX + platform fixes). Applied 2: REC-001 extend LLM-DEBUG-001 detection to OTEL_LOG_TOOL_DETAILS=1 + OTEL_LOG_TOOL_CONTENT=1 (tool-parameter/result telemetry leak, v2.1.157 surfaces tool_parameters in tool_decision events; +8 patterns, +3 negative, dual-use note); REC-002 refresh feature-inventory 172->179 (+7 features). Deferred REC-003 (OTEL_RESOURCE_ATTRIBUTES metric labels, P3). Informational no-action: LSP workspaceSymbol fix (taint analysis reliability), parallel-bash failure isolation, Workflow worktree-edit fix validates EIR-05-29 REC-011, enterprise auto mode Bedrock/Vertex/Foundry."
+    },
+    {
+      "date": "2026-06-10",
+      "report": "EIR-2026-06-10",
+      "recommendations_applied": 6,
+      "exploitation_score_before": 98,
+      "exploitation_score_after": 98,
+      "summary": "Major cycle: integrate Claude Fable 5 (claude-fable-5, Mythos-class above Opus 4.8, GA 2026-06-09, Claude Code v2.1.170) + security surfaces of CC v2.1.163->170. Evidence base = dedicated /deep-research L4 report (claude-code-fable5-2026-06-10.md), run on Opus 4.8; load-bearing claims triangulated vs local install (claude --help, changelog) + GHSA/NVD (2 Wave-1 claims corrected). Applied 6: REC-001 feature-inventory 179->188 (fable_5 + 8 security features); REC-002 pattern-gen whitelist + fable/claude-fable-5; REC-003 security SKILL.md Fable 5 cyber-classifier caveat; REC-004 sentinel-evolve SKILL.md Fable 5 Migration Notes; REC-005 extend LLM-DEBUG-001 to OTEL_LOG_USER_PROMPTS (+4 patterns -> 16); REC-006 new rule LLM-CCHARDEN-001 (CLAUDE_CODE_SAFE_MODE/disableBundledSkills/API_FORCE_IDLE_TIMEOUT=0 control bypass, MEDIUM 5.9). KEY FINDING (empirical): Fable 5's real-time cyber/biology safety classifier auto-switched the session off Fable 5 to Opus 4.8 on Sentinel security content -> do NOT orchestrate Sentinel on Fable 5 (documented REC-003/004). Informational: CVE-2026-0621 (MCP TS SDK ReDoS, fix v1.25.2) left to cve-sync feed; Confused-Deputy/glob-deny/version-pinning/OTEL-cert-gate hardening tracked; MCP SEP-1036 = SSRF prevention not vector (Wave-1 correction)."
     }
   ],
   "audit_history": [

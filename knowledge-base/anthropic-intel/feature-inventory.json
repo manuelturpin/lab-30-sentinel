@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_built": "2026-06-04",
+  "last_built": "2026-06-10",
   "features": {
     "skills_system": {
       "introduced": "2.1.0",
@@ -1065,6 +1065,69 @@
       "category": "models",
       "status": "stable",
       "description": "Opus 4.8 — defaults to high effort; /effort xhigh for hardest tasks. Fast mode at 2x standard rate for 2.5x speed."
+    },
+    "fable_5": {
+      "introduced": "2.1.170",
+      "date": "2026-06-09",
+      "category": "models",
+      "status": "stable",
+      "description": "Claude Fable 5 (claude-fable-5) — Mythos-class, most capable GA model, above Opus 4.8. 1M context, 128K output, $10/$50 per MTok. CLI aliases: 'fable' and 'claude-fable-5'. Adaptive thinking always-on (thinking:{type:'disabled'} returns HTTP 400 — omit the param); no temperature/top_p; refusals return stop_reason:'refusal' as HTTP 200. SECURITY NOTE: built-in real-time cyber/biology safety classifier auto-switches the session to Opus 4.8 on flagged content (false positives common) — do NOT default Sentinel orchestration to Fable 5; pin Opus 4.8 or apply to the Cyber Verification Program."
+    },
+    "claude_code_safe_mode": {
+      "introduced": "2.1.169",
+      "date": "2026-06-08",
+      "category": "security",
+      "status": "stable",
+      "description": "--safe-mode flag and CLAUDE_CODE_SAFE_MODE env var start Claude Code with ALL customizations (CLAUDE.md, plugins, skills, hooks, MCP servers) disabled for troubleshooting. Security-relevant: disables hook/MCP/skill-based controls — a monitoring/guardrail bypass vector if set in shared envs."
+    },
+    "disable_bundled_skills": {
+      "introduced": "2.1.169",
+      "date": "2026-06-08",
+      "category": "security",
+      "status": "stable",
+      "description": "disableBundledSkills setting + CLAUDE_CODE_DISABLE_BUNDLED_SKILLS env var hide bundled skills, workflows, and built-in slash commands from the model — reduces available defensive surface."
+    },
+    "fallback_model_chain": {
+      "introduced": "2.1.166",
+      "date": "2026-06-06",
+      "category": "models",
+      "status": "stable",
+      "description": "fallbackModel setting configures up to three fallback models tried in order on overload/unavailability; --fallback-model now applies to interactive sessions, and a turn retries once on the fallback for unexpected non-retryable API errors."
+    },
+    "glob_deny_rules": {
+      "introduced": "2.1.166",
+      "date": "2026-06-06",
+      "category": "security",
+      "status": "stable",
+      "description": "Permission deny rules support glob patterns (e.g. '*' denies all tools) for whitelist-style configs; allow rules reject non-MCP globs and a startup warning shows for unknown tool names in deny rules. Hardening primitive for least-privilege policies."
+    },
+    "cross_session_authority_strip": {
+      "introduced": "2.1.166",
+      "date": "2026-06-06",
+      "category": "security",
+      "status": "stable",
+      "description": "Relayed messages via SendMessage no longer carry user authority; the receiving session rejects relayed permission requests — mitigation for the cross-session Confused Deputy privilege-escalation pattern."
+    },
+    "required_version_range": {
+      "introduced": "2.1.163",
+      "date": "2026-06-04",
+      "category": "security",
+      "status": "stable",
+      "description": "requiredMinimumVersion / requiredMaximumVersion managed settings make Claude Code refuse to start outside the allowed range — prevents version-downgrade attacks against managed deployments."
+    },
+    "api_force_idle_timeout": {
+      "introduced": "2.1.163",
+      "date": "2026-06-04",
+      "category": "security",
+      "status": "stable",
+      "description": "Restored default 5-minute idle timeout on Vertex/Foundry so a stalled stream aborts; API_FORCE_IDLE_TIMEOUT=0 opts out (allowing indefinite stream hangs — DoS / slow-exfiltration risk if set)."
+    },
+    "otel_cert_trust_gate": {
+      "introduced": "2.1.163",
+      "date": "2026-06-04",
+      "category": "security",
+      "status": "stable",
+      "description": "Untrusted project settings can no longer set OTEL client-certificate paths without trust confirmation — closes a cert-injection vector via repo-supplied settings."
     },
     "dynamic_workflows": {
       "introduced": "2.1.154",
