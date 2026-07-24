@@ -107,6 +107,12 @@ Depuis la session 12 (2026-03-15), les agents utilisent les outils natifs de Cla
 
 ## Statut
 
+**Veille concurrentielle — Plugin Claude Security d'Anthropic** (2026-07-24)
+
+- Anthropic a lancé le 22/07 le plugin officiel `claude-security` (bêta, scan multi-agents 6 phases, quorum 2/3, patches vérifiés, inclus dans le forfait sans quota) — **concurrent frontal de `/sentinel-security` sur le scan de code à la demande**. Base de preuve : `/deep-research` L3 → `reports/claude-security-plugin-2026-07-24.md` (4.57/5, fact-check 5/5 sur primaires, code source du plugin fetché).
+- **Décision de positionnement à trancher avant le 2026-08-24** : 4 options (cannibaliser / différencier / hybride orchestré / statu quo) cartographiées dans `docs/research/claude-security-plugin-positionnement-2026-07-24.md`. Étape préalable : benchmark du plugin sur `tests/vulnerable-app/` vs `/sentinel-security`.
+- Confirme REC-003/004 : le fallback Fable 5→Opus sur contenu sécurité est désormais documenté officiellement (persistant, attendu) ; `CLAUDE_CODE_SUBAGENT_MODEL` écrase les frontmatters `model:` des agents de plugin — `unset` avant tout scan comparatif.
+
 **Cycle Evolve — Fable 5 + Claude Code v2.1.163→170** (2026-06-10)
 
 - **Intégration Claude Fable 5** (`claude-fable-5`, classe Mythos au-dessus d'Opus 4.8, GA 2026-06-09, ajouté à Claude Code en v2.1.170, 1M/128K, $10/$50). Tokens CLI `--model` : `fable` et `claude-fable-5`. Breaking : thinking adaptatif toujours actif (`thinking:disabled`→400). `feature-inventory.json` 179→188 ; whitelist `pattern-gen.py` (+`fable`/`claude-fable-5`) ; notes modèle dans `security/SKILL.md` + `sentinel-evolve/SKILL.md`.
