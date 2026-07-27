@@ -1,6 +1,655 @@
 {
   "releases": [
     {
+      "version": "2.1.220",
+      "tag": "v2.1.220",
+      "date": "2026-07-25",
+      "features": [
+        "Bug fixes and reliability improvements"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.220",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.219",
+      "tag": "v2.1.219",
+      "date": "2026-07-24",
+      "features": [
+        "Added Claude Opus 5 (claude-opus-5), now the default Opus model \u2014 1M context, fast mode at $10/$50 per Mtok",
+        "Added sandbox.network.strictAllowlist setting to deny non-allowlisted hosts for sandboxed commands without prompting",
+        "Added DirectoryAdded hook that fires after /add-dir or the SDK register_repo_root control request registers a new working directory mid-session",
+        "Added mcp_server_errors to the headless stream-json init event, listing --mcp-config entries skipped by config validation; terminal runs print a startup warning",
+        "Added the workflowSizeGuideline settings key so the advisory Dynamic workflow size guideline can be set from any settings file; the /config row is hidden while one does",
+        "Added nested subagent forwarding in stream-json: subagents spawned at depth-2+ now appear when --forward-subagent-text is set, keyed by their spawning Agent tool_use id",
+        "Added HTTP status and error text to claude mcp list and /mcp when a server fails to connect, and a warning for MCP config values with hidden leading or trailing whitespace",
+        "Added structured failure categories to self-hosted runner spawn and session failures, so hook errors, runner crashes and config errors can be told apart",
+        "Changed the /model picker to highlight only the newest model's name, so the highlight marks the new release rather than an arbitrary subset of the list",
+        "Added the current default workflow size to the running-workflow status line, with a pointer to /config for changing it"
+      ],
+      "deprecations": [
+        "Fixed a permission you approved while a self-hosted runner was restarting being dropped when the session resumed, so the approved action now runs",
+        "Removed Opus 4.7 from fast mode; /fast now applies to Opus 5 and Opus 4.8"
+      ],
+      "breaking_changes": [
+        "Updated the claude-api skill to default to Claude Opus 5, with a migration path from Opus 4.8",
+        "Subagents can now spawn nested subagents up to depth 3 by default (was 1); set CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1 to disable nesting"
+      ],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.219",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.218",
+      "tag": "v2.1.218",
+      "date": "2026-07-22",
+      "features": [
+        "Changed /code-review to run as a background subagent, so review work no longer fills your conversation and keeps stacked slash commands as its review target",
+        "Added screen-reader announcements of deleted text for word and line deletions (Option+Delete, Ctrl+W, Cmd+Backspace, Ctrl+U, Ctrl+K) in --ax-screen-reader mode",
+        "Added HTTP status and error text to claude mcp list and /mcp when a server fails to connect, and a warning for MCP config values with hidden leading or trailing whitespace",
+        "Fixed multi-line paste collapsing into one line with j in place of newlines in terminals that encode pasted newlines as Ctrl+J",
+        "Fixed VoiceOver reading \"new line\" instead of echoing the typed space at the end of the input in --ax-screen-reader mode",
+        "Added an announcement when fast mode changes as a result of switching models via /config model=<x> or Remote Control",
+        "Changed server-managed settings so benign feature and cost toggles no longer trigger the settings-approval prompt",
+        "Changed agent markdown files to reject agent names containing :, which is reserved for plugin namespacing",
+        "Changed skills with context: fork to run in the background by default; opt out per skill with background: false",
+        "Added yes/no/on/off/1/0 (case-insensitive) as accepted values for skill and plugin frontmatter booleans, alongside true/false"
+      ],
+      "deprecations": [
+        "Fixed mojibake when a long IDE selection was truncated mid-emoji, and a case where a tool executor error could be silently dropped",
+        "Fixed prompt history entries being dropped or duplicated when history writes raced or failed"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.218",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.217",
+      "tag": "v2.1.217",
+      "date": "2026-07-21",
+      "features": [
+        "Added emoji shortcode autocomplete in the prompt input: type :heart: to insert \u2764\ufe0f, or :hea for suggestions \u2014 disable with the emojiCompletionEnabled setting",
+        "Added warnings when transcript writes are failing (e.g. disk full) or when session saving is off due to an inherited environment variable, instead of losing transcripts silently",
+        "Added a cap on concurrently-running subagents (default 20, override with CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS) so one message can't fan out unbounded background agents",
+        "Changed subagents to no longer spawn nested subagents by default; set CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH to allow deeper nesting",
+        "Fixed --max-budget-usd not stopping background subagents: once the cap is reached, new spawns are denied and running background agents are halted"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.217",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.216",
+      "tag": "v2.1.216",
+      "date": "2026-07-20",
+      "features": [
+        "Added sandbox.filesystem.disabled setting to skip filesystem isolation while keeping network egress control",
+        "Fixed MCP re-authenticate revoking working credentials before the new sign-in succeeds, and the reconnect needs-auth message in background sessions pointing at an unusable command",
+        "Improved the /fork confirmation to one line with the new session's name, claude attach id, and a note when the copy shares your checkout",
+        "Improved validation of git and gh command arguments in the PowerShell tool",
+        "Improved the /ultrareview diff-too-large error to show configured limits, measured diff size, and largest contributing files",
+        "Improved /code-review ultra empty-diff message to name the exact base ref and suggest passing an explicit base",
+        "Improved the spend limit adjustment prompt to show the server's reason when a spend limit change is rejected",
+        "/context now shows an explicit warning when the conversation exceeds the context window, and a failed /compact displays as an error",
+        "/rewind no longer restores or deletes files through symlinks or hard links at tracked paths and reports how many paths it skipped",
+        "Background sessions: /mcp and /install-github-app now park a \"needs input\" request in the agent view when no client is attached"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.216",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.215",
+      "tag": "v2.1.215",
+      "date": "2026-07-19",
+      "features": [
+        "Claude no longer runs the /verify and /code-review skills on its own; invoke them with /verify or /code-review when you want them"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.215",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.214",
+      "tag": "v2.1.214",
+      "date": "2026-07-18",
+      "features": [
+        "Added the EndConversation tool: Claude can end sessions with highly abusive users or jailbreak attempts, as on claude.ai since 2025 \u2014 see https://www.anthropic.com/research/end-subset-conversations",
+        "Added a periodic progress heartbeat for long-running tool calls that previously went silent",
+        "Added an ISO modified timestamp to memory file frontmatter",
+        "Added message.uuid, client_request_id, and tool_source attributes to OpenTelemetry log events for message-level correlation and tool provenance",
+        "Added CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH to configure the 60 KB truncation limit on OpenTelemetry content attributes",
+        "Added reasoning effort to the subagentStatusLine payload, so custom agent rows can render model and effort",
+        "Added permission prompts for docker commands (including the Podman docker shim) carrying daemon-redirect flags (--url, --connection, --identity, and Podman's remote mode) that previously ran without o",
+        "Fixed a crash when a GrowthBook feature evaluates to null, and a bug where a malformed flag payload could wipe the cached feature flags",
+        "Fixed feature flags going stale in long-running sessions after the OAuth token rotates"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.214",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.212",
+      "tag": "v2.1.212",
+      "date": "2026-07-17",
+      "features": [
+        "/fork now copies your conversation into a new background session (its own row in claude agents) while you keep working; the in-session subagent it used to launch is now /subtask",
+        "Added claude auto-mode reset to restore the default auto-mode configuration, with a confirmation prompt (pass --yes to skip)",
+        "Added a session-wide limit on WebSearch tool calls (default 200, tunable via CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION) to stop runaway search loops",
+        "Added a per-session cap on subagent spawns (default 200, override with CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION) to stop runaway delegation loops; /clear resets the budget",
+        "MCP tool calls running longer than 2 minutes now move to the background automatically so the session stays usable; configure the threshold or disable with CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
+        "Typing /resume in the agent view now opens a picker of past sessions \u2014 including sessions deleted from the list \u2014 and resumes your pick as a background session",
+        "Fixed Ctrl+J not inserting a newline in the agent view dispatch input on terminals with extended key reporting, and surfaced the newline shortcut in the ? help overlay",
+        "Fixed /ultrareview skipping the billing confirmation in a new conversation after /clear",
+        "Changed headless/SDK sessions to apply a set_model control request mid-turn; the next model round-trip uses the new model instead of waiting for the next turn",
+        "Changed agent view / claude agents --json: sessions waiting on a sandbox, MCP-input, or managed-settings prompt now show as \"Needs input\" instead of \"Working\"",
+        "Updated the auth status panel title from \"Cloud authentication\" to \"Authentication\"",
+        "Corrected an earlier release note (2.1.200): tmux through the 3.6 series lacks synchronized output; newer tmux with support is detected automatically"
+      ],
+      "deprecations": [
+        "Fixed a continue:false hook's halt being dropped when the tool fails or completes mid-stream, and hook infrastructure errors being misreported as user rejections",
+        "Deprecated the Task tool's mode parameter (now ignored); subagents inherit the parent session's permission mode by default",
+        "Changed Enterprise forceLoginMethod to be enforced for VS Code extension, SDK, setup-token, and install-github-app logins, not just the terminal",
+        "Changed session transcripts to record the reasoning effort level on each assistant message"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.212",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.211",
+      "tag": "v2.1.211",
+      "date": "2026-07-15",
+      "features": [
+        "Added --forward-subagent-text flag and CLAUDE_CODE_FORWARD_SUBAGENT_TEXT environment variable to include subagent text and thinking in stream-json output"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.211",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.210",
+      "tag": "v2.1.210",
+      "date": "2026-07-14",
+      "features": [
+        "Added a live elapsed-time counter to the collapsed tool summary line so long-running tool calls visibly tick instead of looking stuck",
+        "Added a startup warning for Write(path), NotebookEdit(path), and Glob(path) permission rules \u2014 use Edit(path) or Read(path) instead"
+      ],
+      "deprecations": [
+        "Fixed claude agents --effort ultracode not reaching dispatched sessions; the value was silently dropped"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.210",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.209",
+      "tag": "v2.1.209",
+      "date": "2026-07-14",
+      "features": [],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.209",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.208",
+      "tag": "v2.1.208",
+      "date": "2026-07-14",
+      "features": [
+        "Added screen reader mode: opt-in plain-text rendering for screen reader users. Run claude --ax-screen-reader, set CLAUDE_AX_SCREEN_READER=1, or add \"axScreenReader\": true to settings.",
+        "Added vimInsertModeRemaps setting: map two-key insert-mode sequences like jj to Escape in vim mode",
+        "Added CLAUDE_CODE_PROCESS_WRAPPER: agent view and the background service now honor a corporate launcher by running every Claude Code self-spawn through a required wrapper executable",
+        "Added mouse-click support for multi-select menus and \"Other\" input rows in fullscreen mode",
+        "Background sessions: an older daemon no longer silently restarts workers spawned by a newer version onto the older binary",
+        "Agent view: Ctrl+X now deletes renamed-branch worktrees, never destroys unpushed commits, keeps the session row when a worktree is kept, and reused worktree names reset to the current base",
+        "Catastrophic removals (e.g. rm -rf ~) in commands containing $(\u2026)/backticks/<(\u2026) now prompt in --dangerously-skip-permissions and auto mode, matching the plain form",
+        "/install-github-app and the /mcp settings menu no longer open in background sessions",
+        "MCP servers configured with an empty URL now show as \"not configured\" in /mcp instead of a config error",
+        "/usage now shows your last-known usage bars with an \"as of\" note when the usage endpoint is rate-limited, instead of an error screen"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.208",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.207",
+      "tag": "v2.1.207",
+      "date": "2026-07-11",
+      "features": [
+        "Auto mode is now available without CLAUDE_CODE_ENABLE_AUTO_MODE opt-in on Bedrock, Vertex AI, and Foundry; disable via disableAutoMode in settings"
+      ],
+      "deprecations": [
+        "Fixed extensions.worktreeConfig being left in the repo's .git/config (breaking go-git tools like tea) after the last worktree.sparsePaths worktree was removed"
+      ],
+      "breaking_changes": [
+        "Fixed malformed bracket patterns in rules globs, skill paths, .ignore, and .worktreeinclude breaking file reads, file suggestions, and worktree creation"
+      ],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.207",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.206",
+      "tag": "v2.1.206",
+      "date": "2026-07-10",
+      "features": [
+        "Added directory path suggestions to /cd, matching /add-dir behavior",
+        "Added a /doctor check that proposes trimming checked-in CLAUDE.md files by cutting content Claude could derive from the codebase",
+        "/commit-push-pr now auto-allows git push to the repo's configured push remote (remote.pushDefault, or the sole remote when only one is configured) in addition to origin",
+        "Gateway: /login now supports Anthropic-operated public gateway endpoints",
+        "EnterWorktree now asks for confirmation before entering a git worktree outside the project's .claude/worktrees/ directory",
+        "Background agents now upgrade to a new version in the background right after a Claude Code update, instead of paying a slow stale-session upgrade when you attach"
+      ],
+      "deprecations": [
+        "Fixed claude rm leaving the removed job in the daemon roster, causing the row to reappear in claude agents"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.206",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.205",
+      "tag": "v2.1.205",
+      "date": "2026-07-08",
+      "features": [
+        "Added an auto mode rule that blocks tampering with session transcript files"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.205",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.204",
+      "tag": "v2.1.204",
+      "date": "2026-07-08",
+      "features": [],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.204",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.203",
+      "tag": "v2.1.203",
+      "date": "2026-07-07",
+      "features": [
+        "Added a warning when your login is about to expire, so you can re-authenticate before background sessions are interrupted",
+        "Added a grey \u23f8 badge to the footer when in manual permission mode, making the active mode always visible",
+        "Added the session's additional working directories to MCP roots/list, with notifications/roots/list_changed sent when the set changes",
+        "[VSCode] Added a Settings toggle for \"Enable Remote Control for all sessions\""
+      ],
+      "deprecations": [
+        "Removed the startup \"claude command missing or broken\" warnings \u2014 they now appear in /doctor and /status instead",
+        "Removed a redundant navigation hint from the claude agents footer"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.203",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.202",
+      "tag": "v2.1.202",
+      "date": "2026-07-06",
+      "features": [
+        "Added a \"Dynamic workflow size\" setting in /config for controlling how large Claude generally makes dynamic workflows (small/medium/large agent counts) \u2014 an advisory guideline, not an enforced cap",
+        "Added workflow.run_id and workflow.name OpenTelemetry attributes to telemetry emitted by workflow-spawned agents, so a workflow run's activity can be reconstructed from OTel data",
+        "Fixed /rename on background sessions being reverted when the job restarts, which broke addressing the session by its new name"
+      ],
+      "deprecations": [
+        "Fixed images and files sent from the Remote Control mobile or web app without a caption being silently dropped"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.202",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.201",
+      "tag": "v2.1.201",
+      "date": "2026-07-03",
+      "features": [
+        "Claude Sonnet 5 sessions no longer use the mid-conversation system role for harness reminders"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.201",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.200",
+      "tag": "v2.1.200",
+      "date": "2026-07-03",
+      "features": [
+        "Changed AskUserQuestion dialogs to no longer auto-continue by default; opt into an idle timeout via /config",
+        "Changed the \"default\" permission mode to \"Manual\" across the CLI, --help, VS Code, and JetBrains; --permission-mode manual and \"defaultMode\": \"manual\" are accepted alongside default",
+        "Fixed background-agent roster issues: transient corruption permanently disabling orphan cleanup, older binaries not preserving fields written by newer versions, and socket auth tokens being stripped d"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.200",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.199",
+      "tag": "v2.1.199",
+      "date": "2026-07-02",
+      "features": [
+        "Stacked slash-skill invocations like /skill-a /skill-b do XYZ now load all leading skills (up to 5), not just the first",
+        "Fixed opening or resuming a session with no new messages needlessly growing the transcript file"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.199",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.198",
+      "tag": "v2.1.198",
+      "date": "2026-07-01",
+      "features": [
+        "Subagents now run in the background by default, so Claude keeps working while they run and is notified when they finish (previously a gradual rollout)",
+        "Claude in Chrome is now generally available",
+        "Added background agent notifications in claude agents \u2014 sessions that need input or finish now fire the Notification hook (agent_needs_input / agent_completed)",
+        "Added /dataviz skill for chart and dashboard design guidance with a runnable color-palette validator",
+        "Gateway: added Claude Platform on AWS (anthropicAws) as an upstream provider; model-not-found responses now advance the failover chain",
+        "Background agents launched from claude agents now commit, push, and open a draft PR when they finish code work in a worktree, instead of stopping to ask",
+        "The built-in Explore agent now inherits the main session's model (capped at opus) instead of running on haiku",
+        "Subagents and context compaction now inherit the session's extended thinking configuration, improving output quality on delegated tasks"
+      ],
+      "deprecations": [
+        "Removed the /agents wizard; ask Claude to create or manage subagents, or edit .claude/agents/ directly"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.198",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.197",
+      "tag": "v2.1.197",
+      "date": "2026-06-30",
+      "features": [
+        "Introducing Claude Sonnet 5: now the default model in Claude Code, with a native 1M-token context window and promotional pricing of $2/$10 per Mtok through August 31. Update to version 2.1.197 for acc"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.197",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.196",
+      "tag": "v2.1.196",
+      "date": "2026-06-29",
+      "features": [
+        "Added support for organization default models \u2014 admins set it in the org console; it shows as \"Org default\" (or \"Role default\") in /model when you haven't picked one yourself",
+        "Added readable default names for sessions at start, making them easier to identify and message",
+        "Added clickable file attachments in chat \u2014 Cmd/Ctrl-click reveals the file in Finder/Explorer",
+        "Security: claude mcp list/get no longer spawn .mcp.json servers that a repo self-approved via a committed .claude/settings.json; untrusted workspaces show \u23f8 Pending approval",
+        "Fixed plugin dependency version pins not being honored when the marketplace was added as a local folder path backed by a git repo"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.196",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.195",
+      "tag": "v2.1.195",
+      "date": "2026-06-26",
+      "features": [
+        "Added CLAUDE_CODE_DISABLE_MOUSE_CLICKS to disable mouse click/drag/hover in fullscreen mode while keeping wheel scroll",
+        "Fixed background jobs disappearing from claude agents or losing data when written by a newer Claude Code version"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.195",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.193",
+      "tag": "v2.1.193",
+      "date": "2026-06-25",
+      "features": [
+        "Added autoMode.classifyAllShell setting to route all Bash/PowerShell commands through the auto-mode classifier instead of only arbitrary-code-execution patterns",
+        "Added auto-mode denial reasons to the transcript, the denial toast, and /permissions recent denials",
+        "Added claude_code.assistant_response OpenTelemetry log event containing the model's response text. Redacted unless OTEL_LOG_ASSISTANT_RESPONSES=1; when that var is unset it follows OTEL_LOG_USER_PROMP",
+        "Added live file path autocomplete to bash mode (!)",
+        "Added a startup notice when MCP servers need authentication, pointing at /mcp",
+        "Added automatic memory-pressure reaping for idle background shell commands (disable with CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1)",
+        "Fixed backgrounding (\u2190\u2190) spuriously cancelling with \"N background tasks would be abandoned\" when all running tasks carry over to the new session",
+        "Improved plugin auto-rename: marketplace renames maps are now followed automatically, updating your settings to the new name",
+        "Improved /add-dir message when the directory is already a working directory"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.193",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.191",
+      "tag": "v2.1.191",
+      "date": "2026-06-24",
+      "features": [
+        "Added /rewind support for resuming a conversation from before /clear was run"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.191",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.190",
+      "tag": "v2.1.190",
+      "date": "2026-06-24",
+      "features": [
+        "Bug fixes and reliability improvements"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.190",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.187",
+      "tag": "v2.1.187",
+      "date": "2026-06-23",
+      "features": [
+        "Added sandbox.credentials setting to block sandboxed commands from reading credential files and secret environment variables",
+        "Added org-configured model restrictions to the model picker, --model, /model, and ANTHROPIC_MODEL, with a \"restricted by your organization's settings\" message when a restricted model is selected",
+        "Added mouse click support to select menus (permission prompts, /model, /config, etc.) in fullscreen mode",
+        "Fixed Claude Code Remote sessions taking ~2.7s longer to start after the agent proxy CA system-trust install was added"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.187",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.186",
+      "tag": "v2.1.186",
+      "date": "2026-06-22",
+      "features": [
+        "Added claude mcp login <name> and claude mcp logout <name> to authenticate MCP servers from the CLI without opening the interactive /mcp menu, with --no-browser stdin redirect support for completing o",
+        "Added status filtering (press f) to the /workflows agent detail view",
+        "Added a \"Skills\" section to the /plugin Installed tab",
+        "Added teammateMode: \"iterm2\" setting with a warning when auto mode cannot find the it2 CLI",
+        "Added \"Claude Platform on AWS - refresh credentials\" option to /login when awsAuthRefresh is configured",
+        "! bash commands now trigger Claude to respond to the output automatically; set \"respondToBashCommands\": false in settings.json to keep the previous context-only behavior",
+        "Fixed --tools allowing feature-gated tools to slip through before flags loaded on a cold first launch"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.186",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.185",
+      "tag": "v2.1.185",
+      "date": "2026-06-20",
+      "features": [
+        "The stream-stall hint now reads \"Waiting for API response \u00b7 will retry in \u2026\" instead of \"No response from API \u00b7 Retrying in \u2026\", and triggers after 20s of silence instead of 10s"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.185",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.183",
+      "tag": "v2.1.183",
+      "date": "2026-06-19",
+      "features": [
+        "Improved auto mode safety: destructive git commands (git reset --hard, git checkout -- ., git clean -fd, git stash drop) are now blocked when you didn't ask to discard local work, git commit --amend i",
+        "Added attribution.sessionUrl setting to omit the claude.ai session link from commits and PRs in web and Remote Control sessions",
+        "Added /config --help to list all available shorthand keys for /config key=value",
+        "Changed /config toggle behavior: Enter and Space both change the selected setting, and Esc now saves and closes instead of reverting",
+        "Fixed tmux teammate panes failing to launch when the shell has slow rc-file initialization, and keystrokes typed during agent spawn leaking into the new tmux pane instead of the leader prompt"
+      ],
+      "deprecations": [
+        "Added a warning when the requested model is deprecated or automatically updated to a newer model, shown on stderr in print mode (-p) and now also covering models set in agent frontmatter",
+        "Removed the startup \"setup issues\" line under the logo \u2014 run /doctor to see configuration issues or use --debug"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.183",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.181",
+      "tag": "v2.1.181",
+      "date": "2026-06-17",
+      "features": [
+        "Added /config key=value syntax to set any setting from the prompt (e.g. /config thinking=false) \u2014 works in interactive, -p, and Remote Control",
+        "Added sandbox.allowAppleEvents opt-in setting that lets sandboxed commands send Apple Events on macOS",
+        "Added CLAUDE_CLIENT_PRESENCE_FILE environment variable: point it at a marker file to suppress mobile push notifications while you're at the machine",
+        "Upgraded the bundled Bun runtime to 1.4",
+        "Improved streaming of long paragraphs: text now appears line-by-line instead of waiting for the first line break",
+        "Improved auto-retry: API connection drops mid-thinking now automatically retry instead of showing \"Connection closed while thinking\"",
+        "Improved the subagent panel: idle subagents auto-hide after 30s, the list caps at 5 rows with scroll hints, and keyboard hints now show in the footer",
+        "Improved the MCP OAuth browser page to match Claude Code's visual style and auto-close on success",
+        "Changed fullscreen mode URL opening to require Cmd+click (macOS) / Ctrl+click, matching native terminal behavior",
+        "Changed the Improved N memories line to no longer list individual files outside verbose mode"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.181",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.179",
+      "tag": "v2.1.179",
+      "date": "2026-06-16",
+      "features": [],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.179",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.178",
+      "tag": "v2.1.178",
+      "date": "2026-06-15",
+      "features": [
+        "Added Tool(param:value) syntax for permission rules to match a tool's input parameters (with * wildcard), e.g. Agent(model:opus) to block Opus subagents",
+        "Skills in nested .claude/skills directories now load when working on files there; on a name clash, the nested skill appears as <dir>:<name> so both stay available",
+        "Nested .claude/ directories: the agent, workflow, and output-style closest to the working directory now wins when names collide; project-scope workflow saves now target the closest existing .claude/wo",
+        "Improved auto mode: subagent spawns are now evaluated by the classifier before launch, closing a gap where a subagent could request a blocked action without review",
+        "Improved /doctor with consistent flat tree layout across all sections, clearer section status icons, and highlighted command names",
+        "Improved the skill listing truncation warning to show how many skill descriptions are affected",
+        "Changed the workflow prompt keyword to use a purple shimmer highlight and trigger only on explicit phrases like \"run a workflow\" or \"workflow:\", not on any mention of the word",
+        "Improved Remote Control error messages: connection failures now show a persistent red \"/rc failed\" indicator in the footer, and the \"not yet enabled\" error now explains whether it's a gate, a check fa"
+      ],
+      "deprecations": [
+        "Fixed several subagent issues: viewing a subagent's transcript now shows tool results and live progress, messages sent while it finishes its turn are no longer dropped, and backgrounding a running sub"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.178",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.177",
+      "tag": "v2.1.177",
+      "date": "2026-06-13",
+      "features": [],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.177",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.176",
+      "tag": "v2.1.176",
+      "date": "2026-06-12",
+      "features": [
+        "Session titles are now generated in the language of your conversation (set the language setting to pin a specific language)",
+        "Added footerLinksRegexes setting for regex-matched link badges in the footer row, configurable via user or managed settings"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.176",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.175",
+      "tag": "v2.1.175",
+      "date": "2026-06-12",
+      "features": [
+        "Added enforceAvailableModels managed setting \u2014 when enabled, the availableModels allowlist also constrains the Default model (a Default that would resolve to a disallowed model now falls back to the f"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.175",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.174",
+      "tag": "v2.1.174",
+      "date": "2026-06-12",
+      "features": [
+        "Added wheelScrollAccelerationEnabled setting to disable mouse-wheel scroll acceleration in fullscreen mode",
+        "[VSCode] Added usage attribution to the Account & usage dialog (/usage) showing cache misses, long context, subagents, and per-skill/agent/plugin/MCP breakdowns over the last 24h or 7d"
+      ],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.174",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.173",
+      "tag": "v2.1.173",
+      "date": "2026-06-11",
+      "features": [],
+      "deprecations": [],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.173",
+      "prerelease": false
+    },
+    {
+      "version": "2.1.172",
+      "tag": "v2.1.172",
+      "date": "2026-06-10",
+      "features": [
+        "Sub-agents can now spawn their own sub-agents (up to 5 levels deep)",
+        "Amazon Bedrock now reads the AWS region from ~/.aws config files when AWS_REGION isn't set, matching AWS SDK precedence; /status shows where the region came from",
+        "Added a search bar when browsing a marketplace's plugins in /plugin",
+        "Added model attribute to the claude_code.lines_of_code.count OTEL metric",
+        "Improved the non-interactive Usage Policy refusal message to suggest starting a new session or changing your model",
+        "/code-review now keeps the ultra option visible when you're not signed in to claude.ai, with an explanation that the cloud review requires a claude.ai account",
+        "Shortened the Remote Control footer indicator to \"/rc active\" and hid it on narrow terminals",
+        "Stopped promoting /loop in remote sessions, where pending loops don't keep the container alive"
+      ],
+      "deprecations": [
+        "Fixed a repeating \"an image in the conversation could not be processed and was removed\" error when the conversation contained multiple images"
+      ],
+      "breaking_changes": [],
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.172",
+      "prerelease": false
+    },
+    {
       "version": "2.1.170",
       "tag": "v2.1.170",
       "date": "2026-06-09",
@@ -2108,6 +2757,6 @@
       "prerelease": false
     }
   ],
-  "last_modified": "2026-06-10T07:35:10.411022+00:00",
-  "total_releases": 127
+  "last_modified": "2026-07-27T06:16:42.655658+00:00",
+  "total_releases": 168
 }

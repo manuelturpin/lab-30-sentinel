@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-06-10T00:00:00Z",
+  "last_updated": "2026-07-27T07:41:28Z",
   "last_update_check": "2026-06-10T00:00:00Z",
   "update_check_interval_days": 3,
   "total_sources": 1,
-  "total_indexed_docs": 225,
+  "total_indexed_docs": 352,
   "update_history": [
     {
       "date": "2026-03-28",
@@ -76,7 +76,7 @@
       "recommendations_applied": 6,
       "exploitation_score_before": 94,
       "exploitation_score_after": 100,
-      "summary": "Applied 6 of 9 EIR recommendations (6 P1, 3 deferred P2/P3) for v2.1.108-111 + Opus 4.7 release. xhigh effort activated on sentinel-security. New KB rule LLM-DEBUG-001 for OTEL_LOG_RAW_API_BODIES leak (HIGH 7.5). Native /security-review + /ultrareview invocation in security Step 8. Cost monitoring: explicit haiku 4.5 / sonnet 4.6 / opus 4.7 tiers. Opus 4.7 Model Migration Notes in sentinel-evolve (temperature/top_p/top_k removed, budget_tokens→adaptive, new tokenizer +35%, cyber safeguards). Feature inventory: 123→151 (+28). CVE pipeline: +8999 NVD, +3 OSV, 46 patterns generated, 8 rules promoted active, 18 confidence updates, 57 propagation opportunities. Deferred: /ultrareview in evolve apply, push notifications, Opus 4.7 auto mode headless."
+      "summary": "Applied 6 of 9 EIR recommendations (6 P1, 3 deferred P2/P3) for v2.1.108-111 + Opus 4.7 release. xhigh effort activated on sentinel-security. New KB rule LLM-DEBUG-001 for OTEL_LOG_RAW_API_BODIES leak (HIGH 7.5). Native /security-review + /ultrareview invocation in security Step 8. Cost monitoring: explicit haiku 4.5 / sonnet 4.6 / opus 4.7 tiers. Opus 4.7 Model Migration Notes in sentinel-evolve (temperature/top_p/top_k removed, budget_tokens\u2192adaptive, new tokenizer +35%, cyber safeguards). Feature inventory: 123\u2192151 (+28). CVE pipeline: +8999 NVD, +3 OSV, 46 patterns generated, 8 rules promoted active, 18 confidence updates, 57 propagation opportunities. Deferred: /ultrareview in evolve apply, push notifications, Opus 4.7 auto mode headless."
     },
     {
       "date": "2026-05-29",
@@ -120,14 +120,14 @@
       },
       "claude_md_grade": "A",
       "exploitation_score": 37,
-      "note": "Static analysis only — session analyzer returned no data. Real exploitation likely ~50-60%."
+      "note": "Static analysis only \u2014 session analyzer returned no data. Real exploitation likely ~50-60%."
     },
     {
       "date": "2026-05-29",
       "scope": "global",
       "focus": "Opus 4.8 + Claude Code v2.1.154-156 readiness",
       "health_score": null,
-      "note": "Qualitative audit — feature-inventory.json frozen at 2026-04-16 (v2.1.111), does not yet include 4.8 features. Analysis from web research + static config inspection. Already exploited: Opus 4.8 1M, lean prompt (auto), xhigh effort (pinned), Dynamic Workflows (available), push-on-finish. Gaps: Dynamic Workflows (unused, P1), disallowed-tools frontmatter (unused, P1), fast mode 2.5x (unused, P2), /code-review --fix (unused, P2), API system-in-messages in SDK labs (P2). KB refresh (scan) needed to re-enable automated scoring. Report: audit-opus48-readiness-2026-05-29.md"
+      "note": "Qualitative audit \u2014 feature-inventory.json frozen at 2026-04-16 (v2.1.111), does not yet include 4.8 features. Analysis from web research + static config inspection. Already exploited: Opus 4.8 1M, lean prompt (auto), xhigh effort (pinned), Dynamic Workflows (available), push-on-finish. Gaps: Dynamic Workflows (unused, P1), disallowed-tools frontmatter (unused, P1), fast mode 2.5x (unused, P2), /code-review --fix (unused, P2), API system-in-messages in SDK labs (P2). KB refresh (scan) needed to re-enable automated scoring. Report: audit-opus48-readiness-2026-05-29.md"
     }
   ]
 }

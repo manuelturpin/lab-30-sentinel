@@ -2,7 +2,7 @@
 name: sentinel-security
 description: Audit de cybersecurite complet pour tout projet (web, API, mobile, infra, DB, IA/LLM). Detecte le stack, dispatche 12 agents specialises en parallele, consulte une KB de 4000+ regles enrichie par RAG, et produit un rapport SARIF 2.1.0 avec scoring CVSS v4 + EPSS et remediations. Couvre OWASP Top 10 Web/API/LLM/Mobile, MITRE ATLAS, CWE-25, NIST AI RMF.
 user_invocable: true
-effort: xhigh
+effort: high
 keep-coding-instructions: true
 paths:
   - "**/package.json"
@@ -79,7 +79,7 @@ Launch Agent(
 
 For simpler projects, skip directly to stack detection.
 
-Use an **Explore subagent** (Haiku-based, fast and cheap) to detect the stack — this preserves the main context window:
+Use an **Explore subagent** to detect the stack — this preserves the main context window. Note (v2.1.198): the built-in Explore agent now **inherits the main session's model** (capped at `opus`) instead of running on Haiku, so this step is no longer the cheap probe it used to be — budget it accordingly.
 
 ```
 Launch Agent(
@@ -125,13 +125,21 @@ Then map the detected files to agents using this table:
 |------|-------|--------|
 | **Heavy** (complex analysis) | *inherit session model* | web-audit, api-audit, llm-ai-audit, supply-chain-audit, mobile-audit |
 | **Medium** (structured analysis) | `sonnet` | database-audit, infrastructure-audit, data-privacy-audit |
-| **Light** (pattern checks) | `haiku` | cors-audit, ssl-tls-audit, static-site-audit, websocket-audit |
+| **Light** (pattern checks) | `sonnet` | cors-audit, ssl-tls-audit, static-site-audit, websocket-audit |
+
+> Doctrine machine (19/07/2026) : **opus ou sonnet exclusivement, plus jamais haiku**. `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` écrase de toute façon le modèle demandé par agent — les tiers ci-dessus sont donc indicatifs tant que cette variable est posée.
 
 **Security hardening** — set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` before dispatching agents to prevent credential leakage from subprocess environments during scans. On Linux, this also enables PID namespace isolation for subprocess sandboxing (v2.1.98+). Additionally, set `CLAUDE_CODE_SCRIPT_CAPS=500` to limit per-session script invocations — prevents runaway agent execution.
 
-**Cost monitoring** — Sentinel dispatches agents across multiple model tiers (haiku 4.5 for light checks, sonnet 4.6 for mid-tier DB/infra/privacy, Opus 4.8 for deep analysis — the default unspecified tier inherits the session model, i.e. Opus 4.8 when running on the current default, which itself defaults to **high** effort since v2.1.154). Use `/cost` for the per-model breakdown and cache-hit ratio (v2.1.92+), or `/usage` for a per-category breakdown across skills, subagents, plugins, and per-MCP-server cost (v2.1.149+) — this helps optimize agent tier assignments and identify expensive scans. Note: the Opus 4.7+ tokenizer may use +35% tokens vs 4.6 — increase max_tokens headroom accordingly.
+**Cost monitoring** — Sentinel dispatches agents across multiple model tiers (Sonnet 5 for light and mid-tier checks, Opus 5 for deep analysis — the default unspecified tier inherits the session model). Current defaults: **Sonnet 5** is the default Claude Code model since v2.1.197, **Opus 5** the default Opus model since v2.1.219, and `high` is the default effort *and* the recommended baseline — `xhigh` is an escalation, not a starting point. Use `/cost` for the per-model breakdown and cache-hit ratio (v2.1.92+), or `/usage` for a per-category breakdown across skills, subagents, plugins, and per-MCP-server cost (v2.1.149+) — this helps optimize agent tier assignments and identify expensive scans. Note: the Opus 4.7+ tokenizer may use +35% tokens vs 4.6 — increase max_tokens headroom accordingly.
 
-**Model choice — do NOT orchestrate Sentinel on Fable 5.** Claude Fable 5 (`claude-fable-5`, v2.1.170+) is the most capable GA model, but it ships a **real-time cyber/biology safety classifier** that flags security content and **auto-switches the session to Opus 4.8** (false positives are common — Anthropic's own warning). Because Sentinel's work *is* cybersecurity (CVE, attack surfaces, exploit/injection patterns), orchestrating it on Fable 5 trips the classifier continuously. **Keep Sentinel's orchestrator on Opus 4.8** (pin it via a project `.claude/settings.json` `"model"` while a global Fable 5 default stays for non-security work), or — for legitimate *defensive* use — apply to the [Cyber Verification Program](https://claude.com/form/cyber-use-case) to lift the restriction. Fable 5 remains usable for non-flagged subtasks (it is the documented top tier); the constraint is specifically about the session orchestrator on security content.
+**Model choice — do NOT orchestrate Sentinel on Fable 5.** Claude Fable 5 (`claude-fable-5`, v2.1.170+) is the most capable GA model, but it ships a **real-time cyber/biology safety classifier** that flags security content and **auto-switches the session to Opus 4.8** (false positives are common — Anthropic's own warning). Because Sentinel's work *is* cybersecurity (CVE, attack surfaces, exploit/injection patterns), orchestrating it on Fable 5 trips the classifier continuously. **Keep Sentinel's orchestrator on Opus** — use the `opus` alias, which resolves to the current Opus model (Opus 5 since 2026-07-24). Do **not** pin a literal version such as `claude-opus-4-8`: that now downgrades the session instead of protecting it. Pin via a project `.claude/settings.json` `"model": "opus"` only if a non-Opus global default is in place. For legitimate *defensive* use, apply to the [Cyber Verification Program](https://claude.com/form/cyber-use-case) to lift the restriction. Fable 5 remains usable for non-flagged subtasks (it is the documented top tier); the constraint is specifically about the session orchestrator on security content.
+
+> **Note Opus 5 (25/07/2026)** : les classifieurs de cybersécurité sont **renforcés** sur Opus 5, pas assouplis. Le risque de refus sur du contenu sécurité augmente. Gérer `stop_reason: "refusal"` avant de lire le contenu d'une réponse, et envisager `fallbacks: "default"`. Corollaire pour les rapports d'agents : ne jamais demander « ne remonte que le high-severity » — Opus 5 suit les filtres de sévérité **littéralement**, ce qui fait chuter le recall. Tout remonter, filtrer en aval.
+>
+> ⚠️ Ces deux consignes sont pour l'instant **documentaires** : aucune branche de traitement de `stop_reason: "refusal"` ni filtre de sévérité aval n'est implémenté dans l'étape 3 d'agrégation. Un agent qui refuse produit aujourd'hui un JSON invalide, avalé par le `WARNING: did not return valid JSON` — un scan partiellement refusé peut donc rendre zéro finding et paraître propre. À implémenter avant de s'appuyer sur ces notes. *(Finding S3 de la revue croisée du 27/07.)*
+
+> **Portée de la contrainte (mesuré le 27/07/2026)** : elle vise l'**orchestrateur en fonctionnement** sur du contenu d'exploit, pas tout appel touchant à la sécurité. Sonde `claude -p --model claude-fable-5` sur une question d'*architecture* de scanner : réponse rendue par `canonicalModel: "claude-fable-5"`, contexte 1M, aucun basculement ni refus. Un appel de revue borné et cadré sur l'architecture/le design reste donc exploitable sur Fable 5 — à condition d'instrumenter `canonicalModel` à chaque appel plutôt que de présumer l'absence de bascule (n=1).
 
 **Progress tracking** — before dispatching, create a task for each agent using TaskCreate so the user can see scan progress. Update each task to completed when the agent returns.
 
@@ -143,12 +151,12 @@ For each agent in detected_agents:
   Launch Agent(
     subagent_type: "general-purpose",
     name: "{agent}",
-    model: "haiku" if agent in [cors-audit, ssl-tls-audit, static-site-audit, websocket-audit] else "sonnet" if agent in [database-audit, infrastructure-audit, data-privacy-audit] else omit,
+    model: "sonnet" if agent in [cors-audit, ssl-tls-audit, static-site-audit, websocket-audit, database-audit, infrastructure-audit, data-privacy-audit] else omit,
     initialPrompt: "Begin audit now.",
     prompt: "You are a security audit agent. Follow these steps exactly:
       0. Check your memory for known false positives in this project — skip any pattern/file combination you previously confirmed as false positive
-      1. Read your agent instructions at /Users/manuelturpin/.claude/skills/security/agents/{agent}.md
-      2. Read the common execution protocol at /Users/manuelturpin/.claude/skills/security/agents/_protocol.md
+      1. Read your agent instructions at /Users/manuelturpin/.claude/skills/sentinel-security/agents/{agent}.md
+      2. Read the common execution protocol at /Users/manuelturpin/.claude/skills/sentinel-security/agents/_protocol.md
       3. Audit the project at {target_path} following your Execution Protocol
       4. Use Read + Grep + Bash for KB pattern scanning (read rules.json, grep patterns, enrich via RAG)
       5. Only use MCP tools if your agent lists them (scan-dependencies for supply-chain, scan-headers for web/cors/ssl/static) — MCP tools are inherited automatically from the parent session (v2.1.101+)
@@ -505,7 +513,7 @@ Configure a **ConfigChange hook** to auto-trigger `deploy.sh` when KB rules or s
 Watched paths: `knowledge-base/domains/*/rules.json`, `skills/security/SKILL.md`, `skills/security/agents/*.md`
 
 When triggered:
-1. Run `bash scripts/deploy.sh` to sync changes to `~/.claude/skills/security/` and `~/.sentinel/`
+1. Run `DRY_RUN=0 bash scripts/deploy.sh` to sync changes to `~/.claude/skills/sentinel-security/` and `~/.sentinel/` — **`DRY_RUN=0` is mandatory**: the script defaults to `DRY_RUN=1` since 2026-04-17 (H3 audit fix), so the bare `bash scripts/deploy.sh` is a silent no-op. This hook has been dead since that change. *(Finding S1b de la revue croisée du 27/07.)*
 2. Log the deploy result
 
 This uses Claude Code's ConfigChange hook event (v2.1.50+) and eliminates forgetting to run `deploy.sh` after edits.

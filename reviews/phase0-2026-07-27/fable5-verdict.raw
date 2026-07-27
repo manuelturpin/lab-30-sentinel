@@ -1,0 +1,3 @@
+Le grep récursif de fond a terminé : `FIND-001` n'apparaît que dans les deux fichiers d'archive (`reports/archive/EIR-2026-07-27.{md,json}`) et dans le mandat lui-même — aucune occurrence ailleurs dans le dépôt. Cela confirme le finding central de ma revue : FIND-001 est bien absent de la version du rapport fournie au corpus (`reviews/phase0-2026-07-27/EIR-2026-07-27.md`) et ne vit que dans l'archive postérieure.
+
+Aucune donnée nouvelle ne contredit le verdict rendu. La revue reste : **revise**, avec le JSON livré au tour précédent comme réponse finale du mandat.

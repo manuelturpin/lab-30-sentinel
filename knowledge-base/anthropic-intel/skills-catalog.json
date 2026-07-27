@@ -38,7 +38,7 @@
     },
     {
       "path": "skills/claude-api/SKILL.md",
-      "sha": "c4c35ce46291221e2560373a58084704452ba74c",
+      "sha": "6ddbf0b48d0a55a3065ae870556c9d77fc310a58",
       "name": "claude-api",
       "description": "|-",
       "frontmatter_keys": [
@@ -48,7 +48,7 @@
         "SKIP only when another provider is being worked on (overrides all triggers)",
         "license"
       ],
-      "size_bytes": 42031
+      "size_bytes": 71590
     },
     {
       "path": "skills/doc-coauthoring/SKILL.md",
@@ -63,15 +63,15 @@
     },
     {
       "path": "skills/docx/SKILL.md",
-      "sha": "2951e559989765293b6fbf83942378a3c2d0cba6",
+      "sha": "fb954a460a1ea2294e9595e87fecce8df043eeba",
       "name": "docx",
-      "description": "\"Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files). Triggers include: any mention of 'Word doc', 'word document', '.docx', or requests to produce professional documents with formatting like tables of contents, headings, page numbers, or letterheads. Also use when extracting or reorganizing content from .docx files, inserting or replacing images in documents, performing find-and-replace in Word files, working with tracked changes or comments, or converting content into a polished Word document. If the user asks for a 'report', 'memo', 'letter', 'template', or similar deliverable as a Word or .docx file, use this skill. Do NOT use for PDFs, spreadsheets, Google Docs, or general coding tasks unrelated to document generation.\"",
+      "description": "\"Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx files). Triggers include: any mention of 'Word doc', 'word document', '.docx', '.dotx', or requests to produce professional documents with formatting like tables of contents, headings, page numbers, or letterheads. Also use when extracting or reorganizing content from .docx or .dotx files, inserting or replacing images in documents, performing find-and-replace in Word files, working with tracked changes or comments, or converting content into a polished Word document. If the user asks for a 'report', 'memo', 'letter', 'template', or similar deliverable as a Word or .docx file, use this skill. Do NOT use for PDFs, spreadsheets, Google Docs, or general coding tasks unrelated to document generation.\"",
       "frontmatter_keys": [
         "name",
         "description",
         "license"
       ],
-      "size_bytes": 20084
+      "size_bytes": 6911
     },
     {
       "path": "skills/frontend-design/SKILL.md",
@@ -123,15 +123,15 @@
     },
     {
       "path": "skills/pptx/SKILL.md",
-      "sha": "df5000e17ef60ecf400e65bfcd3c58ff88b604c3",
+      "sha": "41cd2306977f269bb1d8169a9643b35053aa66bd",
       "name": "pptx",
-      "description": "\"Use this skill any time a .pptx file is involved in any way \u2014 as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx file (even if the extracted content will be used elsewhere, like in an email or summary); editing, modifying, or updating existing presentations; combining or splitting slide files; working with templates, layouts, speaker notes, or comments. Trigger whenever the user mentions \\\"deck,\\\" \\\"slides,\\\" \\\"presentation,\\\" or references a .pptx filename, regardless of what they plan to do with the content afterward. If a .pptx file needs to be opened, created, or touched, use this skill.\"",
+      "description": "\"Use this skill any time a .pptx or .potx file is involved in any way \u2014 as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx or .potx file (even if the extracted content will be used elsewhere, like in an email or summary); editing, modifying, or updating existing presentations; combining or splitting slide files; working with templates (.potx), layouts, speaker notes, or comments. Trigger whenever the user mentions \\\"deck,\\\" \\\"slides,\\\" \\\"presentation,\\\" or references a .pptx or .potx filename, regardless of what they plan to do with the content afterward. If a .pptx or .potx file needs to be opened, created, or touched, use this skill.\"",
       "frontmatter_keys": [
         "name",
         "description",
         "license"
       ],
-      "size_bytes": 9182
+      "size_bytes": 20796
     },
     {
       "path": "skills/skill-creator/SKILL.md",
@@ -194,15 +194,15 @@
     },
     {
       "path": "skills/xlsx/SKILL.md",
-      "sha": "c5c881be9ebaa2bfcdd02f97de2ebd711ab78803",
+      "sha": "9da54804cc8c938586f89363c8da3b3a6e2a563d",
       "name": "xlsx",
-      "description": "\"Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .csv, or .tsv file (e.g., adding columns, computing formulas, formatting, charting, cleaning messy data); create a new spreadsheet from scratch or from other data sources; or convert between tabular file formats. Trigger especially when the user references a spreadsheet file by name or path \u2014 even casually (like \\\"the xlsx in my downloads\\\") \u2014 and wants something done to it or produced from it. Also trigger for cleaning or restructuring messy tabular data files (malformed rows, misplaced headers, junk data) into proper spreadsheets. The deliverable must be a spreadsheet file. Do NOT trigger when the primary deliverable is a Word document, HTML report, standalone Python script, database pipeline, or Google Sheets API integration, even if tabular data is involved.\"",
+      "description": "\"Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .xltx, .csv, or .tsv file (e.g., adding columns, computing formulas, formatting, charting, cleaning messy data); create a new spreadsheet from scratch or from other data sources; or convert between tabular file formats. Trigger especially when the user references a spreadsheet file by name or path \u2014 even casually (like \\\"the xlsx in my downloads\\\") \u2014 and wants something done to it or produced from it. Also trigger for cleaning or restructuring messy tabular data files (malformed rows, misplaced headers, junk data) into proper spreadsheets. The deliverable must be a spreadsheet file. Do NOT trigger when the primary deliverable is a Word document, HTML report, standalone Python script, database pipeline, or Google Sheets API integration, even if tabular data is involved.\"",
       "frontmatter_keys": [
         "name",
         "description",
         "license"
       ],
-      "size_bytes": 11463
+      "size_bytes": 8598
     },
     {
       "path": "template/SKILL.md",
@@ -216,6 +216,6 @@
       "size_bytes": 140
     }
   ],
-  "last_modified": "2026-06-10T07:35:14.955981+00:00",
+  "last_modified": "2026-07-27T06:16:49.517551+00:00",
   "total_skills": 18
 }

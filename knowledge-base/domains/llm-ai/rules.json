@@ -20,8 +20,17 @@
         "validate_input\\(",
         "escape_prompt\\("
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test", "__pycache__"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test",
+        "__pycache__"
+      ]
     },
     "remediation": {
       "description": "Use structured message formats (system/user/assistant roles) instead of string concatenation. Apply input validation and length limits. Use frameworks with built-in prompt injection defenses.",
@@ -31,9 +40,19 @@
         "https://simonwillison.net/2023/Apr/14/worst-that-can-happen/"
       ]
     },
-    "standards": ["CWE-77", "CWE-74", "OWASP-LLM01:2025", "AML.T0051"],
+    "standards": [
+      "CWE-77",
+      "CWE-74",
+      "OWASP-LLM01:2025",
+      "AML.T0051"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex", "openai", "anthropic"]
+    "frameworks": [
+      "langchain",
+      "llamaindex",
+      "openai",
+      "anthropic"
+    ]
   },
   {
     "id": "LLM-PROMPT-002",
@@ -56,8 +75,16 @@
         "content_filter\\(",
         "validate_source\\("
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Sanitize document content before embedding. Implement content filtering on ingested documents. Use canary tokens to detect instruction injection in documents. Separate data context from instruction context.",
@@ -67,9 +94,18 @@
         "https://embracethered.com/blog/posts/2023/chatgpt-plugin-vulnerabilities-chat-with-code/"
       ]
     },
-    "standards": ["CWE-74", "CWE-94", "OWASP-LLM01:2025", "OWASP-LLM04:2025", "AML.T0051"],
+    "standards": [
+      "CWE-74",
+      "CWE-94",
+      "OWASP-LLM01:2025",
+      "OWASP-LLM04:2025",
+      "AML.T0051"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex"]
+    "frameworks": [
+      "langchain",
+      "llamaindex"
+    ]
   },
   {
     "id": "LLM-INFO-001",
@@ -91,8 +127,18 @@
         "mask_pii\\(",
         "REDACTED"
       ],
-      "file_types": ["*.py", "*.ts", "*.js", "*.yaml", "*.yml"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js",
+        "*.yaml",
+        "*.yml"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Implement PII detection and redaction before passing data to the LLM. Use data loss prevention (DLP) filters on both input and output. Never include real credentials in prompts.",
@@ -101,9 +147,18 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-200", "CWE-532", "OWASP-LLM02:2025"],
+    "standards": [
+      "CWE-200",
+      "CWE-532",
+      "OWASP-LLM02:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex", "openai", "anthropic"]
+    "frameworks": [
+      "langchain",
+      "llamaindex",
+      "openai",
+      "anthropic"
+    ]
   },
   {
     "id": "LLM-SUPPLY-001",
@@ -126,8 +181,15 @@
         "verify_hash\\(",
         "revision\\s*="
       ],
-      "file_types": ["*.py"],
-      "exclude": ["node_modules", "dist", "test", "__pycache__"]
+      "file_types": [
+        "*.py"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test",
+        "__pycache__"
+      ]
     },
     "remediation": {
       "description": "Always pin model revisions with commit hashes. Set trust_remote_code=False. Use safetensors format instead of pickle-based formats. Verify model checksums before loading.",
@@ -137,9 +199,17 @@
         "https://huggingface.co/docs/hub/security"
       ]
     },
-    "standards": ["CWE-494", "CWE-502", "OWASP-LLM03:2025", "AML.T0043"],
+    "standards": [
+      "CWE-494",
+      "CWE-502",
+      "OWASP-LLM03:2025",
+      "AML.T0043"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex"]
+    "frameworks": [
+      "langchain",
+      "llamaindex"
+    ]
   },
   {
     "id": "LLM-POISON-001",
@@ -161,8 +231,16 @@
         "data_integrity_check\\(",
         "checksum_verify\\("
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Validate training data provenance and integrity. Use checksums for data files. Implement data quality checks and outlier detection. Curate data from trusted sources only.",
@@ -171,9 +249,17 @@
         "https://atlas.mitre.org/techniques/AML.T0020"
       ]
     },
-    "standards": ["CWE-345", "CWE-494", "OWASP-LLM04:2025", "AML.T0043"],
+    "standards": [
+      "CWE-345",
+      "CWE-494",
+      "OWASP-LLM04:2025",
+      "AML.T0043"
+    ],
     "ai_specific": true,
-    "frameworks": ["openai", "anthropic"]
+    "frameworks": [
+      "openai",
+      "anthropic"
+    ]
   },
   {
     "id": "LLM-OUTPUT-001",
@@ -195,8 +281,18 @@
         "escape_html\\(",
         "DOMPurify"
       ],
-      "file_types": ["*.py", "*.ts", "*.js", "*.tsx", "*.jsx"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js",
+        "*.tsx",
+        "*.jsx"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Always sanitize LLM output before rendering in web contexts. Never execute LLM output as code without sandboxing. Use allowlists for any structured output (JSON schema validation).",
@@ -205,9 +301,19 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-79", "CWE-94", "CWE-78", "OWASP-LLM05:2025"],
+    "standards": [
+      "CWE-79",
+      "CWE-94",
+      "CWE-78",
+      "OWASP-LLM05:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex", "openai", "anthropic"]
+    "frameworks": [
+      "langchain",
+      "llamaindex",
+      "openai",
+      "anthropic"
+    ]
   },
   {
     "id": "LLM-AGENCY-001",
@@ -232,8 +338,16 @@
         "human_approval\\(",
         "confirm_action\\("
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Restrict agent capabilities to the minimum needed. Use allowlists for commands and file paths. Implement mandatory human-in-the-loop for destructive actions. Sandbox code execution environments.",
@@ -242,9 +356,18 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-250", "CWE-269", "OWASP-LLM06:2025"],
+    "standards": [
+      "CWE-250",
+      "CWE-269",
+      "OWASP-LLM06:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex", "claude-code", "cursor"]
+    "frameworks": [
+      "langchain",
+      "llamaindex",
+      "claude-code",
+      "cursor"
+    ]
   },
   {
     "id": "LLM-AGENCY-002",
@@ -267,8 +390,16 @@
         "domain_allowlist",
         "egress_filter\\("
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Implement domain allowlists for all agent network access. Use egress filtering to prevent connections to unknown hosts. Log all outbound requests for audit.",
@@ -277,9 +408,17 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-918", "CWE-441", "OWASP-LLM06:2025"],
+    "standards": [
+      "CWE-918",
+      "CWE-441",
+      "OWASP-LLM06:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex", "claude-code"]
+    "frameworks": [
+      "langchain",
+      "llamaindex",
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-LEAK-001",
@@ -301,8 +440,16 @@
         "instruction_defense",
         "do not reveal.*system.*prompt"
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Add instruction defense in system prompts. Implement output filtering to detect system prompt content in responses. Use prompt guards and canary tokens to detect extraction attempts.",
@@ -311,9 +458,17 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-200", "CWE-497", "OWASP-LLM07:2025"],
+    "standards": [
+      "CWE-200",
+      "CWE-497",
+      "OWASP-LLM07:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["openai", "anthropic", "langchain"]
+    "frameworks": [
+      "openai",
+      "anthropic",
+      "langchain"
+    ]
   },
   {
     "id": "LLM-EMBED-001",
@@ -337,8 +492,16 @@
         "access_control",
         "metadata_filter.*(?:user_id|org_id)"
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Implement tenant isolation using namespaces or metadata filters. Require authentication for vector DB access. Apply RBAC to control which embeddings each user can query.",
@@ -347,9 +510,16 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-284", "CWE-862", "OWASP-LLM08:2025"],
+    "standards": [
+      "CWE-284",
+      "CWE-862",
+      "OWASP-LLM08:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex"]
+    "frameworks": [
+      "langchain",
+      "llamaindex"
+    ]
   },
   {
     "id": "LLM-MISINFO-001",
@@ -371,8 +541,16 @@
         "confidence_score",
         "verification_required"
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Implement human-in-the-loop for high-stakes decisions. Add confidence scoring and uncertainty indicators. Use retrieval-augmented generation with cited sources. Never use LLM output as sole decision maker for critical domains.",
@@ -381,9 +559,17 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-754", "OWASP-LLM09:2025"],
+    "standards": [
+      "CWE-754",
+      "OWASP-LLM09:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex", "openai", "anthropic"]
+    "frameworks": [
+      "langchain",
+      "llamaindex",
+      "openai",
+      "anthropic"
+    ]
   },
   {
     "id": "LLM-CONSUME-001",
@@ -407,8 +593,16 @@
         "cost_limit",
         "max_retries\\s*="
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Set max_tokens on all API calls. Implement rate limiting per user/session. Set cost budgets and alerting. Add circuit breakers for recursive or looping LLM calls.",
@@ -417,9 +611,17 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-400", "CWE-770", "OWASP-LLM10:2025"],
+    "standards": [
+      "CWE-400",
+      "CWE-770",
+      "OWASP-LLM10:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["openai", "anthropic", "langchain"]
+    "frameworks": [
+      "openai",
+      "anthropic",
+      "langchain"
+    ]
   },
   {
     "id": "LLM-MCP-001",
@@ -443,8 +645,19 @@
         "sandbox_mcp\\(",
         "audit_tools\\("
       ],
-      "file_types": ["*.py", "*.ts", "*.js", "*.json", "*.yaml", "*.yml"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js",
+        "*.json",
+        "*.yaml",
+        "*.yml"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Only connect to trusted, audited MCP servers. Review all tool descriptions for hidden instructions. Implement tool allowlists and capability restrictions. Sandbox MCP tool execution.",
@@ -454,9 +667,18 @@
         "https://modelcontextprotocol.io/docs/concepts/security"
       ]
     },
-    "standards": ["CWE-94", "CWE-829", "OWASP-LLM06:2025", "AML.T0057"],
+    "standards": [
+      "CWE-94",
+      "CWE-829",
+      "OWASP-LLM06:2025",
+      "AML.T0057"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code", "cursor", "langchain"]
+    "frameworks": [
+      "claude-code",
+      "cursor",
+      "langchain"
+    ]
   },
   {
     "id": "LLM-MCP-002",
@@ -479,8 +701,20 @@
         "# Security review completed",
         "audit_config\\("
       ],
-      "file_types": ["*.md", "*.txt", "*.yaml", "*.yml"],
-      "exclude": ["node_modules", "dist", "docs", "plans", "README.md", "CHANGELOG.md"]
+      "file_types": [
+        "*.md",
+        "*.txt",
+        "*.yaml",
+        "*.yml"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "docs",
+        "plans",
+        "README.md",
+        "CHANGELOG.md"
+      ]
     },
     "remediation": {
       "description": "Audit all agent configuration files for hidden instructions. Review CLAUDE.md, SKILL.md, and .cursorrules files in dependencies and cloned repos. Implement integrity checks on agent configuration files.",
@@ -489,9 +723,17 @@
         "https://blog.trailofbits.com/2024/10/24/ai-coding-assistants-threats/"
       ]
     },
-    "standards": ["CWE-94", "CWE-829", "OWASP-LLM03:2025", "AML.T0056"],
+    "standards": [
+      "CWE-94",
+      "CWE-829",
+      "OWASP-LLM03:2025",
+      "AML.T0056"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code", "cursor"]
+    "frameworks": [
+      "claude-code",
+      "cursor"
+    ]
   },
   {
     "id": "LLM-OUTPUT-002",
@@ -514,8 +756,16 @@
         "static_analysis\\(",
         "human_approval\\("
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Never execute LLM-generated code directly. Use sandboxed execution environments (Docker, gVisor, WebAssembly). Implement code review gates and static analysis before execution.",
@@ -524,9 +774,17 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-94", "CWE-78", "OWASP-LLM05:2025"],
+    "standards": [
+      "CWE-94",
+      "CWE-78",
+      "OWASP-LLM05:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex", "claude-code"]
+    "frameworks": [
+      "langchain",
+      "llamaindex",
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-EMBED-002",
@@ -548,8 +806,16 @@
         "authenticate\\(",
         "rate_limit\\("
       ],
-      "file_types": ["*.py", "*.ts", "*.js"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.py",
+        "*.ts",
+        "*.js"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Require authentication for embedding endpoints. Implement rate limiting. Consider dimensionality reduction or noise injection to prevent inversion attacks. Do not expose raw embedding vectors publicly.",
@@ -558,9 +824,16 @@
         "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
       ]
     },
-    "standards": ["CWE-200", "CWE-284", "OWASP-LLM08:2025"],
+    "standards": [
+      "CWE-200",
+      "CWE-284",
+      "OWASP-LLM08:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["langchain", "llamaindex"]
+    "frameworks": [
+      "langchain",
+      "llamaindex"
+    ]
   },
   {
     "id": "LLM-HOOK-001",
@@ -587,8 +860,14 @@
         "localhost",
         "127\\.0\\.0\\.1"
       ],
-      "file_types": ["*.json", "settings.json"],
-      "exclude": ["node_modules", "dist"]
+      "file_types": [
+        "*.json",
+        "settings.json"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist"
+      ]
     },
     "remediation": {
       "description": "Review all hooks in .claude/settings.json before trusting a cloned repository. Add 'if' conditional guards (v2.1.85+) to restrict when hooks fire — this uses permission rule syntax (e.g., Bash(git *)) and prevents unnecessary process spawning. Never allow hooks to POST to external URLs without explicit review. Use 'matcher' to limit hooks to specific tool patterns.",
@@ -597,9 +876,16 @@
         "https://venturebeat.com/technology/claude-codes-source-code-appears-to-have-leaked-heres-what-we-know"
       ]
     },
-    "standards": ["CWE-94", "CWE-78", "OWASP-LLM06:2025", "AML.T0056"],
+    "standards": [
+      "CWE-94",
+      "CWE-78",
+      "OWASP-LLM06:2025",
+      "AML.T0056"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code"]
+    "frameworks": [
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-BASH-001",
@@ -632,8 +918,19 @@
         "security_check\\(",
         "sanitize_command\\("
       ],
-      "file_types": ["*.md", "*.json", "*.yaml", "*.yml", "*.sh", "*.zsh"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.md",
+        "*.json",
+        "*.yaml",
+        "*.yml",
+        "*.sh",
+        "*.zsh"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Sanitize all shell command inputs against Unicode zero-width characters, null bytes, and Zsh-specific expansion patterns. Use allowlists for permitted commands. Block dangerous Zsh builtins (zmodload, builtin, source with variables). Never construct shell commands from untrusted input.",
@@ -642,9 +939,16 @@
         "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/"
       ]
     },
-    "standards": ["CWE-78", "CWE-116", "OWASP-LLM06:2025"],
+    "standards": [
+      "CWE-78",
+      "CWE-116",
+      "OWASP-LLM06:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code", "cursor"]
+    "frameworks": [
+      "claude-code",
+      "cursor"
+    ]
   },
   {
     "id": "LLM-ENVLEAK-001",
@@ -671,8 +975,21 @@
         "# documentation",
         "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\\s*=\\s*1"
       ],
-      "file_types": [".env", ".env.*", "Dockerfile", "docker-compose.*", "*.yaml", "*.yml", "*.sh", "*.md"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        ".env",
+        ".env.*",
+        "Dockerfile",
+        "docker-compose.*",
+        "*.yaml",
+        "*.yml",
+        "*.sh",
+        "*.md"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Never commit security bypass env vars to version control. Use .env.example with placeholder values only. Audit CI/CD configs for variables that disable security features. Set CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1 to prevent credential leakage.",
@@ -681,9 +998,16 @@
         "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/"
       ]
     },
-    "standards": ["CWE-215", "CWE-489", "OWASP-LLM06:2025"],
+    "standards": [
+      "CWE-215",
+      "CWE-489",
+      "OWASP-LLM06:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code", "cursor"]
+    "frameworks": [
+      "claude-code",
+      "cursor"
+    ]
   },
   {
     "id": "LLM-STEALTH-001",
@@ -706,8 +1030,18 @@
         "# security policy",
         "# privacy requirement"
       ],
-      "file_types": ["*.md", "*.txt", "*.yaml", "*.yml", "*.json"],
-      "exclude": ["node_modules", "dist", "docs"]
+      "file_types": [
+        "*.md",
+        "*.txt",
+        "*.yaml",
+        "*.yml",
+        "*.json"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "docs"
+      ]
     },
     "remediation": {
       "description": "Require transparent AI attribution in all AI-assisted code. Use Co-Authored-By lines in commits. Maintain an AI disclosure policy for the project. Attribution suppression undermines code review trust and supply chain auditing.",
@@ -716,9 +1050,16 @@
         "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/"
       ]
     },
-    "standards": ["CWE-451", "OWASP-LLM03:2025"],
+    "standards": [
+      "CWE-451",
+      "OWASP-LLM03:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code", "cursor", "copilot"]
+    "frameworks": [
+      "claude-code",
+      "cursor",
+      "copilot"
+    ]
   },
   {
     "id": "LLM-SKILL-001",
@@ -743,8 +1084,18 @@
         "# read-only",
         "# safe command"
       ],
-      "file_types": ["SKILL.md", "*.md", "settings.json", "*.json"],
-      "exclude": ["node_modules", "dist", "test", "docs"]
+      "file_types": [
+        "SKILL.md",
+        "*.md",
+        "settings.json",
+        "*.json"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test",
+        "docs"
+      ]
     },
     "remediation": {
       "description": "Enable disableSkillShellExecution in settings.json for environments where untrusted skills are loaded. Audit all Bash tool invocations in SKILL.md files — ensure they are strictly necessary and use allowlists. For enterprise deployments, combine with managed-settings.json to enforce this policy org-wide.",
@@ -753,9 +1104,15 @@
         "https://docs.anthropic.com/en/docs/claude-code"
       ]
     },
-    "standards": ["CWE-78", "CWE-94", "OWASP-LLM06:2025"],
+    "standards": [
+      "CWE-78",
+      "CWE-94",
+      "OWASP-LLM06:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code"]
+    "frameworks": [
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-SANDBOX-001",
@@ -775,8 +1132,15 @@
         "failIfUnavailable.*true",
         "\"failIfUnavailable\"\\s*:\\s*true"
       ],
-      "file_types": ["settings.json", "*.json", ".claude/*"],
-      "exclude": ["node_modules", "dist"]
+      "file_types": [
+        "settings.json",
+        "*.json",
+        ".claude/*"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist"
+      ]
     },
     "remediation": {
       "description": "Add sandbox.failIfUnavailable: true to settings.json whenever sandbox mode is configured. This ensures that sandboxed execution is enforced — if the sandbox cannot start, the process exits with an error rather than silently running without isolation.",
@@ -785,9 +1149,15 @@
         "https://docs.anthropic.com/en/docs/claude-code"
       ]
     },
-    "standards": ["CWE-693", "CWE-269", "OWASP-LLM06:2025"],
+    "standards": [
+      "CWE-693",
+      "CWE-269",
+      "OWASP-LLM06:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code"]
+    "frameworks": [
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-PLUGIN-001",
@@ -807,8 +1177,14 @@
         "allowedChannelPlugins",
         "\"allowedChannelPlugins\""
       ],
-      "file_types": ["*.json", "*.plist"],
-      "exclude": ["node_modules", "dist"]
+      "file_types": [
+        "*.json",
+        "*.plist"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist"
+      ]
     },
     "remediation": {
       "description": "Add an allowedChannelPlugins list to managed-settings.json specifying which plugins are approved for the organization. Plugins not in the list cannot be installed and are hidden from marketplace. Combine with managed-settings.d/ for per-team plugin policies.",
@@ -817,9 +1193,15 @@
         "https://docs.anthropic.com/en/docs/claude-code"
       ]
     },
-    "standards": ["CWE-284", "CWE-269", "OWASP-LLM09:2025"],
+    "standards": [
+      "CWE-284",
+      "CWE-269",
+      "OWASP-LLM09:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code"]
+    "frameworks": [
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-MCP-003",
@@ -839,8 +1221,17 @@
       "negative_patterns": [
         "# intentionally verbose"
       ],
-      "file_types": ["*.ts", "*.js", "*.py", "*.json"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        "*.ts",
+        "*.js",
+        "*.py",
+        "*.json"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Keep MCP tool descriptions under 2KB. For OpenAPI-generated servers, override auto-generated descriptions with concise summaries. Claude Code v2.1.84+ truncates at 2KB — design for this limit proactively.",
@@ -849,9 +1240,15 @@
         "https://docs.anthropic.com/en/docs/claude-code"
       ]
     },
-    "standards": ["CWE-400", "OWASP-LLM10:2025"],
+    "standards": [
+      "CWE-400",
+      "OWASP-LLM10:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code", "mcp"]
+    "frameworks": [
+      "claude-code",
+      "mcp"
+    ]
   },
   {
     "id": "LLM-MGMT-001",
@@ -873,8 +1270,15 @@
         "forceRemoteSettingsRefresh.*true",
         "forceRemoteSettingsRefresh.*:\\s*true"
       ],
-      "file_types": ["*.json", "*.plist", "*.md"],
-      "exclude": ["node_modules", "dist"]
+      "file_types": [
+        "*.json",
+        "*.plist",
+        "*.md"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist"
+      ]
     },
     "remediation": {
       "description": "Enable forceRemoteSettingsRefresh in managed settings to ensure the CLI always starts with the latest policy. Combine with sandbox.failIfUnavailable for defense-in-depth. For air-gapped environments, maintain a local managed-settings.json as fallback.",
@@ -883,9 +1287,16 @@
         "https://docs.anthropic.com/en/docs/claude-code/enterprise"
       ]
     },
-    "standards": ["CWE-1188", "OWASP-LLM09:2025", "NIST-AI-RMF-GV-1.1"],
+    "standards": [
+      "CWE-1188",
+      "OWASP-LLM09:2025",
+      "NIST-AI-RMF-GV-1.1"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code", "enterprise"]
+    "frameworks": [
+      "claude-code",
+      "enterprise"
+    ]
   },
   {
     "id": "LLM-PERM-002",
@@ -905,8 +1316,16 @@
         "permissions\\.deny",
         "permissionDecision.*['\"]deny['\"]"
       ],
-      "file_types": ["*.json", "*.md", "*.js", "*.ts"],
-      "exclude": ["node_modules", "dist"]
+      "file_types": [
+        "*.json",
+        "*.md",
+        "*.js",
+        "*.ts"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist"
+      ]
     },
     "remediation": {
       "description": "Add explicit permissions.deny rules alongside PreToolUse hooks. Do not rely solely on hooks returning 'ask' for security gating — use deny rules as the primary enforcement and hooks as supplementary checks.",
@@ -915,9 +1334,14 @@
         "https://github.com/anthropics/claude-code/releases/tag/v2.1.101"
       ]
     },
-    "standards": ["CWE-863", "OWASP-LLM09:2025"],
+    "standards": [
+      "CWE-863",
+      "OWASP-LLM09:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code"]
+    "frameworks": [
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-CAPS-001",
@@ -941,8 +1365,17 @@
         "script_caps",
         "maxTurns"
       ],
-      "file_types": ["*.md", "*.json", "*.sh", "*.yaml", "*.yml"],
-      "exclude": ["node_modules", "dist"]
+      "file_types": [
+        "*.md",
+        "*.json",
+        "*.sh",
+        "*.yaml",
+        "*.yml"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist"
+      ]
     },
     "remediation": {
       "description": "Set CLAUDE_CODE_SCRIPT_CAPS environment variable to limit the maximum number of shell script invocations per session. Combine with maxTurns agent frontmatter for defense-in-depth. Recommended value: 100-500 depending on workflow complexity.",
@@ -951,9 +1384,15 @@
         "https://github.com/anthropics/claude-code/releases/tag/v2.1.98"
       ]
     },
-    "standards": ["CWE-770", "OWASP-LLM10:2025", "NIST-AI-RMF-MS-2.6"],
+    "standards": [
+      "CWE-770",
+      "OWASP-LLM10:2025",
+      "NIST-AI-RMF-MS-2.6"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code"]
+    "frameworks": [
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-DEBUG-001",
@@ -962,7 +1401,7 @@
     "category": "llm-ai",
     "subcategory": "debug-leakage",
     "title": "OTEL debug logging enabled — leaks prompts, thinking, tool parameters, and tool results",
-    "description": "Claude Code OTEL debug-logging env vars emit sensitive content as OpenTelemetry log events / span attributes. OTEL_LOG_RAW_API_BODIES=1 (v2.1.111+) emits full request and response bodies (prompts, thinking, assistant responses). OTEL_LOG_TOOL_DETAILS=1 (v2.1.101+) logs tool parameters into spans — and since v2.1.157 also into tool_decision events — exposing Bash command lines, Write/Edit file paths and contents, and any secret passed as a tool argument. OTEL_LOG_TOOL_CONTENT=1 logs full tool results (file contents, command output, query results). OTEL_LOG_USER_PROMPTS=1 emits user_system_prompt and user_prompt span/event content (full user prompts and the system prompt, plus slash-command names and sources) — direct leakage of user input and instructions. In production telemetry pipelines or any backend routed to a SaaS observability platform, enabling any of these is a confidentiality breach. Designed for local debugging only.",
+    "description": "Claude Code OTEL debug-logging env vars emit sensitive content as OpenTelemetry log events / span attributes. OTEL_LOG_RAW_API_BODIES=1 (v2.1.111+) emits full request and response bodies (prompts, thinking, assistant responses). OTEL_LOG_TOOL_DETAILS=1 (v2.1.101+) logs tool parameters into spans — and since v2.1.157 also into tool_decision events — exposing Bash command lines, Write/Edit file paths and contents, and any secret passed as a tool argument. OTEL_LOG_TOOL_CONTENT=1 logs full tool results (file contents, command output, query results). OTEL_LOG_USER_PROMPTS=1 emits user_system_prompt and user_prompt span/event content (full user prompts and the system prompt, plus slash-command names and sources) — direct leakage of user input and instructions. In production telemetry pipelines or any backend routed to a SaaS observability platform, enabling any of these is a confidentiality breach. Designed for local debugging only. OTEL_LOG_ASSISTANT_RESPONSES=1 (v2.1.193+) de-redacts the claude_code.assistant_response log event, which carries the model's full response text; when the variable is unset it inherits OTEL_LOG_USER_PROMPTS, so enabling prompt logging silently enables response logging too. CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH (v2.1.214+) raises the 60 KB truncation cap on OTel content attributes — a large or disabled cap turns truncated leakage into complete leakage.",
     "detect": {
       "patterns": [
         "OTEL_LOG_RAW_API_BODIES\\s*=\\s*1",
@@ -980,30 +1419,53 @@
         "OTEL_LOG_USER_PROMPTS\\s*=\\s*1",
         "OTEL_LOG_USER_PROMPTS\\s*=\\s*true",
         "OTEL_LOG_USER_PROMPTS:\\s*['\"]?1",
-        "export\\s+OTEL_LOG_USER_PROMPTS"
+        "export\\s+OTEL_LOG_USER_PROMPTS",
+        "OTEL_LOG_ASSISTANT_RESPONSES\\s*=\\s*1",
+        "OTEL_LOG_ASSISTANT_RESPONSES\\s*=\\s*true",
+        "OTEL_LOG_ASSISTANT_RESPONSES:\\s*['\"]?1",
+        "export\\s+OTEL_LOG_ASSISTANT_RESPONSES"
       ],
       "negative_patterns": [
-        "OTEL_LOG_RAW_API_BODIES\\s*=\\s*0",
-        "OTEL_LOG_TOOL_DETAILS\\s*=\\s*0",
-        "OTEL_LOG_TOOL_CONTENT\\s*=\\s*0",
-        "OTEL_LOG_USER_PROMPTS\\s*=\\s*0",
-        "# debug only",
-        "# local only"
+        "# local only",
+        "# troubleshooting only",
+        "# debug only"
       ],
-      "file_types": [".env", ".env.*", "Dockerfile", "docker-compose.*", "*.yaml", "*.yml", "*.sh", "*.md"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        ".env",
+        ".env.*",
+        "Dockerfile",
+        "docker-compose.*",
+        "*.yaml",
+        "*.yml",
+        "*.sh",
+        "*.md"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
-      "description": "Never enable OTEL_LOG_RAW_API_BODIES, OTEL_LOG_TOOL_DETAILS, or OTEL_LOG_TOOL_CONTENT in production, CI, or any environment exporting telemetry to a shared backend — they leak prompts, tool parameters (command lines, file paths, secrets), and tool results. Use them only in local debugging with ephemeral logs. If needed for incident response, scope to a specific session via a command-line export and scrub logs immediately after. Note: Sentinel's own performance-tracing guidance uses OTEL_LOG_TOOL_DETAILS=1 in a trusted local/ephemeral context only — annotate such usage with `# local only`.",
+      "description": "Never enable OTEL_LOG_RAW_API_BODIES, OTEL_LOG_TOOL_DETAILS, or OTEL_LOG_TOOL_CONTENT in production, CI, or any environment exporting telemetry to a shared backend — they leak prompts, tool parameters (command lines, file paths, secrets), and tool results. Use them only in local debugging with ephemeral logs. If needed for incident response, scope to a specific session via a command-line export and scrub logs immediately after. Note: Sentinel's own performance-tracing guidance uses OTEL_LOG_TOOL_DETAILS=1 in a trusted local/ephemeral context only — annotate such usage with `# local only`. Since v2.1.193 also treat OTEL_LOG_ASSISTANT_RESPONSES as prompt-grade sensitive: it emits the assistant's own output, and it defaults to following OTEL_LOG_USER_PROMPTS when unset — so audit both together. Leave CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH at its 60 KB default. CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH n'est volontairement pas détecté par pattern : le seuil au-delà duquel un cap devient dangereux dépend du backend et de la sensibilité du contenu, et un seuil arbitraire donnerait une fausse assurance. À vérifier manuellement lors d'une revue de configuration télémétrie : le laisser au défaut de 60 KB.",
       "code_example": "# WRONG — committed to repo or CI config\nOTEL_LOG_RAW_API_BODIES=1\nOTEL_LOG_TOOL_DETAILS=1\nOTEL_LOG_TOOL_CONTENT=1\n\n# RIGHT — local debug only, ephemeral shell\n$ OTEL_LOG_TOOL_DETAILS=1 claude --bare -p '/my-skill' 2>debug.log  # local only\n$ shred -u debug.log  # scrub after",
       "references": [
         "https://github.com/anthropics/claude-code/releases/tag/v2.1.111",
-        "https://github.com/anthropics/claude-code/releases/tag/v2.1.157"
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.157",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.193",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.214"
       ]
     },
-    "standards": ["CWE-532", "CWE-215", "OWASP-LLM02:2025", "OWASP-LLM06:2025"],
+    "standards": [
+      "CWE-532",
+      "CWE-215",
+      "OWASP-LLM02:2025",
+      "OWASP-LLM06:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code"]
+    "frameworks": [
+      "claude-code"
+    ]
   },
   {
     "id": "LLM-CCHARDEN-001",
@@ -1012,7 +1474,7 @@
     "category": "llm-ai",
     "subcategory": "control-bypass",
     "title": "Claude Code defensive controls disabled (safe-mode / bundled-skills / idle-timeout)",
-    "description": "Claude Code settings that weaken the agent's own security posture, dangerous when set in shared, CI, or committed environments rather than ad-hoc local troubleshooting. CLAUDE_CODE_SAFE_MODE=1 (or --safe-mode, v2.1.169+) starts Claude Code with ALL customizations disabled — CLAUDE.md, plugins, skills, hooks, and MCP servers — which silently bypasses any hook-based audit, guardrail skill, or MCP policy control. CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1 (or disableBundledSkills) hides bundled skills, workflows, and built-in slash commands from the model, shrinking the defensive surface. API_FORCE_IDLE_TIMEOUT=0 (v2.1.163+) disables the 5-minute idle-stream timeout, allowing indefinite stream hangs (DoS / slow data exfiltration). These belong in an ephemeral local shell, never in .env, CI config, Dockerfiles, or managed settings.",
+    "description": "Claude Code settings that weaken the agent's own security posture, dangerous when set in shared, CI, or committed environments rather than ad-hoc local troubleshooting. CLAUDE_CODE_SAFE_MODE=1 (or --safe-mode, v2.1.169+) starts Claude Code with ALL customizations disabled — CLAUDE.md, plugins, skills, hooks, and MCP servers — which silently bypasses any hook-based audit, guardrail skill, or MCP policy control. CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1 (or disableBundledSkills) hides bundled skills, workflows, and built-in slash commands from the model, shrinking the defensive surface. API_FORCE_IDLE_TIMEOUT=0 (v2.1.163+) disables the 5-minute idle-stream timeout, allowing indefinite stream hangs (DoS / slow data exfiltration). These belong in an ephemeral local shell, never in .env, CI config, Dockerfiles, or managed settings. autoMode.classifyAllShell=false (v2.1.193+) narrows the auto-mode classifier back to arbitrary-code-execution patterns only, so ordinary Bash/PowerShell commands run unreviewed in auto mode.",
     "detect": {
       "patterns": [
         "CLAUDE_CODE_SAFE_MODE\\s*=\\s*1",
@@ -1023,28 +1485,121 @@
         "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS\\s*=\\s*true",
         "export\\s+CLAUDE_CODE_DISABLE_BUNDLED_SKILLS",
         "\"disableBundledSkills\"\\s*:\\s*true",
-        "API_FORCE_IDLE_TIMEOUT\\s*=\\s*0"
+        "API_FORCE_IDLE_TIMEOUT\\s*=\\s*0",
+        "\"classifyAllShell\"\\s*:\\s*false"
       ],
       "negative_patterns": [
-        "CLAUDE_CODE_SAFE_MODE\\s*=\\s*0",
-        "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS\\s*=\\s*0",
-        "\"disableBundledSkills\"\\s*:\\s*false",
+        "# local only",
         "# troubleshooting only",
-        "# local only"
+        "# debug only"
       ],
-      "file_types": [".env", ".env.*", "Dockerfile", "docker-compose.*", "*.yaml", "*.yml", "*.sh", "settings.json", "managed-settings.json", "*.md"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        ".env",
+        ".env.*",
+        "Dockerfile",
+        "docker-compose.*",
+        "*.yaml",
+        "*.yml",
+        "*.sh",
+        "settings.json",
+        "managed-settings.json",
+        "*.md"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Never persist CLAUDE_CODE_SAFE_MODE, CLAUDE_CODE_DISABLE_BUNDLED_SKILLS, or API_FORCE_IDLE_TIMEOUT=0 in committed config, CI, Dockerfiles, or managed settings — they disable hooks/MCP/skill-based controls and idle-timeout protections that your security posture relies on. Use --safe-mode only as an interactive, one-off troubleshooting flag in a local shell. If a hook or MCP server misbehaves, fix or scope it rather than globally disabling all customizations. For managed deployments, enforce policy via requiredMinimumVersion and glob deny rules instead of safe-mode.",
       "code_example": "# WRONG — committed / CI / Docker: silently disables hooks, MCP, skills\nENV CLAUDE_CODE_SAFE_MODE=1\nAPI_FORCE_IDLE_TIMEOUT=0\n\n# RIGHT — interactive, local, one-off troubleshooting only\n$ claude --safe-mode   # then exit; never export it",
       "references": [
         "https://github.com/anthropics/claude-code/releases/tag/v2.1.169",
-        "https://github.com/anthropics/claude-code/releases/tag/v2.1.163"
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.163",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.193"
       ]
     },
-    "standards": ["CWE-693", "CWE-16", "CWE-400", "OWASP-LLM06:2025"],
+    "standards": [
+      "CWE-693",
+      "CWE-16",
+      "CWE-400",
+      "OWASP-LLM06:2025"
+    ],
     "ai_specific": true,
-    "frameworks": ["claude-code"]
+    "frameworks": [
+      "claude-code"
+    ]
+  },
+  {
+    "id": "LLM-CCSANDBOX-001",
+    "severity": "MEDIUM",
+    "cvss_v4": 6.3,
+    "category": "llm-ai",
+    "subcategory": "sandbox-weakening",
+    "title": "Claude Code sandbox isolation weakened (filesystem / network allowlist / credentials / Apple Events)",
+    "description": "Claude Code sandbox settings that reduce the isolation applied to sandboxed commands. sandbox.filesystem.disabled=true (v2.1.216+) skips filesystem isolation entirely while keeping only network egress control, so a sandboxed command regains full read/write access to the host tree. sandbox.network.strictAllowlist=false (v2.1.219+) lets sandboxed commands reach hosts that are not on the allowlist without prompting, defeating egress control and enabling silent exfiltration. sandbox.credentials configured to permit credential access lets sandboxed commands read credential files and secret environment variables (v2.1.187+ added the setting precisely to block this). sandbox.allowAppleEvents=true (v2.1.181+) lets sandboxed commands drive other macOS applications via Apple Events — a sandbox escape by proxy. Each of these is legitimate as a deliberate, scoped, local choice; committed to a repo, a Dockerfile, CI config, or managed settings, they silently strip the isolation that the rest of the posture assumes.",
+    "detect": {
+      "patterns": [
+        "sandbox\\.filesystem\\.disabled\\s*[:=]\\s*true",
+        "sandbox\\.network\\.strictAllowlist\\s*[:=]\\s*false",
+        "sandbox\\.allowAppleEvents\\s*[:=]\\s*true",
+        "sandbox\\.credentials\\s*[:=]\\s*(false|\"?allow\"?)",
+        "\"strictAllowlist\"\\s*:\\s*false",
+        "\"allowAppleEvents\"\\s*:\\s*true",
+        "\"credentials\"\\s*:\\s*(false|\"allow\")",
+        "\"filesystem\"\\s*:\\s*\\{\\s*\"disabled\"\\s*:\\s*true"
+      ],
+      "negative_patterns": [
+        "# local only",
+        "# troubleshooting only",
+        "# debug only"
+      ],
+      "file_types": [
+        ".env",
+        ".env.*",
+        "Dockerfile",
+        "docker-compose.*",
+        "*.yaml",
+        "*.yml",
+        "*.sh",
+        "settings.json",
+        "managed-settings.json",
+        "*.md"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ],
+      "matching_notes": "Les patterns dotted et les clés JSON spécifiques matchent en ligne-par-ligne (grep). Le dernier pattern (\"filesystem\":{\"disabled\":true}) exige une lecture du fichier entier : une clé \"disabled\" isolée sur sa ligne est trop générique pour être détectée sans son contexte parent, et un pattern générique produirait un volume de faux positifs inacceptable. Limite assumée, mesurée le 2026-07-27."
+    },
+    "remediation": {
+      "description": "Keep sandbox isolation at its defaults in anything committed or shared. Prefer narrowing the specific permission that blocks you over disabling a whole isolation layer: add the host to the network allowlist rather than setting strictAllowlist=false; grant a specific path rather than filesystem.disabled=true. Keep sandbox.credentials blocking credential files and secret environment variables — that setting exists to stop a sandboxed command from reading what the sandbox was meant to protect. On macOS, leave allowAppleEvents off unless a named workflow requires driving a specific app, and scope it to a local session. If a setting must be relaxed temporarily, do it in an ephemeral shell and annotate it `# local only`.",
+      "code_example": "// WRONG — committed .claude/settings.json: isolation silently removed\n{ \"sandbox\": { \"filesystem\": { \"disabled\": true },\n                \"network\": { \"strictAllowlist\": false },\n                \"allowAppleEvents\": true } }\n\n// RIGHT — isolation kept, exceptions named and scoped\n{ \"sandbox\": { \"network\": { \"strictAllowlist\": true,\n                              \"allowlist\": [\"api.osv.dev\", \"services.nvd.nist.gov\"] } } }",
+      "references": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.216",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.219",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.187",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.181"
+      ]
+    },
+    "standards": [
+      "CWE-693",
+      "CWE-653",
+      "CWE-923",
+      "CWE-522",
+      "OWASP-LLM06:2025"
+    ],
+    "ai_specific": true,
+    "frameworks": [
+      "claude-code"
+    ],
+    "cvss_v4_vector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:L/VA:N/SC:N/SI:N/SA:N",
+    "validation": {
+      "rule_tester": "non exécuté — règle écrite à la main, hors périmètre du gate CVE",
+      "fp_test": "0 déclenchement sur les 249 fichiers du dépôt (2026-07-27)",
+      "fn_test": "settings.json indenté : 3/4 réglages détectés en ligne-par-ligne ; filesystem.disabled exige la lecture fichier entier"
+    }
   }
 ]

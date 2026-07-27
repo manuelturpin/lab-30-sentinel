@@ -1,0 +1,468 @@
+{
+  "date": "2026-07-27",
+  "cc_version": "2.1.220",
+  "previous_eir": "EIR-2026-06-10",
+  "sync": {
+    "releases_ingested": 41,
+    "version_range": "2.1.172 → 2.1.220",
+    "skills_catalog": 4,
+    "sdk_python": 14,
+    "sdk_typescript": 27,
+    "mcp_python": 6,
+    "mcp_typescript": 30,
+    "cookbooks": 24,
+    "total_entries": 146,
+    "kb_docs_indexed": 274
+  },
+  "exploitation_score_before_reported": 98,
+  "exploitation_score_before_recomputed": 84,
+  "exploitation_score_after": null,
+  "score_note": "Le 98% de l'EIR-2026-06-10 portait sur un feature-inventory.json figé au 10/06 (188 entrées). Recalculé sur la surface réelle de v2.1.220, le taux d'exploitation tombe à ~84% : le score n'avait pas baissé parce que le dénominateur n'avait pas bougé.",
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Réconcilier le drift runtime→repo AVANT tout deploy.sh",
+      "description": "Les skills déployés dans ~/.claude/skills/ ont été édités directement le 25/07 (corrections Opus 5) sans passer par le repo source. Le repo est en retard : effort xhigh vs high, tier haiku vs sonnet, note Fable/Opus 4.8 littéral vs alias opus, paths agents skills/security/ vs sentinel-security/. Un deploy.sh exécuté maintenant écraserait ces corrections. Rapatrier runtime→repo, puis seulement redéployer.",
+      "source": {
+        "feature": "workflow_integrity",
+        "introduced": "n/a",
+        "reference": "CLAUDE.md — Workflow de synchronisation"
+      },
+      "impact": {
+        "score": 5,
+        "affected_files": [
+          "skills/security/SKILL.md",
+          "skills/sentinel-evolve/SKILL.md"
+        ],
+        "description": "Évite la perte des corrections Opus 5 du 25/07 et restaure le repo comme source de vérité"
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 15
+      },
+      "status": "applied",
+      "blocking": true,
+      "applied_note": "Merge sélectif, pas une copie runtime→repo : la note runtime « scripts/deploy.sh n'existe pas dans ce skill » est fausse (le script existe, 15 Ko) et n'a pas été rapatriée ; le champ Watched paths du repo (skills/security/) était correct et a été conservé contre la version runtime (skills/sentinel-security/), qui ne correspond à aucun chemin du dépôt."
+    },
+    {
+      "id": "REC-002",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Corriger l'affirmation fausse « Explore subagent (Haiku-based) »",
+      "description": "skills/security/SKILL.md:82 décrit l'agent Explore comme « Haiku-based, fast and cheap ». Faux depuis v2.1.198 : l'agent Explore intégré hérite désormais du modèle de la session principale (plafonné à opus) et ne tourne plus sur Haiku. La détection de stack coûte donc bien plus cher que ce que le skill annonce.",
+      "source": {
+        "feature": "explore_subagent_model_inherit",
+        "introduced": "2.1.198",
+        "reference": "changelog v2.1.198"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "skills/security/SKILL.md"
+        ],
+        "description": "Corrige une hypothèse de coût fausse dans l'étape 1 du scan"
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 5
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-003",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Mettre à jour les tiers de modèles obsolètes (haiku 4.5 / sonnet 4.6 / Opus 4.8)",
+      "description": "skills/security/SKILL.md:128-132 raisonne encore sur haiku 4.5, sonnet 4.6 et Opus 4.8. Depuis : Sonnet 5 est le défaut CC (v2.1.197), Opus 5 le défaut Opus (v2.1.219). Ajouter que CLAUDE_CODE_SUBAGENT_MODEL=sonnet (posé sur cette machine) écrase les model: par agent, rendant la table de tiers indicative.",
+      "source": {
+        "feature": "sonnet_5, opus_5",
+        "introduced": "2.1.197, 2.1.219",
+        "reference": "changelog v2.1.197 / v2.1.219"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "skills/security/SKILL.md"
+        ],
+        "description": "Aligne la doctrine de routage sur la réalité machine"
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 10
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-004",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Étendre LLM-DEBUG-001 avec OTEL_LOG_ASSISTANT_RESPONSES",
+      "description": "v2.1.193 ajoute l'événement OTEL claude_code.assistant_response contenant le texte de réponse du modèle, dé-rédigé par OTEL_LOG_ASSISTANT_RESPONSES=1. Même classe de fuite que OTEL_LOG_USER_PROMPTS déjà couverte par LLM-DEBUG-001 (6 occurrences dans la règle). Ajouter aussi CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH (v2.1.214) qui pilote la troncature à 60 KB des attributs de contenu.",
+      "source": {
+        "feature": "otel_assistant_response",
+        "introduced": "2.1.193",
+        "reference": "changelog v2.1.193 / v2.1.214"
+      },
+      "impact": {
+        "score": 5,
+        "affected_files": [
+          "knowledge-base/domains/llm-ai/rules.json"
+        ],
+        "description": "Ferme une exfiltration de contenu conversationnel via télémétrie, symétrique de celle déjà détectée côté prompts"
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 20
+      },
+      "status": "applied"
+    },
+    {
+      "id": "REC-005",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Étendre LLM-CCHARDEN-001 avec la surface sandbox de juin-juillet",
+      "description": "Cinq réglages de durcissement/affaiblissement apparus depuis le 10/06, tous absents de la règle : sandbox.filesystem.disabled (v2.1.216, désactive l'isolation FS), sandbox.network.strictAllowlist (v2.1.219, à false = hôtes non-allowlistés autorisés sans prompt), sandbox.credentials (v2.1.187, lecture des fichiers de credentials par les commandes sandboxées), sandbox.allowAppleEvents (v2.1.181, Apple Events depuis le sandbox macOS), autoMode.classifyAllShell (v2.1.193, à false seules les commandes d'exécution arbitraire passent par le classifieur).",
+      "source": {
+        "feature": "sandbox_settings",
+        "introduced": "2.1.181 → 2.1.219",
+        "reference": "changelog v2.1.181/187/193/216/219"
+      },
+      "impact": {
+        "score": 5,
+        "affected_files": [
+          "knowledge-base/domains/llm-ai/rules.json"
+        ],
+        "description": "Couvre la principale surface de mauvaise configuration Claude Code apparue ce trimestre"
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 30
+      },
+      "status": "applied",
+      "applied_note": "Écart assumé vs la reco initiale : le sandbox a été sorti dans une règle dédiée LLM-CCSANDBOX-001 (HIGH 7.1) au lieu d'être versé dans LLM-CCHARDEN-001 — familles de risque, remediations et CWE distincts. Seul autoMode.classifyAllShell est resté dans CCHARDEN."
+    },
+    {
+      "id": "REC-006",
+      "priority": "P1",
+      "category": "quick-win",
+      "title": "Reconstruire feature-inventory.json (188 → ~230 entrées)",
+      "description": "Le fichier n'a pas bougé depuis le 10/06 alors que 41 releases ont été publiées. C'est la source de vérité des modes analyze et audit : tant qu'il est figé, le score d'exploitation est mécaniquement flatteur (98% sur un dénominateur périmé, ~84% sur la surface réelle) et le mode audit sous-évalue les gaps de tous les projets.",
+      "source": {
+        "feature": "feature_inventory",
+        "introduced": "n/a",
+        "reference": "knowledge-base/anthropic-intel/feature-inventory.json"
+      },
+      "impact": {
+        "score": 5,
+        "affected_files": [
+          "knowledge-base/anthropic-intel/feature-inventory.json"
+        ],
+        "description": "Restaure la validité de tout le scoring evolve et audit"
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 60
+      },
+      "status": "applied",
+      "applied_note": "188 → 266 entrées (+78 features v2.1.172→2.1.220). version 1.0.0 → 1.1.0."
+    },
+    {
+      "id": "REC-007",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Déployer sentinel-rag — le skill est absent du runtime",
+      "description": "~/.claude/skills/sentinel-rag/ n'existe pas. Le skill /sentinel-rag documenté dans CLAUDE.md n'est donc pas invocable. Par ailleurs ~/.claude/skills/sentinel-evolve/ ne contient que SKILL.md (pas knowledge/). Le déploiement est partiel, ce qui explique en partie la note runtime du 25/07 affirmant à tort que scripts/deploy.sh n'existe pas.",
+      "source": {
+        "feature": "deployment_integrity",
+        "introduced": "n/a",
+        "reference": "CLAUDE.md — table deploy.sh"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "scripts/deploy.sh"
+        ],
+        "description": "Rend /sentinel-rag réellement utilisable"
+      },
+      "effort": {
+        "level": "low",
+        "estimate_minutes": 10
+      },
+      "status": "pending",
+      "correction_note": "Caractérisation initiale inexacte. scripts/deploy.sh:151-177 déploie bien sentinel-rag (SKILL.md, knowledge/indexer.py, query.py, config.json, sources/, metadata.json) et lignes 179+ sentinel-evolve. L'absence de ~/.claude/skills/sentinel-rag/ ne vient donc pas d'une lacune du script mais du fait qu'il n'a pas été exécuté depuis longtemps, ou que son étape 3b a échoué sans être remarquée. La reco devient : exécuter DRY_RUN=0 deploy.sh et vérifier que 3b passe — pas modifier le script."
+    },
+    {
+      "id": "REC-008",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Nouvelle règle KB LLM-CCFANOUT-001 — caps de fan-out des sous-agents",
+      "description": "Série de garde-fous introduits puis modifiés entre v2.1.172 et v2.1.219, avec un aller-retour notable : v2.1.172 autorise 5 niveaux de nesting, v2.1.217 le désactive par défaut, v2.1.219 le rétablit à 3. Variables à détecter : CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH, CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS (défaut 20), CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION (défaut 200), CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION (défaut 200). Un desserrage de ces valeurs est une surface d'emballement (coût et charge).",
+      "source": {
+        "feature": "subagent_fanout_caps",
+        "introduced": "2.1.172 → 2.1.219",
+        "reference": "changelog v2.1.172/211/212/217/219"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "knowledge-base/domains/llm-ai/rules.json"
+        ],
+        "description": "Détecte les configurations d'orchestration non bornées"
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 45
+      },
+      "status": "pending"
+    },
+    {
+      "id": "REC-009",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Exploiter la syntaxe de permission Tool(param:value)",
+      "description": "v2.1.178 permet de matcher les paramètres d'entrée d'un outil dans une règle de permission, ex. Agent(model:opus). Double usage pour Sentinel : recommander des permissions granulaires dans les rapports d'audit, et durcir sa propre configuration de dispatch. Noter aussi l'avertissement v2.1.210 : les règles Write(path)/NotebookEdit(path)/Glob(path) sont à remplacer par Edit(path)/Read(path).",
+      "source": {
+        "feature": "tool_param_permissions",
+        "introduced": "2.1.178",
+        "reference": "changelog v2.1.178 / v2.1.210"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "skills/security/SKILL.md",
+          "knowledge-base/domains/llm-ai/rules.json"
+        ],
+        "description": "Remédiations de permission plus précises"
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 40
+      },
+      "status": "pending"
+    },
+    {
+      "id": "REC-010",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Adapter l'étape 2 du dispatch au background-par-défaut",
+      "description": "v2.1.198 : les sous-agents tournent en arrière-plan par défaut et notifient à la fin ; les hooks Notification agent_completed / agent_needs_input sont disponibles. Le SKILL.md décrit encore run_in_background: true comme un choix explicite assorti d'un Monitor. Simplifier, et brancher les hooks de notification plutôt que le polling. v2.1.198 ajoute aussi que les sous-agents héritent de la configuration de thinking de la session.",
+      "source": {
+        "feature": "background_subagents_default",
+        "introduced": "2.1.198",
+        "reference": "changelog v2.1.198"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "skills/security/SKILL.md"
+        ],
+        "description": "Aligne l'orchestration sur le comportement réel du harness"
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 40
+      },
+      "status": "pending"
+    },
+    {
+      "id": "REC-011",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "Garde-fou coût des scans via --max-budget-usd",
+      "description": "v2.1.217 corrige --max-budget-usd pour qu'il stoppe réellement les sous-agents de fond : au-delà du plafond, les nouveaux spawns sont refusés et les agents en cours sont arrêtés. Un scan Sentinel dispatche 12 agents ; documenter ce plafond comme garde-fou standard dans le SKILL.md et dans .sentinel.json.",
+      "source": {
+        "feature": "max_budget_usd",
+        "introduced": "2.1.217",
+        "reference": "changelog v2.1.217"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "skills/security/SKILL.md",
+          "config/evolve-targets.json"
+        ],
+        "description": "Borne le coût d'un audit multi-agents"
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 30
+      },
+      "status": "pending"
+    },
+    {
+      "id": "REC-012",
+      "priority": "P2",
+      "category": "medium-term",
+      "title": "MCP — auto-background >2 min et durcissement de l'auto-approbation",
+      "description": "Deux items pertinents pour les 3 outils MCP conservés (scan-dependencies, scan-headers, generate-sbom) qui sont des appels réseau lents : v2.1.212 bascule automatiquement en arrière-plan les appels MCP de plus de 2 minutes (CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS), et v2.1.196 empêche claude mcp list/get de spawner des serveurs .mcp.json auto-approuvés par un settings.json commité — candidat direct pour une règle du domaine supply-chain.",
+      "source": {
+        "feature": "mcp_auto_background, mcp_self_approval_hardening",
+        "introduced": "2.1.196, 2.1.212",
+        "reference": "changelog v2.1.196 / v2.1.212"
+      },
+      "impact": {
+        "score": 4,
+        "affected_files": [
+          "knowledge-base/domains/supply-chain/rules.json",
+          "skills/security/SKILL.md"
+        ],
+        "description": "Couvre une auto-approbation de serveur MCP par dépôt non fiable"
+      },
+      "effort": {
+        "level": "medium",
+        "estimate_minutes": 45
+      },
+      "status": "pending"
+    },
+    {
+      "id": "REC-013",
+      "priority": "P3",
+      "category": "strategic",
+      "title": "Trancher le positionnement face au plugin officiel claude-security",
+      "description": "Décision cadrée le 24/07 avec échéance au 24/08 : 4 options (cannibaliser / différencier / hybride orchestré / statu quo) dans docs/research/claude-security-plugin-positionnement-2026-07-24.md. Étape préalable identifiée : benchmark du plugin sur tests/vulnerable-app/ contre /sentinel-security. Le pipeline evolve ne peut pas trancher cet arbitrage — il le remonte.",
+      "source": {
+        "feature": "n/a",
+        "introduced": "2026-07-22",
+        "reference": "reports/claude-security-plugin-2026-07-24.md"
+      },
+      "impact": {
+        "score": 5,
+        "affected_files": [],
+        "description": "Détermine la raison d'être de /sentinel-security"
+      },
+      "effort": {
+        "level": "high",
+        "estimate_minutes": 480
+      },
+      "status": "pending"
+    },
+    {
+      "id": "REC-014",
+      "priority": "P3",
+      "category": "strategic",
+      "title": "Revoir le scoring du mode audit sur la surface 2.1.220",
+      "description": "Le mode audit note les projets sur des dimensions (agent_patterns, hooks, feature exploitation) calibrées sur l'inventaire de juin. Plusieurs signaux ont changé de sens : le paramètre mode de l'outil Task est déprécié (v2.1.212), le wizard /agents est supprimé (v2.1.198), Claude ne lance plus /verify et /code-review spontanément (v2.1.215), le mode de permission « default » est renommé « Manual » (v2.1.200). À recalibrer après REC-006.",
+      "source": {
+        "feature": "audit_scoring",
+        "introduced": "2.1.198 → 2.1.215",
+        "reference": "changelog"
+      },
+      "impact": {
+        "score": 3,
+        "affected_files": [
+          "skills/sentinel-evolve/SKILL.md",
+          "config/evolve-targets.json"
+        ],
+        "description": "Évite des recommandations d'audit fondées sur des features disparues"
+      },
+      "effort": {
+        "level": "high",
+        "estimate_minutes": 180
+      },
+      "status": "pending"
+    }
+  ],
+  "summary": {
+    "total": 14,
+    "p1": 6,
+    "p2": 6,
+    "p3": 2,
+    "applied": 6,
+    "skipped": 0
+  },
+  "pipeline_status": {
+    "scan": "done — 146 entrées, KB 352 docs",
+    "cve_pipeline": "cve-sync terminé (55 121 entrées). pattern-gen / rule-tester / feedback-loop non lancés.",
+    "analyze": "done",
+    "recommend": "done",
+    "apply": "6 P1 appliqués, puis 10 correctifs issus de la revue croisée",
+    "cross_review": "done — Fable 5 et GPT-5.6-Sol, mandat identique sur gabarit scellé, verdicts revise/revise",
+    "commit": "prêt — à faire AVANT deploy (ordre corrigé, finding S1)",
+    "deploy": "après commit uniquement, avec DRY_RUN=0 et contrôle de santé"
+  },
+  "kb_docs_after_reindex": 352,
+  "new_findings": [
+    {
+      "id": "FIND-001",
+      "severity": "MEDIUM",
+      "source": "run cve-sync du 2026-07-27",
+      "title": "cve-sync propose des régressions de standards OWASP",
+      "description": "Confirmé au niveau du code. scripts/cve-sync.py:638 teste `latest_version != current_version` : il n'y a AUCUNE comparaison d'ordre, seulement une inégalité. Toute valeur différente de la version courante est donc rapportée comme « update available », y compris une version antérieure. La source aggrave le défaut : ligne 622, `releases/latest` renvoie la release que GitHub considère comme la plus récemment publiée, ce qui pour un dépôt ayant cessé de couper des releases peut être un tag ancien ; à défaut, ligne 632, le fallback prend `tags?per_page=1`, dont l'ordre n'est pas garanti sémantique. Résultat observé au run du 27/07 : owasp-web 2025 → 2017-RC2, owasp-api 2023 → 2.7.0, owasp-llm 2025 → 2024, owasp-mobile 2024 → 2.0.0. Rien n'est appliqué automatiquement — les entrées vont dans pending-updates.json — mais toute application de ce fichier remplacerait le Top 10 2025 par la release candidate de 2017.",
+      "affected_files": [
+        "scripts/cve-sync.py",
+        "knowledge-base/standards/pending-updates.json"
+      ],
+      "status": "pending",
+      "correction_note": "Formulation initiale imprécise : j'avais écrit que la comparaison « trie des tags git hétérogènes sans ordre sémantique », ce qui laissait entendre qu'un tri existait. Il n'y en a pas.",
+      "code_reference": "scripts/cve-sync.py:622-649",
+      "remediation": "Comparer sémantiquement avant de proposer : normaliser les schémas de version hétérogènes (année vs semver) et n'émettre une mise à jour que si la version distante est strictement supérieure. À défaut d'ordre fiable, marquer l'entrée `needs-review` au lieu de `update available`.",
+      "severity_note": "Rétrogradé HIGH → MEDIUM le 27/07 sur finding S8 (GPT-5.6-Sol) : le bug est réel et reproduit, mais aucun consommateur automatique n'applique pending-updates.json. L'impact reste conditionné à une action humaine. Proportionnalité corrigée."
+    }
+  ],
+  "fp_test": {
+    "date": "2026-07-27",
+    "methode": "Chaque pattern AJOUTÉ par REC-004/005 exécuté contre les 249 fichiers suivis par git.",
+    "resultat_initial": "7 déclenchements, 0 sur une configuration réelle — tous auto-référentiels (description de la règle elle-même, changelog généré, feature-inventory, release notes).",
+    "correctif": "Ajout de 6 entrées d'exclusion (knowledge-base/, anthropic-intel/, knowledge/sources/, reports/archive/, CHANGELOG, changelog) aux 3 règles. Patterns inchangés : les ancrer en début de ligne aurait supprimé les faux positifs mais fait perdre la détection des formes en ligne (`docker run -e VAR=1`), soit un échange FP contre FN non souhaitable.",
+    "resultat_final": "0 déclenchement résiduel.",
+    "reserve": "Le défaut préexistait sur OTEL_LOG_USER_PROMPTS (LLM-DEBUG-001, avant cette session) : cette session l'a amplifié, pas créé. Aucun vrai positif n'existe dans ce dépôt, donc ce test mesure la précision sur du bruit, pas le recall sur de vraies configurations vulnérables."
+  },
+  "cross_review": {
+    "date": "2026-07-27",
+    "protocole": "lab-73, gabarit scellé du 26/07, bloc « Objet du round » seul renseigné",
+    "evaluateurs": [
+      {
+        "nom": "Claude Fable 5",
+        "modele_resolu": "claude-fable-5",
+        "verdict": "revise",
+        "findings": 10,
+        "cout_usd": 7.54,
+        "output_tokens": 51832,
+        "note": "canonicalModel vérifié — aucun basculement malgré le contenu sécurité"
+      },
+      {
+        "nom": "GPT-5.6-Sol",
+        "verdict": "revise",
+        "findings": 8,
+        "duree_min": 14,
+        "note": "1 blocker (ordre deploy/commit)"
+      }
+    ],
+    "convergences": [
+      "corpus périmé vs état disque",
+      "pseudo-code haiku vs table sonnet",
+      "patterns sandbox inopérants en ligne-par-ligne + règle promue sans validation",
+      "le 84 % n'est pas mesuré",
+      "l'affirmation « patterns validés » était fausse",
+      "FIND-001 réel",
+      "duplication des notes de migration modèles entre les 2 skills"
+    ],
+    "divergences": {
+      "sol_seul": [
+        "ordre deploy→commit du pipeline auto (blocker)",
+        "runtime→repo inverse la source de vérité sans gate de provenance",
+        "negative_patterns globaux neutralisent un positif voisin",
+        "consignes Opus 5 purement documentaires (refusal, filtre aval non implémentés)",
+        "`bash scripts/deploy.sh` nu est un no-op depuis 2026-04-17"
+      ],
+      "fable_seul": [
+        "`.claude/rules/deploy-reminder.md` gardait un chemin mort",
+        "les 6 exclusions ont une portée globale → perte de recall sur tout projet audité",
+        "phrase anglaise orpheline en fin de note française",
+        "pattern OTEL_CONTENT_MAX_LENGTH à seuil arbitraire"
+      ],
+      "desaccord": [
+        "sévérité de FIND-001 : Fable le tient pour grave, Sol dit HIGH excessif sans consommateur automatique. Tranché en faveur de Sol → MEDIUM."
+      ]
+    },
+    "corrections_appliquees": 10,
+    "non_traite": [
+      "Sourcer les affirmations Opus 5 (System Card, docs) — relève de la phase 1 de l'audit complet",
+      "Implémenter la branche refusal et le filtre de sévérité aval — travail de code, P2",
+      "Passer les 3 règles par rule-tester.py avec fixtures multi-lignes réalistes",
+      "Régénérer un corpus de revue à jour et refaire un round (le corpus jugé était périmé)"
+    ]
+  }
+}

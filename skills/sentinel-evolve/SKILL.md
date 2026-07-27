@@ -72,8 +72,7 @@ MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-evolve auto" --name 
 5. **Auto-apply** — apply all P1 (quick wins) automatically. For P2/P3:
    - **Interactive mode**: ask the user which P2/P3 to apply
    - **Headless mode**: apply all P2 too, skip P3 (require explicit approval for strategic changes)
-6. **Deploy** — run `DRY_RUN=0 bash /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/deploy.sh` (deploy.sh defaults to DRY_RUN=1 since 2026-04-17 — pass DRY_RUN=0 explicitly)
-7. **Commit** — in strict order, no shortcut:
+6. **Commit** — versionner AVANT de déployer. `CLAUDE.md` du dépôt fixe cet ordre (« 1. Commit + push vers GitHub · 2. Deployer sur la machine locale ») et ce pipeline le violait jusqu'au 2026-07-27 : il déployait un état non commité, mettant le runtime en avance sur git — c'est-à-dire recréant exactement le drift que le cycle prétend réparer. *(Finding S1, blocker, revue croisée GPT-5.6-Sol du 27/07.)* En ordre strict, sans raccourci :
    ```bash
    # a. Pre-commit assertion: EIR report must exist on disk in the source repo.
    Bash: test -f reports/archive/EIR-{date}.json && test -f reports/archive/EIR-{date}.md || { echo "ABORT: EIR file missing — do not commit"; exit 1; }
@@ -85,6 +84,14 @@ MCP_CONNECTION_NONBLOCKING=true claude --bare -p "/sentinel-evolve auto" --name 
    Bash: git commit -m "perf(evolve): apply EIR-{date} — {N} recommendations, score {before}%→{after}%"
    # e. Push.
    Bash: git push
+   ```
+7. **Deploy** — une fois, et une fois seulement, que le commit est poussé :
+   ```bash
+   # DRY_RUN=0 est obligatoire : deploy.sh vaut DRY_RUN=1 par défaut depuis 2026-04-17 (H3 audit fix),
+   # donc `bash scripts/deploy.sh` nu est un no-op silencieux.
+   Bash: DRY_RUN=0 bash /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/scripts/deploy.sh
+   # Contrôle de santé : le déploiement doit avoir produit les 3 skills. Échec fermé si l'un manque.
+   Bash: for s in sentinel-security sentinel-rag sentinel-evolve; do test -f ~/.claude/skills/$s/SKILL.md || { echo "ABORT: $s non déployé"; exit 1; }; done
    ```
 
 ### Safety guardrails
@@ -577,14 +584,29 @@ Available domains: `skills`, `agents`, `hooks`, `mcp`, `performance`, `config`, 
 Claude **Fable 5** (`claude-fable-5`) is a **Mythos-class model above Opus 4.8** — the most capable GA model (1M context, 128K output, **$10/$50 per MTok**). CLI accepts both `fable` (alias) and `claude-fable-5` (full id) for `--model` / `/model`. SDK support landed in anthropic-sdk-python v0.108.0 (+ server-side fallbacks on refusal).
 
 - **Same breaking-change surface as Opus 4.7/4.8** (no `temperature`/`top_p`/`top_k`, `budget_tokens`→adaptive) **plus one new break**: adaptive thinking is **always-on**, so `thinking:{type:"disabled"}` returns **HTTP 400** — omit the `thinking` param entirely. Refusals return `stop_reason:"refusal"` as **HTTP 200** (not an error) — handle accordingly. Cache minimum prefix is 512 tokens (vs 4096 on Opus).
-- **⚠️ Do NOT default-orchestrate Sentinel on Fable 5.** Fable 5 has a **real-time cyber/biology safety classifier** that flags security content and **auto-switches the session to Opus 4.8** (false positives common). Sentinel's domain *is* cybersecurity, so it trips the classifier continuously. Keep the orchestrator on **Opus 4.8** (project-level `.claude/settings.json` `"model"`), or apply to the [Cyber Verification Program](https://claude.com/form/cyber-use-case) for legitimate defensive use. Verified empirically during EIR-2026-06-10 (the cycle integrating Fable 5 itself auto-switched off Fable 5).
+- **⚠️ Do NOT default-orchestrate Sentinel on Fable 5.** Fable 5 has a **real-time cyber/biology safety classifier** that flags security content and **auto-switches the session to Opus 4.8** (false positives common). Sentinel's domain *is* cybersecurity, so it trips the classifier continuously. Keep the orchestrator on **`opus`** (alias, résolu vers Opus 5 — ne jamais épingler `claude-opus-4-8` littéralement), ou candidater au [Cyber Verification Program](https://claude.com/form/cyber-use-case) pour un usage défensif légitime. Verified empirically during EIR-2026-06-10 (the cycle integrating Fable 5 itself auto-switched off Fable 5).
+- **Portée de cette contrainte, mesurée le 27/07/2026** : elle vise l'orchestrateur *en fonctionnement* sur du contenu d'exploit, pas tout appel touchant à la sécurité. Sonde `claude -p --model claude-fable-5` sur une question d'architecture de scanner : `canonicalModel: "claude-fable-5"`, contexte 1M, aucun basculement ni refus. Un appel de revue borné, cadré architecture/design, reste donc exploitable — mais instrumenter `canonicalModel` à chaque appel plutôt que présumer (n=1).
 - Fable 5 is still the right pick for **non-security** labs and for individual non-flagged subtasks.
 
-### Opus 4.8 (released 2026-05-28)
+### Opus 5 (released 2026-07-24) — CURRENT DEFAULT
 
-Opus 4.8 is the current default model (v2.1.154). When evolving Sentinel skills or dispatching audit agents:
+Opus 5 (`claude-opus-5`) is the current default Opus model since Claude Code **v2.1.219**. The `opus` alias resolves to it on Max/Team/Enterprise. **Never pin a literal `claude-opus-4-8`** — that downgrades the session.
 
-- **Defaults to `high` effort** — use `/effort xhigh` for the hardest deep-dive audits (sentinel-security already sets `effort: xhigh` in its frontmatter). `xhigh` sits between `high` and `max`.
+What changes for Sentinel:
+
+- **Effort**: `high` is the default *and* the recommended starting point. `xhigh` is an escalation, not a baseline — `sentinel-security` was moved from `xhigh` to `high` on 2026-07-25. At `xhigh`/`max`, `thinking:{type:"disabled"}` returns **HTTP 400**.
+- **⚠️ Cybersecurity classifiers are STRENGTHENED on Opus 5**, not relaxed. Refusals on security content are *more* likely. Handle `stop_reason:"refusal"` before reading response content; consider `fallbacks:"default"`. The Opus 5 System Card notes that its multi-agent benchmarks were measured *without* safeguards active — the classifiers are explicitly tied to parallel/multi-agent contexts.
+- **⚠️ Severity filters are followed literally.** An agent prompt saying "only report high-severity" measurably lowers recall. Ask agents to report everything and filter downstream — this directly affects Sentinel's `Finding[]` contracts.
+- **Self-verification is native.** Remove inherited "double-check your findings before returning" instructions from agent prompts; keep only instructions that replay a *named external tool* (KB grep, MCP scanner).
+- **Delegation increased** and subagent nesting depth went from 1 to 3 by default (v2.1.219). Cap agent spawning explicitly in Step 2 rather than relying on the model's restraint.
+- **Context**: 1M by default and maximum, no surcharge on Max. The `[1m]` suffix is a no-op.
+- Same breaking API surface as 4.7/4.8 (no `temperature`/`top_p`/`top_k`, `budget_tokens`→adaptive). Cache minimum prefix lowered to **512 tokens**. Web fetch and Priority Tier are **not** available on Opus 5.
+
+### Opus 4.8 (released 2026-05-28) — superseded
+
+Historical. Was the default until v2.1.219 (2026-07-24).
+
+- **Defaulted to `high` effort** — the old advice was `/effort xhigh` for the hardest deep-dive audits. Superseded: see Opus 5 above.
 - **Fast mode** on Opus 4.8 is now available at 2x the standard rate for 2.5x the speed (down from its previous premium) — useful for light/breadth scans.
 - **Lean system prompt is now the default** for all models except Haiku, Sonnet, and Opus 4.7-and-earlier — this frees context budget for audit findings; keep agent prompts tight.
 - **AskUserQuestion is reserved for genuine decisions** — Claude no longer asks when it already has enough context to proceed. Headless audits should drive behaviour from `.sentinel.json` rather than relying on interactive prompts.

@@ -1,5 +1,5 @@
 {
-  "last_sync": "2026-06-10T07:35:21.086282+00:00",
+  "last_sync": "2026-07-27T06:16:56.740333+00:00",
   "sync_sources": {
     "claude_code": {
       "repo": "anthropics/claude-code",
@@ -68,14 +68,16 @@
   "rate_limit_ms": 1000,
   "max_pages_per_source": 5,
   "last_sync_status": {
-    "timestamp": "2026-06-10T07:35:21.086288+00:00",
+    "timestamp": "2026-07-27T06:16:56.740356+00:00",
     "results": {
-      "claude_code": 26,
-      "skills": 2,
-      "sdk_python": 13,
-      "sdk_typescript": 26,
-      "mcp_python": 1,
-      "mcp_typescript": 0
+      "claude_code": 41,
+      "skills": 4,
+      "sdk_python": 14,
+      "sdk_typescript": 27,
+      "mcp_python": 6,
+      "mcp_typescript": 30,
+      "cookbooks": 24,
+      "courses": 0
     },
     "success": true
   }

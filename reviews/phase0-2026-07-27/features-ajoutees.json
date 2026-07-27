@@ -1,0 +1,553 @@
+{
+  "ajoutees": 78,
+  "total_avant": 188,
+  "total_apres": 266,
+  "entrees": {
+    "sonnet_5": {
+      "introduced": "2.1.197",
+      "date": "2026-06-30",
+      "category": "models",
+      "status": "stable",
+      "description": "Claude Sonnet 5, default Claude Code model, native 1M context"
+    },
+    "opus_5": {
+      "introduced": "2.1.219",
+      "date": "2026-07-24",
+      "category": "models",
+      "status": "stable",
+      "description": "Claude Opus 5 (claude-opus-5), default Opus model, 1M context, fast mode $10/$50 per Mtok"
+    },
+    "org_default_models": {
+      "introduced": "2.1.196",
+      "date": "2026-06-29",
+      "category": "models",
+      "status": "stable",
+      "description": "Organization default model set in the org console, shown as 'Org default' in /model"
+    },
+    "org_model_restrictions": {
+      "introduced": "2.1.187",
+      "date": "2026-06-23",
+      "category": "models",
+      "status": "stable",
+      "description": "Org-configured model restrictions applied to picker, --model, /model and ANTHROPIC_MODEL"
+    },
+    "enforce_available_models": {
+      "introduced": "2.1.175",
+      "date": "2026-06-12",
+      "category": "models",
+      "status": "stable",
+      "description": "Managed setting making the availableModels allowlist also constrain the Default model"
+    },
+    "fast_mode_opus5": {
+      "introduced": "2.1.219",
+      "date": "2026-07-24",
+      "category": "models",
+      "status": "stable",
+      "description": "/fast applies to Opus 5 and Opus 4.8; Opus 4.7 removed from fast mode"
+    },
+    "deprecated_model_warning": {
+      "introduced": "2.1.183",
+      "date": "2026-06-19",
+      "category": "models",
+      "status": "stable",
+      "description": "stderr warning when the requested model is deprecated or auto-updated, incl. agent frontmatter models"
+    },
+    "subagent_nesting_depth": {
+      "introduced": "2.1.219",
+      "date": "2026-07-24",
+      "category": "multi-agent",
+      "status": "stable",
+      "description": "Subagents spawn nested subagents up to depth 3 by default (5 levels in 2.1.172, disabled in 2.1.217); CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH"
+    },
+    "subagent_concurrency_cap": {
+      "introduced": "2.1.217",
+      "date": "2026-07-21",
+      "category": "multi-agent",
+      "status": "stable",
+      "description": "Cap on concurrently-running subagents, default 20, CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS"
+    },
+    "subagent_session_cap": {
+      "introduced": "2.1.212",
+      "date": "2026-07-17",
+      "category": "multi-agent",
+      "status": "stable",
+      "description": "Per-session cap on subagent spawns, default 200, CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION; /clear resets"
+    },
+    "background_subagents_default": {
+      "introduced": "2.1.198",
+      "date": "2026-07-01",
+      "category": "multi-agent",
+      "status": "stable",
+      "description": "Subagents run in the background by default and notify on completion"
+    },
+    "subagent_thinking_inherit": {
+      "introduced": "2.1.198",
+      "date": "2026-07-01",
+      "category": "multi-agent",
+      "status": "stable",
+      "description": "Subagents and compaction inherit the session's extended thinking configuration"
+    },
+    "explore_agent_model_inherit": {
+      "introduced": "2.1.198",
+      "date": "2026-07-01",
+      "category": "agents",
+      "status": "stable",
+      "description": "Built-in Explore agent inherits the main session model (capped at opus) instead of running on haiku"
+    },
+    "agents_wizard_removed": {
+      "introduced": "2.1.198",
+      "date": "2026-07-01",
+      "category": "agents",
+      "status": "removed",
+      "description": "/agents wizard removed; edit .claude/agents/ directly or ask Claude"
+    },
+    "forward_subagent_text": {
+      "introduced": "2.1.211",
+      "date": "2026-07-15",
+      "category": "multi-agent",
+      "status": "stable",
+      "description": "--forward-subagent-text / CLAUDE_CODE_FORWARD_SUBAGENT_TEXT includes subagent text and thinking in stream-json"
+    },
+    "nested_subagent_forwarding": {
+      "introduced": "2.1.219",
+      "date": "2026-07-24",
+      "category": "multi-agent",
+      "status": "stable",
+      "description": "Depth-2+ subagents appear in stream-json keyed by their spawning Agent tool_use id"
+    },
+    "subagent_statusline_effort": {
+      "introduced": "2.1.214",
+      "date": "2026-07-18",
+      "category": "agents",
+      "status": "stable",
+      "description": "Reasoning effort added to subagentStatusLine payload"
+    },
+    "task_mode_param_deprecated": {
+      "introduced": "2.1.212",
+      "date": "2026-07-17",
+      "category": "tools",
+      "status": "removed",
+      "description": "Task tool mode parameter deprecated and ignored; subagents inherit parent permission mode"
+    },
+    "agent_name_colon_reserved": {
+      "introduced": "2.1.218",
+      "date": "2026-07-22",
+      "category": "agents",
+      "status": "stable",
+      "description": "Agent markdown files reject names containing ':' (reserved for plugin namespacing)"
+    },
+    "max_budget_usd_enforcement": {
+      "introduced": "2.1.217",
+      "date": "2026-07-21",
+      "category": "multi-agent",
+      "status": "stable",
+      "description": "--max-budget-usd now denies new spawns and halts running background subagents at the cap"
+    },
+    "directory_added_hook": {
+      "introduced": "2.1.219",
+      "date": "2026-07-24",
+      "category": "hooks",
+      "status": "stable",
+      "description": "DirectoryAdded hook fires after /add-dir or SDK register_repo_root registers a working directory mid-session"
+    },
+    "notification_hook_agent_events": {
+      "introduced": "2.1.198",
+      "date": "2026-07-01",
+      "category": "hooks",
+      "status": "stable",
+      "description": "Notification hook fires agent_needs_input / agent_completed for background agents"
+    },
+    "sandbox_network_strict_allowlist": {
+      "introduced": "2.1.219",
+      "date": "2026-07-24",
+      "category": "security",
+      "status": "stable",
+      "description": "sandbox.network.strictAllowlist denies non-allowlisted hosts for sandboxed commands without prompting"
+    },
+    "sandbox_filesystem_disabled": {
+      "introduced": "2.1.216",
+      "date": "2026-07-20",
+      "category": "security",
+      "status": "stable",
+      "description": "sandbox.filesystem.disabled skips filesystem isolation while keeping network egress control"
+    },
+    "sandbox_credentials": {
+      "introduced": "2.1.187",
+      "date": "2026-06-23",
+      "category": "security",
+      "status": "stable",
+      "description": "sandbox.credentials blocks sandboxed commands from reading credential files and secret env vars"
+    },
+    "sandbox_allow_apple_events": {
+      "introduced": "2.1.181",
+      "date": "2026-06-17",
+      "category": "security",
+      "status": "stable",
+      "description": "sandbox.allowAppleEvents opt-in lets sandboxed commands send Apple Events on macOS"
+    },
+    "auto_mode_classify_all_shell": {
+      "introduced": "2.1.193",
+      "date": "2026-06-25",
+      "category": "security",
+      "status": "stable",
+      "description": "autoMode.classifyAllShell routes all Bash/PowerShell through the classifier, not only arbitrary-code-execution patterns"
+    },
+    "auto_mode_destructive_git_block": {
+      "introduced": "2.1.183",
+      "date": "2026-06-19",
+      "category": "security",
+      "status": "stable",
+      "description": "Auto mode blocks destructive git commands not explicitly requested (reset --hard, checkout -- ., clean -fd, stash drop)"
+    },
+    "auto_mode_transcript_tamper_block": {
+      "introduced": "2.1.205",
+      "date": "2026-07-08",
+      "category": "security",
+      "status": "stable",
+      "description": "Auto mode rule blocking tampering with session transcript files"
+    },
+    "auto_mode_subagent_classifier": {
+      "introduced": "2.1.178",
+      "date": "2026-06-15",
+      "category": "security",
+      "status": "stable",
+      "description": "Subagent spawns evaluated by the auto-mode classifier before launch"
+    },
+    "auto_mode_no_optin": {
+      "introduced": "2.1.207",
+      "date": "2026-07-11",
+      "category": "security",
+      "status": "stable",
+      "description": "Auto mode available without CLAUDE_CODE_ENABLE_AUTO_MODE on Bedrock/Vertex/Foundry; disableAutoMode to disable"
+    },
+    "auto_mode_denial_reasons": {
+      "introduced": "2.1.193",
+      "date": "2026-06-25",
+      "category": "security",
+      "status": "stable",
+      "description": "Auto-mode denial reasons surfaced in transcript, denial toast and /permissions recent denials"
+    },
+    "mcp_self_approval_hardening": {
+      "introduced": "2.1.196",
+      "date": "2026-06-29",
+      "category": "security",
+      "status": "stable",
+      "description": "claude mcp list/get no longer spawn .mcp.json servers self-approved by a committed .claude/settings.json"
+    },
+    "catastrophic_removal_prompt": {
+      "introduced": "2.1.208",
+      "date": "2026-07-14",
+      "category": "security",
+      "status": "stable",
+      "description": "Catastrophic removals inside $(…)/backticks/<(…) now prompt even in --dangerously-skip-permissions and auto mode"
+    },
+    "docker_permission_prompts": {
+      "introduced": "2.1.214",
+      "date": "2026-07-18",
+      "category": "security",
+      "status": "stable",
+      "description": "Permission prompts for docker/Podman commands carrying daemon-redirect flags"
+    },
+    "rewind_symlink_guard": {
+      "introduced": "2.1.216",
+      "date": "2026-07-20",
+      "category": "security",
+      "status": "stable",
+      "description": "/rewind no longer restores or deletes files through symlinks or hard links at tracked paths"
+    },
+    "server_managed_settings_benign": {
+      "introduced": "2.1.218",
+      "date": "2026-07-22",
+      "category": "security",
+      "status": "stable",
+      "description": "Benign feature and cost toggles no longer trigger the settings-approval prompt"
+    },
+    "tool_param_permission_syntax": {
+      "introduced": "2.1.178",
+      "date": "2026-06-15",
+      "category": "permissions",
+      "status": "stable",
+      "description": "Tool(param:value) permission rules matching a tool's input parameters, e.g. Agent(model:opus)"
+    },
+    "permission_rule_path_warning": {
+      "introduced": "2.1.210",
+      "date": "2026-07-14",
+      "category": "permissions",
+      "status": "stable",
+      "description": "Startup warning for Write(path)/NotebookEdit(path)/Glob(path) rules — use Edit(path) or Read(path)"
+    },
+    "permission_mode_manual_rename": {
+      "introduced": "2.1.200",
+      "date": "2026-07-03",
+      "category": "permissions",
+      "status": "stable",
+      "description": "'default' permission mode renamed 'Manual' across CLI, --help, VS Code and JetBrains"
+    },
+    "config_key_value_syntax": {
+      "introduced": "2.1.181",
+      "date": "2026-06-17",
+      "category": "config",
+      "status": "stable",
+      "description": "/config key=value syntax to set any setting from the prompt, incl. -p and Remote Control"
+    },
+    "workflow_size_guideline": {
+      "introduced": "2.1.219",
+      "date": "2026-07-24",
+      "category": "config",
+      "status": "stable",
+      "description": "workflowSizeGuideline settings key for the advisory Dynamic workflow size"
+    },
+    "dynamic_workflow_size": {
+      "introduced": "2.1.202",
+      "date": "2026-07-06",
+      "category": "config",
+      "status": "stable",
+      "description": "'Dynamic workflow size' setting in /config (small/medium/large) — advisory, not an enforced cap"
+    },
+    "footer_links_regexes": {
+      "introduced": "2.1.176",
+      "date": "2026-06-12",
+      "category": "config",
+      "status": "stable",
+      "description": "footerLinksRegexes setting for regex-matched link badges in the footer row"
+    },
+    "attribution_session_url": {
+      "introduced": "2.1.183",
+      "date": "2026-06-19",
+      "category": "config",
+      "status": "stable",
+      "description": "attribution.sessionUrl setting to omit the claude.ai session link from commits and PRs"
+    },
+    "vim_insert_mode_remaps": {
+      "introduced": "2.1.208",
+      "date": "2026-07-14",
+      "category": "config",
+      "status": "stable",
+      "description": "vimInsertModeRemaps setting for two-key insert-mode sequences"
+    },
+    "respond_to_bash_commands": {
+      "introduced": "2.1.186",
+      "date": "2026-06-22",
+      "category": "config",
+      "status": "stable",
+      "description": "! bash commands trigger Claude to respond to output; respondToBashCommands:false restores context-only"
+    },
+    "otel_assistant_response": {
+      "introduced": "2.1.193",
+      "date": "2026-06-25",
+      "category": "observability",
+      "status": "stable",
+      "description": "claude_code.assistant_response OTel log event with model response text; redacted unless OTEL_LOG_ASSISTANT_RESPONSES=1"
+    },
+    "otel_content_max_length": {
+      "introduced": "2.1.214",
+      "date": "2026-07-18",
+      "category": "observability",
+      "status": "stable",
+      "description": "CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH configures the 60 KB truncation limit on OTel content attributes"
+    },
+    "otel_message_correlation": {
+      "introduced": "2.1.214",
+      "date": "2026-07-18",
+      "category": "observability",
+      "status": "stable",
+      "description": "message.uuid, client_request_id and tool_source attributes on OTel log events"
+    },
+    "workflow_otel_attributes": {
+      "introduced": "2.1.202",
+      "date": "2026-07-06",
+      "category": "observability",
+      "status": "stable",
+      "description": "workflow.run_id and workflow.name OTel attributes on workflow-spawned agents"
+    },
+    "mcp_auto_background": {
+      "introduced": "2.1.212",
+      "date": "2026-07-17",
+      "category": "mcp",
+      "status": "stable",
+      "description": "MCP tool calls over 2 minutes move to background automatically; CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS"
+    },
+    "mcp_cli_login_logout": {
+      "introduced": "2.1.186",
+      "date": "2026-06-22",
+      "category": "mcp",
+      "status": "stable",
+      "description": "claude mcp login/logout <name> to authenticate MCP servers from the CLI"
+    },
+    "mcp_server_errors_init": {
+      "introduced": "2.1.219",
+      "date": "2026-07-24",
+      "category": "mcp",
+      "status": "stable",
+      "description": "mcp_server_errors in the headless stream-json init event listing skipped --mcp-config entries"
+    },
+    "mcp_connection_errors": {
+      "introduced": "2.1.218",
+      "date": "2026-07-22",
+      "category": "mcp",
+      "status": "stable",
+      "description": "HTTP status and error text in claude mcp list and /mcp on connection failure; whitespace warning"
+    },
+    "mcp_roots_additional_dirs": {
+      "introduced": "2.1.203",
+      "date": "2026-07-07",
+      "category": "mcp",
+      "status": "stable",
+      "description": "Session additional working directories exposed in MCP roots/list with list_changed notifications"
+    },
+    "stacked_slash_skills": {
+      "introduced": "2.1.199",
+      "date": "2026-07-02",
+      "category": "skills",
+      "status": "stable",
+      "description": "Stacked slash-skill invocations load all leading skills, up to 5"
+    },
+    "skills_context_fork_background": {
+      "introduced": "2.1.218",
+      "date": "2026-07-22",
+      "category": "skills",
+      "status": "stable",
+      "description": "Skills with context: fork run in the background by default; background:false to opt out"
+    },
+    "nested_claude_skills_dirs": {
+      "introduced": "2.1.178",
+      "date": "2026-06-15",
+      "category": "skills",
+      "status": "stable",
+      "description": "Skills in nested .claude/skills load when working on files there; <dir>:<name> on name clash"
+    },
+    "skill_frontmatter_boolean_forms": {
+      "introduced": "2.1.218",
+      "date": "2026-07-22",
+      "category": "skills",
+      "status": "stable",
+      "description": "yes/no/on/off/1/0 accepted for skill and plugin frontmatter booleans"
+    },
+    "dataviz_skill": {
+      "introduced": "2.1.198",
+      "date": "2026-07-01",
+      "category": "skills",
+      "status": "stable",
+      "description": "/dataviz skill for chart and dashboard design with a runnable color-palette validator"
+    },
+    "no_auto_verify_code_review": {
+      "introduced": "2.1.215",
+      "date": "2026-07-19",
+      "category": "skills",
+      "status": "stable",
+      "description": "Claude no longer runs /verify and /code-review on its own; invoke explicitly"
+    },
+    "code_review_background_subagent": {
+      "introduced": "2.1.218",
+      "date": "2026-07-22",
+      "category": "skills",
+      "status": "stable",
+      "description": "/code-review runs as a background subagent, keeping stacked slash commands as its review target"
+    },
+    "fork_background_session": {
+      "introduced": "2.1.212",
+      "date": "2026-07-17",
+      "category": "sessions",
+      "status": "stable",
+      "description": "/fork copies the conversation into a new background session; the in-session variant is now /subtask"
+    },
+    "web_search_session_cap": {
+      "introduced": "2.1.212",
+      "date": "2026-07-17",
+      "category": "cli",
+      "status": "stable",
+      "description": "Session-wide WebSearch cap, default 200, CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION"
+    },
+    "resume_picker_agent_view": {
+      "introduced": "2.1.212",
+      "date": "2026-07-17",
+      "category": "sessions",
+      "status": "stable",
+      "description": "/resume in the agent view opens a picker of past sessions, incl. deleted, resumed as background"
+    },
+    "rewind_before_clear": {
+      "introduced": "2.1.191",
+      "date": "2026-06-24",
+      "category": "sessions",
+      "status": "stable",
+      "description": "/rewind can resume a conversation from before /clear was run"
+    },
+    "end_conversation_tool": {
+      "introduced": "2.1.214",
+      "date": "2026-07-18",
+      "category": "tools",
+      "status": "stable",
+      "description": "EndConversation tool: Claude can end sessions with highly abusive users or jailbreak attempts"
+    },
+    "screen_reader_mode": {
+      "introduced": "2.1.208",
+      "date": "2026-07-14",
+      "category": "ui",
+      "status": "stable",
+      "description": "Opt-in plain-text rendering via --ax-screen-reader, CLAUDE_AX_SCREEN_READER=1 or axScreenReader"
+    },
+    "doctor_claude_md_trim": {
+      "introduced": "2.1.206",
+      "date": "2026-07-10",
+      "category": "cli",
+      "status": "stable",
+      "description": "/doctor check proposing to trim checked-in CLAUDE.md content Claude could derive from the codebase"
+    },
+    "enter_worktree_confirmation": {
+      "introduced": "2.1.206",
+      "date": "2026-07-10",
+      "category": "isolation",
+      "status": "stable",
+      "description": "EnterWorktree confirms before entering a worktree outside .claude/worktrees/"
+    },
+    "process_wrapper": {
+      "introduced": "2.1.208",
+      "date": "2026-07-14",
+      "category": "cli",
+      "status": "stable",
+      "description": "CLAUDE_CODE_PROCESS_WRAPPER runs every Claude Code self-spawn through a required wrapper executable"
+    },
+    "client_presence_file": {
+      "introduced": "2.1.181",
+      "date": "2026-06-17",
+      "category": "integrations",
+      "status": "stable",
+      "description": "CLAUDE_CLIENT_PRESENCE_FILE suppresses mobile push notifications while you are at the machine"
+    },
+    "ask_user_question_no_autocontinue": {
+      "introduced": "2.1.200",
+      "date": "2026-07-03",
+      "category": "tools",
+      "status": "stable",
+      "description": "AskUserQuestion dialogs no longer auto-continue by default; idle timeout is opt-in via /config"
+    },
+    "claude_in_chrome_ga": {
+      "introduced": "2.1.198",
+      "date": "2026-07-01",
+      "category": "integrations",
+      "status": "stable",
+      "description": "Claude in Chrome generally available"
+    },
+    "background_agent_auto_pr": {
+      "introduced": "2.1.198",
+      "date": "2026-07-01",
+      "category": "automation",
+      "status": "stable",
+      "description": "Background agents from claude agents commit, push and open a draft PR when finishing worktree code work"
+    },
+    "memory_modified_timestamp": {
+      "introduced": "2.1.214",
+      "date": "2026-07-18",
+      "category": "memory",
+      "status": "stable",
+      "description": "ISO modified timestamp added to memory file frontmatter"
+    },
+    "transcript_write_warnings": {
+      "introduced": "2.1.217",
+      "date": "2026-07-21",
+      "category": "sessions",
+      "status": "stable",
+      "description": "Warnings when transcript writes fail or session saving is off, instead of losing transcripts silently"
+    }
+  }
+}

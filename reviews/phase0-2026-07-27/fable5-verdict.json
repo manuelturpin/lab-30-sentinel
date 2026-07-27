@@ -1,0 +1,160 @@
+{
+  "evaluateur": "Claude Fable 5 (claude-fable-5) — panel de consultation, appel headless xhigh, famille identique à l'auteur (Anthropic), signalé en angle mort",
+  "verdict": "revise",
+  "synthese": "Le travail factuel de fond est largement exact et vérifié de première main : le diff fourni correspond bit à bit au git diff réel, le drift runtime→repo du 25/07 est réel (7 corrections présentes dans ~/.claude/skills/sentinel-security/ et absentes du repo avant apply), deploy.sh existe bien (15 036 octets), le claim Explore/v2.1.198 est confirmé par le changelog local, et FIND-001 est un vrai défaut que j'ai reproduit dans le code (cve-sync.py compare par simple `!=` sans ordre ; pending-updates.json matérialise 2025→2017-RC2). Mais le round est vicié par un défaut de premier ordre : l'objet soumis à revue n'est pas l'objet sur disque. Le rapport du corpus (11:59) est un préfixe tronqué de l'archive réelle (12:03) qui omet toute la section 7 — FIND-001, l'écart REC-005 assumé, le test de faux positifs et le disclaimer « 84 % = estimation, pas une mesure » — et rules-avant-apres.json ne montre pas les 6 entrées d'exclusion ajoutées ensuite aux 3 règles. S'y ajoutent : le pseudo-code de dispatch qui assigne toujours `haiku` en contradiction avec la table corrigée et la doctrine machine ; des exclusions anti-faux-positifs calibrées sur le dépôt Sentinel lui-même mais appliquées à tout projet scanné (perte de recall silencieuse — le mode d'échec n°1 documenté du lab, reproduit) ; des patterns JSON multi-lignes qui ne matcheront jamais un settings.json réel indenté, sur une règle promue HIGH 7.1 sans passer par le gate rule-tester.py du dépôt ; et un tableau de pipeline « Apply ⏸ en attente de validation » conservé dans le rapport final alors que les 6 P1 sont appliqués. Rien de structurellement faux — mais l'écart corpus↔disque et les régressions du correctif imposent une reprise avant tout deploy/commit.",
+  "territoires": [
+    {
+      "nom": "exactitude_factuelle",
+      "etat": "reserves",
+      "commentaire": "Les claims vérifiables sont exacts : Explore/v2.1.198, Sonnet 5 défaut v2.1.197, Opus 5 défaut v2.1.219, OTEL_LOG_ASSISTANT_RESPONSES et son héritage (v2.1.193), les 4 réglages sandbox, le drift runtime, deploy.sh (15 036 octets), FIND-001 (vérifié dans cve-sync.py et pending-updates.json), inventaire réel à 266 entrées. Réserves : le « ≈ 84 % » est présenté dans le corpus comme « recalculé » alors que l'archive l'admet comme estimation sans méthode ; REC-006 annonce « 188 → ~230 » quand l'application réalise 266 ; plusieurs claims Opus 5 (System Card, web fetch/Priority Tier absents, classifieurs renforcés) n'ont aucune base de preuve dans le dépôt."
+    },
+    {
+      "nom": "doctrine",
+      "etat": "defaut",
+      "commentaire": "Le cycle répare la violation majeure du 25/07 (édition directe du runtime) dans le bon sens (réconciliation runtime→repo puis workflow normal) — c'est conforme au contrat. Mais il laisse `model: \"haiku\"` dans le pseudo-code de dispatch du fichier même qu'il éditait, en violation de la doctrine machine « opus ou sonnet exclusivement, plus jamais haiku » ; la règle gardienne .claude/rules/deploy-reminder.md pointe toujours le chemin runtime mort `~/.claude/skills/security/` ; et le SKILL.md evolve stipule « the apply mode requires explicit user approval for each change » alors que l'archive déclare « Les 6 P1 ont été appliqués » sans trace d'approbation par changement (le mandat précise qu'aucun tiers n'est intervenu)."
+    },
+    {
+      "nom": "trous",
+      "etat": "defaut",
+      "commentaire": "Les nouvelles règles n'ont pas traversé le pipeline de validation maison (rule-tester.py, corpus tests/fixtures, gate précision ≥70 % — Session 14 du CLAUDE.md) : aucune des 3 règles ne porte de champ test_precision (vérifié). Les patterns multi-lignes de LLM-CCSANDBOX-001 ne peuvent pas matcher un settings.json indenté en matching ligne-par-ligne, donc la règle rate sa cible principale pour filesystem.disabled et credentials ; la sémantique de `\"credentials\": (false|\"allow\")` est spéculative (le changelog ne documente pas les valeurs) ; le pattern CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH ne détecte ni la désactivation annoncée par la description ni les valeurs à 6 chiffres. L'archive admet elle-même : « ce dépôt ne contient aucun vrai positif : le test mesure la précision sur du bruit, pas le recall »."
+    },
+    {
+      "nom": "coherence_interne",
+      "etat": "defaut",
+      "commentaire": "Trois contradictions vérifiées : (1) l'objet soumis à revue diverge de l'objet sur disque — EIR du corpus tronqué de la section 7, rules-avant-apres.json sans les 6 exclusions ajoutées ; (2) la table des tiers dit `sonnet` pour les agents Light, le pseudo-code trois paragraphes plus bas dit `haiku` ; (3) le rapport final conserve « 5. Apply ⏸ en attente de validation » et « deploy.sh exécuté maintenant détruirait l'intégralité de ces corrections » au présent, alors que sa propre section 7 déclare les P1 appliqués et que le diff a rapatrié ces corrections. Plus la phrase anglaise sur Fable 5 orpheline en fin de note française Opus 5."
+    },
+    {
+      "nom": "proportionnalite",
+      "etat": "reserves",
+      "commentaire": "Le cœur du cycle est proportionné (petites éditions ciblées, une règle KB, un inventaire reconstruit). Excès listés dans sur_ingenierie : sonde n=1 dupliquée dans deux SKILL.md, sections historiques Opus 4.8/4.7 conservées in extenso, doctrine machine personnelle dans un skill générique, pattern regex au seuil arbitraire non testé. Le découpage CCSANDBOX/CCHARDEN est défendable (CWE et remédiations distincts) — ce n'est pas de la sur-ingénierie — mais sa calibration relative interroge : le bypass total des contrôles (safe-mode, CCHARDEN) reste MEDIUM 5.9 quand le bypass d'une couche (CCSANDBOX) devient HIGH 7.1, sans vecteur CVSS fourni ni pour l'un ni pour l'autre."
+    },
+    {
+      "nom": "regressions_du_correctif",
+      "etat": "defaut",
+      "commentaire": "Deux régressions créées par les correctifs : (1) les 6 entrées d'exclusion ajoutées aux 3 règles pour éteindre 7 faux positifs auto-référentiels du dépôt Sentinel (`knowledge-base/`, `CHANGELOG`, `changelog`, `reports/archive/`, etc.) s'appliquent à TOUT projet scanné — un projet cible qui documente `OTEL_LOG_USER_PROMPTS=1` dans son CHANGELOG ou sa knowledge-base échappe désormais à la détection ; c'est l'échange FP→FN que la section 7 refuse explicitement pour l'ancrage de ligne, accepté ici sans le voir — 6e occurrence du mode d'échec documenté du lab ; (2) la réconciliation runtime→repo a rapatrié tel quel le pseudo-code `haiku` et la phrase Fable orpheline, propageant au repo deux défauts du 25/07."
+    }
+  ],
+  "findings": [
+    {
+      "gravite": "majeur",
+      "territoire": "coherence_interne",
+      "resume": "Le corpus soumis à revue est périmé par rapport à l'état réel du dépôt : le rapport y est tronqué de toute la section 7 (FIND-001, écart REC-005, test de faux positifs, disclaimer sur le 84 %) et rules-avant-apres.json omet les 6 entrées d'exclusion réellement présentes dans rules.json.",
+      "citation": "reviews/phase0-2026-07-27/EIR-2026-07-27.md (7 917 o, 11:59) est un préfixe exact de reports/archive/EIR-2026-07-27.md (11 399 o, 12:03) — diff vérifié : seules manquent les lignes à partir de « ## 7. Application des P1 et corrections apportées à ce rapport ». knowledge-base/domains/llm-ai/rules.json contient pour les 3 règles « exclude: ['node_modules','dist','test','knowledge-base/','anthropic-intel/','knowledge/sources/','reports/archive/','CHANGELOG','changelog'] » ; le corpus rules-avant-apres.json « apres » ne montre que « ['node_modules','dist','test'] ».",
+      "consequence_decisionnelle": "Tout évaluateur s'en tenant au corpus juge un état qui n'existe plus et rate précisément les éléments que le mandat demande d'éprouver (FIND-001, validation des patterns, statut du 84 %). Re-synchroniser le corpus sur l'état disque avant tout scellement ; aucune conclusion de ce round fondée uniquement sur rules-avant-apres.json n'est valide."
+    },
+    {
+      "gravite": "majeur",
+      "territoire": "regressions_du_correctif",
+      "resume": "Le correctif anti-faux-positifs (6 exclusions ajoutées aux 3 règles, hors corpus) est calibré sur les auto-déclenchements du dépôt Sentinel mais s'applique génériquement à tout projet audité : perte de recall silencieuse sur toute cible dont la config vulnérable vit dans un CHANGELOG, une knowledge-base ou une archive de rapports.",
+      "citation": "reports/archive/EIR-2026-07-27.md : « Les 7 déclenchements étaient tous auto-référentiels […] Correctif retenu : 6 entrées d'exclusion sur les 3 règles » ; rules.json réel : « exclude: […,'knowledge-base/','anthropic-intel/','knowledge/sources/','reports/archive/','CHANGELOG','changelog'] ». La même section refuse pourtant l'échange équivalent : « cela aurait supprimé les faux positifs mais fait perdre la détection des formes en ligne […] soit un échange FP contre FN non souhaitable ».",
+      "consequence_decisionnelle": "Les règles LLM-DEBUG-001/CCHARDEN-001/CCSANDBOX-001 ne détecteront plus ces variables dans des emplacements légitimes de projets cibles. Remplacer les exclusions génériques par un mécanisme scoping propre au dépôt Sentinel (.sentinel.json false_positives, prévu exactement pour cela dans CLAUDE.md) avant deploy."
+    },
+    {
+      "gravite": "majeur",
+      "territoire": "trous",
+      "resume": "LLM-CCSANDBOX-001 (HIGH 7.1) repose sur des patterns qui ne peuvent pas matcher sa cible principale : en matching ligne-par-ligne, les regex multi-lignes ne détectent ni sandbox.filesystem.disabled ni sandbox.credentials dans un settings.json indenté ; et aucune des 3 règles n'est passée par le pipeline de validation maison (rule-tester.py, gate 70 %).",
+      "citation": "rules.json, LLM-CCSANDBOX-001 : patterns « \"filesystem\"\\s*:\\s*\\{[^}]*\"disabled\"\\s*:\\s*true » et « \"sandbox\"\\s*:\\s*\\{[^}]*\"credentials\"\\s*:\\s*(false|\"allow\") » — inopérants si accolade et clé sont sur des lignes distinctes, ce qui est la forme normale d'un settings.json. Vérifié : aucune des 3 règles ne porte de champ test_precision. CLAUDE.md : « rule-tester.py — valide les patterns LLM contre un corpus de test […] Precision gate >=70% pour promotion \"active\" ».",
+      "consequence_decisionnelle": "La règle donne une assurance de couverture qu'elle n'a pas : un settings.json committé désactivant l'isolation filesystem passerait inaperçu. Ajouter des fixtures multi-lignes réalistes au corpus de test, passer les 3 règles par rule-tester.py, et documenter la sémantique réelle de sandbox.credentials avant de maintenir le pattern."
+    },
+    {
+      "gravite": "majeur",
+      "territoire": "doctrine",
+      "resume": "La réconciliation a corrigé la table des tiers (Light → sonnet) mais pas le pseudo-code de dispatch trois paragraphes plus bas, qui assigne toujours haiku aux quatre agents Light — en contradiction avec la table, avec la doctrine machine « plus jamais haiku », et présent à l'identique dans le runtime : ni le 25/07 ni le 27/07 ne l'ont vu.",
+      "citation": "skills/security/SKILL.md:152 : « model: \"haiku\" if agent in [cors-audit, ssl-tls-audit, static-site-audit, websocket-audit] else \"sonnet\" […] » ; même fichier ligne 128 : « | **Light** (pattern checks) | `sonnet` | cors-audit, ssl-tls-audit, static-site-audit, websocket-audit | » ; ligne 130 : « opus ou sonnet exclusivement, plus jamais haiku ».",
+      "consequence_decisionnelle": "Le pseudo-code est ce que l'orchestrateur suit réellement au dispatch : si CLAUDE_CODE_SUBAGENT_MODEL saute (unset requis pour tout scan comparatif, cf. statut CLAUDE.md), le skill redispatche du haiku en violation de la doctrine. Corriger la ligne 152 avant deploy."
+    },
+    {
+      "gravite": "majeur",
+      "territoire": "coherence_interne",
+      "resume": "Le rapport final s'auto-contredit sur l'état du pipeline : le tableau conserve « Apply ⏸ en attente de validation » et le texte affirme au présent que deploy.sh « détruirait l'intégralité de ces corrections », alors que la section 7 du même document déclare les 6 P1 appliqués et que le diff a précisément rapatrié ces corrections — et le SKILL.md evolve exige une approbation explicite par changement dont aucune trace n'existe.",
+      "citation": "reports/archive/EIR-2026-07-27.md : « | 5. Apply | ⏸ en attente de validation | » et « | 6. Deploy | 🔴 **bloqué par REC-001** | » coexistent avec « Les 6 P1 ont été appliqués le 27/07 » ; EIR §3 : « bash scripts/deploy.sh exécuté maintenant détruirait l'intégralité de ces corrections » ; skills/sentinel-evolve/SKILL.md:564 : « the apply mode requires explicit user approval for each change ». Vérifié : le diff repo↔runtime restant ne contient plus que des avancées du repo (REC-002/003, sonde, restauration deploy.sh) — plus rien à détruire.",
+      "consequence_decisionnelle": "Le blocage 🔴 sur deploy n'est plus fondé après réconciliation : le maintenir sans le requalifier (« en attente de revue croisée ») entretient une fausse représentation du risque, et la contradiction apply-attente/appliqué rend l'état du pipeline invérifiable pour le lecteur. Mettre le tableau à jour et acter le mécanisme d'approbation réellement suivi (mode auto du CLAUDE.md vs clause du SKILL.md — les deux se contredisent aussi entre eux)."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "exactitude_factuelle",
+      "resume": "Le « ≈ 84 % » est présenté dans la version corpus comme « recalculé sur la surface réelle » sans réserve, alors que l'archive l'admet comme estimation non recalculée ; et REC-006 annonce « 188 → ~230 » quand l'application réalise 266, sans que l'écart soit corrigé.",
+      "citation": "reviews/phase0-2026-07-27/EIR-2026-07-27.md : « Recalculé sur la surface réelle de v2.1.220, le taux d'exploitation tombe à ≈ 84 % » — sans le disclaimer présent uniquement dans reports/archive/EIR-2026-07-27.md : « Le « ≈ 84 % » est une estimation, pas une mesure : il n'a pas été recalculé par le mode analyze ». REC-006 : « Reconstruire feature-inventory.json (188 → ~230) » ; vérifié : l'inventaire réel compte 266 entrées.",
+      "consequence_decisionnelle": "Aucune décision ne doit être indexée sur le chiffre 84 avant le recalcul annoncé au prochain cycle ; la version du rapport qui circule (corpus) surjoue la solidité du chiffre que l'archive relativise."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "exactitude_factuelle",
+      "resume": "Plusieurs affirmations à portée décisionnelle sur Opus 5 introduites dans le SKILL.md evolve n'ont aucune base de preuve dans le dépôt, contrairement au cycle précédent qui avait produit un rapport deep-research sourcé pour Fable 5.",
+      "citation": "skills/sentinel-evolve/SKILL.md:591-596 : « The Opus 5 System Card notes that its multi-agent benchmarks were measured *without* safeguards active » ; « Web fetch and Priority Tier are **not** available on Opus 5 » ; « Cybersecurity classifiers are STRENGTHENED on Opus 5 ». Aucun rapport reports/claude-*opus5* dans le dépôt ; NON_VERIFIE (introuvable dans le changelog local et hors de portée d'une vérification hors-ligne).",
+      "consequence_decisionnelle": "Ces claims pilotent des choix opérationnels (gestion des refus, fallbacks, contrats Finding[]). Les sourcer (System Card, docs pricing/features) ou les marquer comme non vérifiés avant qu'un futur cycle les traite comme acquis."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "coherence_interne",
+      "resume": "Artefact de réconciliation : la phrase anglaise sur l'utilisabilité de Fable 5 est restée accrochée en fin de note française sur les classifieurs Opus 5, où elle est hors sujet — dupliquée depuis le paragraphe « Model choice » d'origine.",
+      "citation": "skills/security/SKILL.md:138 : « …Tout remonter, filtrer en aval. Fable 5 remains usable for non-flagged subtasks (it is the documented top tier); the constraint is specifically about the session orchestrator on security content. »",
+      "consequence_decisionnelle": "Rattacher la phrase au paragraphe Model choice (ligne 136) ou la supprimer — en l'état, la note Opus 5 conclut sur une exception qui concerne un autre modèle."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "doctrine",
+      "resume": "La règle projet qui interdit l'édition directe du runtime pointe un chemin qui n'existe plus : le cycle a corrigé les paths des agents dans le SKILL.md mais pas dans la règle gardienne elle-même.",
+      "citation": ".claude/rules/deploy-reminder.md : « Never edit files directly in `~/.claude/skills/security/` — always edit in this repo and deploy » — vérifié : ~/.claude/skills/security/ n'existe pas, le runtime réel est ~/.claude/skills/sentinel-security/.",
+      "consequence_decisionnelle": "Une règle qui protège un chemin mort ne protège rien : la violation du 25/07 a eu lieu dans sentinel-security/, hors du chemin cité. Mettre à jour le path pour que le garde-fou couvre le vrai runtime."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "trous",
+      "resume": "Le pattern ajouté pour CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH ne couvre pas ce que sa propre description annonce : seuil arbitraire à 7 chiffres (≥10 M) qui laisse passer des caps 6 chiffres (~16× le défaut de 60 KB) et aucune détection de la forme « disabled » pourtant qualifiée de fuite complète.",
+      "citation": "rules.json, LLM-DEBUG-001 : pattern « CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH\\s*=\\s*[0-9]{7,} » ; description : « a large or disabled cap turns truncated leakage into complete leakage ».",
+      "consequence_decisionnelle": "Soit documenter le seuil et la forme de désactivation réelle du réglage, soit retirer le pattern et garder la variable en remédiation textuelle — un pattern à demi-couvrant donne une fausse assurance."
+    }
+  ],
+  "affirmations_evaluees": [
+    {
+      "numero": 1,
+      "statut": "avance_sans_preuve",
+      "justification": "La partie « artefact » est établie : l'inventaire était figé à 188 entrées depuis le 10/06 (vérifié : 78 ajouts couvrant v2.1.172→220 portent l'inventaire réel à 266), donc le dénominateur du 98 % ne pouvait pas bouger. Le chiffre « ≈ 84 % », lui, est avancé sans méthode : aucun calcul dans le corpus, et l'archive l'admet — « Le « ≈ 84 % » est une estimation, pas une mesure : il n'a pas été recalculé par le mode analyze ». La version corpus dit pourtant « Recalculé sur la surface réelle », formulation qui surjoue le statut du chiffre."
+    },
+    {
+      "numero": 2,
+      "statut": "etabli",
+      "justification": "Vérifié dans le changelog local rapatrié par cron (skills/sentinel-evolve/knowledge/sources/claude-code-changelog.md, v2.1.198) : « The built-in Explore agent now inherits the main session's model (capped at opus) instead of running on haiku ». La phrase « (Haiku-based, fast and cheap) » du SKILL.md était donc bien devenue fausse ; le correctif appliqué (repo ligne 82) est fidèle. Réserve d'indépendance : cette source est produite par le pipeline de l'agent évalué (voir angle mort)."
+    },
+    {
+      "numero": 3,
+      "statut": "etabli",
+      "justification": "Vérifié de première main : la note existe dans le runtime (~/.claude/skills/sentinel-security/SKILL.md:515 : « le scripts/deploy.sh référencé auparavant n'existe pas dans ce skill ») et elle est fausse par rapport au dépôt — scripts/deploy.sh existe, exécutable, 15 036 octets (le « 15 Ko » du rapport est exact). L'explication du rapport (visible seulement depuis ~/.claude/skills/) est plausible, et la décision de ne pas rapatrier une note fausse est justifiée et documentée dans l'EIR §3."
+    },
+    {
+      "numero": 4,
+      "statut": "avance_sans_preuve",
+      "justification": "Le découpage en règle distincte est défendable (subcategory sandbox-weakening vs control-bypass, CWE distincts — CWE-653/923/522 ajoutés) et l'écart est documenté… mais uniquement dans l'archive (« Le sandbox n'a pas été versé dans LLM-CCHARDEN-001 comme annoncé […] une règle dédiée LLM-CCSANDBOX-001 (HIGH 7.1) a été créée »), pas dans la version corpus. La sévérité 7.1 n'est justifiée par aucun vecteur CVSS v4, et la calibration relative est incohérente : safe-mode, qui désactive TOUS les contrôles (hooks, MCP, skills), reste MEDIUM 5.9 tandis que la désactivation d'une couche d'isolation devient HIGH 7.1."
+    },
+    {
+      "numero": 5,
+      "statut": "faux",
+      "justification": "Le claim « validés » était faux au moment où il a été écrit : l'archive elle-même l'admet — « C'était incomplet : aucun test de faux positifs n'avait été fait ». Un test FP a été exécuté après coup (hors corpus : 7 déclenchements auto-référentiels → 0), mais il ne teste que la précision sur le bruit du dépôt Sentinel (« ce dépôt ne contient aucun vrai positif ») et son correctif — 6 exclusions génériques — introduit une régression de recall sur les projets cibles (finding majeur). Le pipeline de validation maison (rule-tester.py, gate 70 %) n'a jamais été utilisé : aucune des 3 règles ne porte de test_precision (vérifié)."
+    },
+    {
+      "numero": 6,
+      "statut": "etabli",
+      "justification": "Reproduit dans le code : scripts/cve-sync.py compare « latest_version != current_version » sans aucune comparaison d'ordre, avec source releases/latest puis fallback tags?per_page=1 — et knowledge-base/standards/pending-updates.json matérialise les régressions le 27/07 à 07:20 (owasp-web 2025→2017-RC2, owasp-llm 2025→2024, plus deux comparaisons de schémas hétérogènes). Sévérité proportionnée : le fichier est une file « pending » que seul cve-sync écrit (aucun consommateur automatique trouvé), donc proposition, pas application. Réserve décisive : FIND-001 est totalement absent de la version corpus du rapport — il ne figure que dans l'archive."
+    },
+    {
+      "numero": 7,
+      "statut": "etabli",
+      "justification": "L'arrêt était justifié au moment de la décision : les 7 corrections runtime du 25/07 sont réelles (vérifiées par diff repo↔runtime) et un deploy.sh avant réconciliation les aurait écrasées — ce n'est pas une prudence vendue comme sauvetage. Réserve : après l'apply (qui rapatrie précisément ces corrections), le rapport final n'a réactualisé ni le tableau (« Apply ⏸ en attente de validation » alors que §7 dit les P1 appliqués) ni la formulation au présent « détruirait l'intégralité de ces corrections », désormais périmée : le blocage résiduel légitime est l'attente de revue croisée, pas un risque de destruction."
+    }
+  ],
+  "sur_ingenierie": [
+    "La sonde Fable 5 n=1 du 27/07 (canonicalModel, « aucun basculement ni refus ») est dupliquée quasi verbatim dans deux fichiers (skills/security/SKILL.md:140 et skills/sentinel-evolve/SKILL.md:581) : une observation n=1 mérite un seul emplacement (evolve, le skill de veille) et un renvoi, pas deux copies à maintenir en synchronisation.",
+    "Les sections « Opus 4.8 — superseded » (7 puces) et « Opus 4.7 » (9 puces) restent in extenso dans skills/sentinel-evolve/SKILL.md alors qu'elles sont déclarées historiques (« Historical. Was the default until v2.1.219 ») : compressibles à deux lignes chacune sans perte, elles chargent le contexte à chaque invocation du skill.",
+    "La note « Doctrine machine (19/07/2026) : opus ou sonnet exclusivement… » (skills/security/SKILL.md:130) inscrit une préférence de configuration personnelle de la machine dans un skill par ailleurs générique et versionné sur GitHub — l'information appartient aux settings machine ou au CLAUDE.md, pas au produit.",
+    "Le pattern « CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH\\s*=\\s*[0-9]{7,} » ajoute une regex à seuil arbitraire non testée là où une ligne de remédiation textuelle (« laisser le cap à 60 KB ») portait déjà l'essentiel du message."
+  ],
+  "angle_mort": [
+    "Aucune exécution réelle : mes conclusions sur l'inopérance des patterns multi-lignes supposent un matching ligne-par-ligne (Grep) ; si le moteur de scan des agents lit le fichier en un seul buffer avec DOTALL, « [^}]* » pourrait matcher. Je n'ai pas lu l'implémentation du protocole de scan (agents/_protocol.md) ni lancé les règles sur une fixture réelle.",
+    "Circularité des sources : le changelog local qui m'a servi à valider les claims de versions (v2.1.197/198/219, sandbox, OTEL) est lui-même généré par le pipeline anthropic-sync de l'agent évalué ; je n'ai pas confronté ces entrées aux releases GitHub d'origine (pas d'accès réseau utilisé). Une falsification ou erreur amont du pipeline validerait faussement les correctifs qui s'y adossent.",
+    "Même famille de modèles que l'auteur (Fable 5 évaluant Opus 5, tous deux Anthropic) : les angles morts de posture partagés — notamment sur les affirmations concernant les classifieurs et le comportement de nos propres modèles — sont précisément ce que l'évaluateur de la famille opposée doit couvrir.",
+    "Je n'ai pas accès à la session du 27/07 : impossible de trancher si une validation utilisateur est intervenue entre « recommend » et « apply » — la contradiction documentaire est établie, la violation effective du contrat d'approbation ne l'est pas.",
+    "Le « ≈ 84 % » est invérifiable dans les deux sens : je n'ai pas non plus recalculé de score d'exploitation indépendant, faute de définition de la métrique dans le corpus.",
+    "Les 78 entrées de l'inventaire n'ont été vérifiées que par échantillonnage (≈10 contre le changelog local) ; des erreurs de version ou de description dans les entrées non échantillonnées passeraient inaperçues, et elles alimentent directement le futur recalcul du score et le mode audit."
+  ]
+}

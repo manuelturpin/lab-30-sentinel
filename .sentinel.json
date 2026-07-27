@@ -1,0 +1,32 @@
+{
+  "_comment": "Configuration de scan pour lab-30-sentinel lui-même. Sentinel s'audite en partie (cron project-rescan) et déclenche alors sur sa propre documentation : les règles décrivent les variables dangereuses, donc les patterns matchent leur propre description. Ces exclusions sont SPÉCIFIQUES À CE DÉPÔT et n'ont rien à faire dans les règles, dont la portée est globale à tout projet audité. Créé le 2026-07-27 après le finding F2 de la revue croisée (Fable 5) : les mêmes exclusions avaient d'abord été mises dans les règles, provoquant une perte de recall silencieuse sur toute cible dont une configuration fuitée vit dans un CHANGELOG ou une knowledge-base.",
+  "exclude_paths": [
+    "knowledge-base/",
+    "skills/sentinel-evolve/knowledge/sources/",
+    "reports/archive/",
+    "reviews/",
+    "rag/chromadb/"
+  ],
+  "false_positives": [
+    {
+      "rule_id": "LLM-DEBUG-001",
+      "file": "knowledge-base/**",
+      "reason": "La règle décrit les variables OTEL qu'elle détecte ; sa propre description matche ses patterns."
+    },
+    {
+      "rule_id": "LLM-CCHARDEN-001",
+      "file": "knowledge-base/**",
+      "reason": "Idem — description auto-référentielle."
+    },
+    {
+      "rule_id": "LLM-CCSANDBOX-001",
+      "file": "knowledge-base/**",
+      "reason": "Idem — description auto-référentielle."
+    },
+    {
+      "rule_id": "LLM-DEBUG-001",
+      "file": "skills/sentinel-evolve/knowledge/sources/*.md",
+      "reason": "Changelog Claude Code généré : cite les variables dans leurs release notes."
+    }
+  ]
+}
