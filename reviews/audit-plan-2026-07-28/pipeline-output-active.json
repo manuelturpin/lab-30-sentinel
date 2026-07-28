@@ -1,0 +1,2545 @@
+[
+  {
+    "id": "CVE-2021-22054",
+    "severity": "HIGH",
+    "cvss_v4": 7.5,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2021-22054: VMware Workspace ONE UEM console 20.0.8 prior to 20.0.8.37, 20.11.0 prior to 20.11.0.40, 21.2.0 prio",
+    "description": "VMware Workspace ONE UEM console 20.0.8 prior to 20.0.8.37, 20.11.0 prior to 20.11.0.40, 21.2.0 prior to 21.2.0.27, and 21.5.0 prior to 21.5.0.37 contain an SSRF vulnerability. This issue may allow a malicious actor with network access to UEM to send their requests without authentication and to gain access to sensitive information.",
+    "detect": {
+      "patterns": [
+        "requests\\.get\\(.*(?:request|req)\\.",
+        "requests\\.post\\(.*(?:request|req)\\.",
+        "urllib\\.request\\.urlopen\\(.*(?:request|req)\\.",
+        "httplib2\\.Http\\(\\)\\.request\\(.*(?:request|req)\\.",
+        "RestTemplate.*exchange\\(.*(?:request|param|body)",
+        "new\\s+URL\\(.*(?:getParameter|getBody|getQuery)",
+        "HttpClient.*execute\\(.*(?:getParameter|getBody|getQuery)",
+        "OkHttpClient.*url\\(.*(?:request|param|body)",
+        "curl_exec\\(.*\\$_(GET|POST|REQUEST)",
+        "file_get_contents\\(\\s*\\$_(GET|POST|REQUEST)",
+        "(?:http|https):\\/\\/.*\\$_(GET|POST|REQUEST)",
+        "WebClient.*(?:get|post)\\(.*(?:request|param)",
+        "(?:fetch|axios)\\(.*(?:req|request)\\.(?:body|query|params).*url",
+        "proxyPass\\s+.*\\$",
+        "redirect.*(?:url|uri).*(?:request|req)\\.(?:getParameter|body|query)"
+      ],
+      "file_types": [
+        "*.java",
+        "*.py",
+        "*.php",
+        "*.js",
+        "*.ts",
+        "*.go",
+        "*.rb",
+        "*.cs",
+        "*.kt"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "test",
+        "tests",
+        "__tests__",
+        "dist",
+        "build",
+        ".git"
+      ],
+      "negative_patterns": [
+        "allowedHosts",
+        "allowedUrls",
+        "allowlist",
+        "whitelist",
+        "validateUrl",
+        "isInternalUrl",
+        "blockPrivateIp",
+        "ssrfProtect",
+        "isSafeUrl",
+        "denyPrivateRange",
+        "isAllowedHost"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2021-22054.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-22054"
+      ]
+    },
+    "standards": [
+      "CWE-918",
+      "CWE-918"
+    ],
+    "epss_score": 0.93582,
+    "epss_percentile": 0.99832,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.91,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 12,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.551047+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2025-57622",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.8,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2025-57622: An issue in Step-Video-T2V allows a remote attacker to execute arbitrary code via the /vae-api , /ca",
+    "description": "An issue in Step-Video-T2V allows a remote attacker to execute arbitrary code via the /vae-api , /caption-api , feature = pickle.loads(request.get_data()) component",
+    "detect": {
+      "patterns": [
+        "pickle\\.loads\\(request\\.get_data\\(",
+        "pickle\\.loads\\(request\\.data",
+        "pickle\\.loads\\(request\\.body",
+        "pickle\\.loads\\(req\\.get_data\\(",
+        "pickle\\.loads\\(req\\.data",
+        "pickle\\.loads\\(flask\\.request",
+        "pickle\\.loads\\(bottle\\.request",
+        "pickle\\.loads\\(tornado\\.request",
+        "pickle\\.loads\\([^)]*\\.read\\(",
+        "pickle\\.load\\(request",
+        "pickle\\.loads\\(",
+        "cPickle\\.loads\\(",
+        "cPickle\\.load\\(request",
+        "shelve\\.open\\(",
+        "marshal\\.loads\\(",
+        "yaml\\.load\\([^,)]+\\)(?!.*Loader\\s*=\\s*yaml\\.SafeLoader)",
+        "yaml\\.load\\(request",
+        "jsonpickle\\.decode\\(",
+        "dill\\.loads\\(",
+        "cloudpickle\\.loads\\("
+      ],
+      "file_types": [
+        "*.py"
+      ],
+      "exclude": [
+        "tests",
+        "test",
+        "__pycache__",
+        ".venv",
+        "venv",
+        "node_modules",
+        "dist",
+        "build",
+        "site-packages"
+      ],
+      "negative_patterns": [
+        "yaml\\.safe_load\\(",
+        "Loader\\s*=\\s*yaml\\.SafeLoader",
+        "Loader\\s*=\\s*yaml\\.FullLoader",
+        "hmac\\.compare_digest\\(",
+        "validate_signature\\(",
+        "verify_hmac\\(",
+        "trusted_source",
+        "allowlist",
+        "whitelist"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2025-57622.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-57622"
+      ]
+    },
+    "standards": [
+      "CWE-502"
+    ],
+    "epss_score": 0.00426,
+    "epss_percentile": 0.62125,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.915,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "feedback_tp": 8,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.551273+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2026-3059",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.8,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-3059: SGLang's multimodal generation module is vulnerable to unauthenticated remote code execution through",
+    "description": "SGLang's multimodal generation module is vulnerable to unauthenticated remote code execution through the ZMQ broker, which deserializes untrusted data using pickle.loads() without authentication.",
+    "detect": {
+      "patterns": [
+        "pickle\\.loads\\(",
+        "pickle\\.load\\(",
+        "zmq.*recv.*pickle|pickle.*zmq.*recv",
+        "socket\\.recv\\(.*\\).*pickle\\.loads|pickle\\.loads.*socket\\.recv",
+        "recv_multipart\\(\\).*pickle|pickle.*recv_multipart",
+        "zmq\\.Context\\(\\)|zmq\\.socket\\(",
+        "import\\s+pickle",
+        "from\\s+pickle\\s+import",
+        "marshal\\.loads\\(",
+        "shelve\\.open\\("
+      ],
+      "file_types": [
+        "*.py"
+      ],
+      "exclude": [
+        "node_modules",
+        "venv",
+        ".venv",
+        "__pycache__",
+        "dist",
+        "build",
+        "tests/fixtures",
+        "tests/vulnerable-app"
+      ],
+      "negative_patterns": [
+        "hmac\\.compare_digest\\(",
+        "authenticate\\(",
+        "verify_signature\\(",
+        "cryptography\\.hazmat",
+        "json\\.loads\\(",
+        "msgpack\\.unpackb\\(",
+        "verify_token\\(",
+        "auth_required",
+        "require_auth"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-3059.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-3059"
+      ]
+    },
+    "standards": [
+      "CWE-502"
+    ],
+    "epss_score": 0.01172,
+    "epss_percentile": 0.78609,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.867,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "feedback_tp": 6,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.551294+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2026-3060",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.8,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-3060: SGLang' encoder parallel disaggregation system is vulnerable to unauthenticated remote code executio",
+    "description": "SGLang' encoder parallel disaggregation system is vulnerable to unauthenticated remote code execution through the disaggregation module, which deserializes untrusted data using pickle.loads() without authentication.",
+    "detect": {
+      "patterns": [
+        "pickle\\.loads\\(",
+        "pickle\\.load\\(",
+        "import pickle",
+        "from pickle import",
+        "cloudpickle\\.loads\\(",
+        "cloudpickle\\.load\\(",
+        "msgpack.*unpickle",
+        "disaggregat.*pickle",
+        "pickle.*disaggregat",
+        "zmq.*pickle\\.loads",
+        "socket.*pickle\\.loads",
+        "recv.*pickle\\.loads",
+        "pickle\\.loads\\(.*recv",
+        "pickle\\.loads\\(.*request",
+        "pickle\\.loads\\(.*data",
+        "pickle\\.loads\\(.*payload",
+        "pickle\\.loads\\(.*body",
+        "pickle\\.loads\\(.*stream"
+      ],
+      "file_types": [
+        "*.py"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        ".venv",
+        "venv",
+        "__pycache__",
+        "dist",
+        "build",
+        ".git",
+        "tests/fixtures"
+      ],
+      "negative_patterns": [
+        "hmac\\.compare_digest\\(",
+        "verify_signature\\(",
+        "authenticate\\(",
+        "@require_auth",
+        "check_token\\(",
+        "restrict_globals",
+        "RestrictedUnpickler",
+        "safe_loads\\(",
+        "allowed_classes",
+        "json\\.loads",
+        "msgpack\\.unpackb.*raw=False"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-3060.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-3060"
+      ]
+    },
+    "standards": [
+      "CWE-502"
+    ],
+    "epss_score": 0.00655,
+    "epss_percentile": 0.70827,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.867,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "feedback_tp": 6,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.551296+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2026-26954",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-26954: SandboxJS is a JavaScript sandboxing library. Prior to 0.8.34, it is possible to obtain arrays conta",
+    "description": "SandboxJS is a JavaScript sandboxing library. Prior to 0.8.34, it is possible to obtain arrays containing Function, which allows escaping the sandbox. Given an array containing Function, and Object.fromEntries, it is possible to construct {[p]: Function} where p is any constructible property. This vulnerability is fixed in 0.8.34.",
+    "detect": {
+      "patterns": [
+        "require\\(['\"]sandbox(?:js)?['\"]\\)",
+        "from\\s+['\"]sandbox(?:js)?['\"]",
+        "import\\s+.*sandbox.*from",
+        "new\\s+Sandbox\\s*\\(",
+        "Sandbox\\.run\\s*\\(",
+        "sandbox\\.evaluate\\s*\\(",
+        "sandbox\\.execute\\s*\\(",
+        "\\.run\\s*\\(.*(?:code|script|expr|source)",
+        "(?:getOwnPropertyNames|getOwnPropertyDescriptor)\\s*\\(.*(?:Array|Object)\\.prototype",
+        "(?:constructor|__proto__).*\\bFunction\\b",
+        "\\bFunction\\b.*constructor",
+        "Object\\.fromEntries\\s*\\(",
+        "\\[\\s*Symbol\\.",
+        "Array\\s*\\.\\s*from\\s*\\(.*Function",
+        "\\beval\\s*\\(.*(?:sandbox|untrusted|user)",
+        "new\\s+Function\\s*\\(",
+        "\\.constructor\\s*\\[\\s*['\"]constructor['\"]\\s*\\]"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.cjs",
+        "*.jsx",
+        "*.tsx"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        ".git",
+        "vendor",
+        "coverage",
+        "__pycache__"
+      ],
+      "negative_patterns": [
+        "vm\\.runInNewContext\\(",
+        "vm\\.createContext\\(",
+        "isolate\\.createContext\\(",
+        "safeEval\\(",
+        "allowedGlobals",
+        "whitelist.*Function",
+        "blacklist.*constructor",
+        "preventEscape\\(",
+        "freezePrototypes\\(",
+        "Object\\.freeze\\(.*prototype"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-26954.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-26954"
+      ]
+    },
+    "standards": [
+      "CWE-94"
+    ],
+    "epss_score": 0.00061,
+    "epss_percentile": 0.19211,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.85,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 6,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.551300+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2026-32306",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.9,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-32306: OneUptime is a solution for monitoring and managing online services. Prior to 10.0.23, the telemetry",
+    "description": "OneUptime is a solution for monitoring and managing online services. Prior to 10.0.23, the telemetry aggregation API accepts user-controlled aggregationType, aggregateColumnName, and aggregationTimestampColumnName parameters and interpolates them directly into ClickHouse SQL queries via the .append() method (documented as \"trusted SQL\"). There is no allowlist, no parameterized query binding, and no input validation. An authenticated user can inject arbitrary SQL into ClickHouse, enabling full da",
+    "detect": {
+      "patterns": [
+        "\\.append\\s*\\(\\s*['\"`][^'\"`;]*\\b(aggregationType|aggregateColumnName|aggregationTimestampColumnName)\\b",
+        "\\.append\\s*\\(.*\\breq\\.(body|query|params)\\.",
+        "\\.append\\s*\\([^)]*\\$\\{[^}]*(aggregationType|aggregateColumnName|aggregationTimestampColumnName|req\\.|body\\.|params\\.|query\\.)",
+        "aggregationType\\s*[+|]\\s*[^=]",
+        "aggregateColumnName\\s*[+|]\\s*[^=]",
+        "aggregationTimestampColumnName\\s*[+|]\\s*[^=]",
+        "\\b(SELECT|INSERT|UPDATE|DELETE|FROM|WHERE|GROUP BY)\\b[^;]*\\+\\s*(aggregationType|aggregateColumnName|aggregationTimestampColumnName)",
+        "\\b(SELECT|INSERT|UPDATE|DELETE|FROM|WHERE|GROUP BY)\\b[^;]*\\$\\{[^}]*(aggregationType|aggregateColumnName|aggregationTimestampColumnName)",
+        "clickhouse.*\\.append\\s*\\([^)]*(?:req\\.|params\\.|body\\.|query\\.)",
+        "(?:queryBuilder|sqlBuilder|queryStr|queryString)\\s*[+]=?\\s*[^;]*(?:aggregationType|aggregateColumnName|columnName)",
+        "\\.append\\s*\\(['\"`]\\s*(?:GROUP BY|ORDER BY|SELECT|WHERE|HAVING)\\s*['\"`]\\s*\\+",
+        "\\.append\\s*\\(`\\s*(?:GROUP BY|ORDER BY|SELECT|WHERE|HAVING)[^`]*\\$\\{",
+        "(?:GROUP BY|ORDER BY|SELECT|WHERE|HAVING)\\s+['\"`]\\s*\\+\\s*(?:req\\.|body\\.|params\\.|query\\.|userInput|input)",
+        "(?:GROUP BY|ORDER BY|SELECT|WHERE|HAVING)[^;`'\"]*\\$\\{(?:req\\.|body\\.|params\\.|query\\.|userInput|input)"
+      ],
+      "file_types": [
+        "*.ts",
+        "*.js",
+        "*.mjs",
+        "*.cjs"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        ".next",
+        "coverage",
+        "vendor",
+        "test",
+        "__tests__",
+        "fixtures"
+      ],
+      "negative_patterns": [
+        "ALLOWED_AGGREGATIONS\\s*=",
+        "ALLOWLIST\\s*=",
+        "allowedColumns",
+        "allowedAggregations",
+        "\\.includes\\s*\\(aggregationType\\)",
+        "\\.includes\\s*\\(aggregateColumnName\\)",
+        "parameterized",
+        "prepared",
+        "\\?\\s*,\\s*\\[",
+        "\\$\\d+",
+        "sanitize\\s*\\(",
+        "escapeIdentifier\\s*\\(",
+        "validateColumn\\s*\\(",
+        "validateAggregation\\s*\\("
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-32306.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-32306"
+      ]
+    },
+    "standards": [
+      "CWE-89"
+    ],
+    "epss_score": 0.00395,
+    "epss_percentile": 0.60187,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-16T19:22:25.925835+00:00",
+    "confidence": 0.838,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-16T19:22:48.630043+00:00",
+    "feedback_tp": 4,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.551302+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2024-2413",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.8,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2024-2413: Intumit SmartRobot uses a fixed encryption key for authentication. Remote attackers can use this key",
+    "description": "Intumit SmartRobot uses a fixed encryption key for authentication. Remote attackers can use this key to encrypt a string composed of the user's name and timestamp to generate an authentication code. With this authentication code, they can obtain administrator privileges and subsequently execute arbitrary code on the remote server using built-in system functionality.",
+    "detect": {
+      "patterns": [
+        "(?i)(secret|encryption|cipher|crypto)[_\\s]*(key|Key|KEY)\\s*=\\s*['\"][^'\"]{8,}['\"]",
+        "(?i)(fixed|static|hardcoded|constant)[_\\s]*(key|secret|token|salt)",
+        "(?i)(AES|DES|Blowfish|HMAC|SHA)\\w*\\.new\\([^)]*['\"][A-Za-z0-9+/=]{8,}['\"]",
+        "(?i)encrypt(Data|String|Token|Auth)?\\([^,)]+,\\s*['\"][A-Za-z0-9+/=]{8,}['\"]",
+        "(?i)def\\s+gen(erate)?[_\\s]*(auth|token|key|code).*timestamp",
+        "(?i)(auth|token|code)\\s*=\\s*encrypt\\s*\\([^)]*\\+[^)]*timestamp",
+        "(?i)KEY\\s*=\\s*b?['\"][A-Za-z0-9+/=!@#$%^&*]{8,}['\"]",
+        "(?i)(private|secret|encryption)_key\\s*=\\s*['\"][^'\"]{6,}['\"]",
+        "(?i)Encoding\\.(?:UTF8|ASCII|Unicode)\\.GetBytes\\(['\"][^'\"]{8,}['\"]\\)",
+        "(?i)new\\s+(?:SecretKeySpec|SecretKey)\\(['\"][^'\"]{8,}['\"]\\s*\\.getBytes",
+        "(?i)createCipheriv\\([^,]+,\\s*['\"][A-Za-z0-9+/=]{8,}['\"]",
+        "(?i)hmac(?:sha\\d+)?\\s*\\(['\"][A-Za-z0-9+/=]{8,}['\"]"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.java",
+        "*.cs",
+        "*.go",
+        "*.php",
+        "*.rb",
+        "*.kt",
+        "*.swift"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "dist",
+        "build",
+        ".git",
+        "test",
+        "tests",
+        "__pycache__",
+        "migrations"
+      ],
+      "negative_patterns": [
+        "os\\.environ",
+        "process\\.env",
+        "getenv",
+        "config\\.get",
+        "vault\\.read",
+        "KeyVault",
+        "SecretsManager",
+        "dotenv",
+        "settings\\.SECRET",
+        "environ\\[",
+        "os\\.getenv",
+        "random\\.bytes",
+        "generateKey",
+        "crypto\\.randomBytes"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2024-2413.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-2413"
+      ]
+    },
+    "standards": [
+      "CWE-321"
+    ],
+    "epss_score": 0.02903,
+    "epss_percentile": 0.86282,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.7,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2026-32968",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.8,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-32968: Due to the improper neutralisation of special elements used in an OS command, an unauthenticated rem",
+    "description": "Due to the improper neutralisation of special elements used in an OS command, an unauthenticated remote attacker can exploit an RCE vulnerability in the com_mb24sysapi module, resulting in full system compromise. This vulnerability is a variant attack for CVE-2020-10383.",
+    "detect": {
+      "patterns": [
+        "subprocess\\.(?:run|call|Popen|check_output|check_call)\\s*\\(\\s*[^)]*(?:request|param|query|input|data|body|args|kwargs|cmd|command|user)[^)]*\\)",
+        "os\\.(?:system|popen|execv|execve|execvp|spawnl|spawnle|spawnlp|spawnv|spawnve|spawnvp)\\s*\\([^)]*(?:request|param|query|input|data|body|args|user)",
+        "exec(?:v|ve|vp|le|l)?\\s*\\([^)]*(?:request|param|query|input|data|body|args|user)",
+        "shell\\s*=\\s*True[^)]*(?:request|param|query|input|data|body|args|user)|(?:request|param|query|input|data|body|args|user)[^)]*shell\\s*=\\s*True",
+        "Runtime\\.getRuntime\\(\\)\\.exec\\s*\\([^)]*(?:request|param|query|input|getParameter|getHeader|getBody)",
+        "ProcessBuilder\\s*\\([^)]*(?:request|param|query|input|getParameter|getHeader)",
+        "child_process\\.(?:exec|execSync|spawn|spawnSync)\\s*\\([^)]*(?:req\\.|request|param|query|body|input|args)",
+        "\\bexec\\s*\\([^)]*\\$(?:_GET|_POST|_REQUEST|_COOKIE|_SERVER|_ENV|argv|argc)",
+        "shell_exec\\s*\\([^)]*\\$(?:_GET|_POST|_REQUEST|_COOKIE|argv)",
+        "passthru\\s*\\([^)]*\\$(?:_GET|_POST|_REQUEST|_COOKIE|argv)",
+        "popen\\s*\\([^)]*\\$(?:_GET|_POST|_REQUEST|_COOKIE|argv)",
+        "system\\s*\\([^)]*\\$(?:_GET|_POST|_REQUEST|_COOKIE|argv)",
+        "backtick\\s*`[^`]*\\$(?:_GET|_POST|_REQUEST|_COOKIE|argv)",
+        "cmd\\.(?:exec|run|execute)\\s*\\([^)]*(?:req\\.|request|param|query|body|input|user)",
+        "(?:sprintf|fmt\\.Sprintf|string\\.Format|String\\.format)\\s*\\([^)]*(?:request|param|query|input|user)[^)]*\\).*(?:exec|system|shell|cmd|command)",
+        "interpolat|f['\"].*(?:request|param|query|user|input).*['\"].*(?:exec|system|shell|os\\.)",
+        "commands\\.getoutput\\s*\\([^)]*(?:request|param|query|input|user)",
+        "commands\\.getstatusoutput\\s*\\([^)]*(?:request|param|query|input|user)"
+      ],
+      "file_types": [
+        "*.py",
+        "*.js",
+        "*.ts",
+        "*.php",
+        "*.java",
+        "*.go",
+        "*.rb",
+        "*.sh",
+        "*.c",
+        "*.cpp"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        ".git",
+        "dist",
+        "build",
+        "__pycache__",
+        "tests/fixtures",
+        "test/fixtures"
+      ],
+      "negative_patterns": [
+        "shlex\\.quote\\(",
+        "shlex\\.split\\(",
+        "pipes\\.quote\\(",
+        "escapeshellarg\\(",
+        "escapeshellcmd\\(",
+        "sanitize(?:Command|Input|Shell|Cmd)\\(",
+        "subprocess\\.run\\(\\[",
+        "child_process\\.execFile\\(",
+        "execFile\\(",
+        "allowlist|whitelist|allowedCommands|ALLOWED_COMMANDS",
+        "CommandValidator|validateCommand|isCommandSafe"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-32968.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-32968"
+      ]
+    },
+    "standards": [
+      "CWE-78"
+    ],
+    "epss_score": 0.00112,
+    "epss_percentile": 0.29682,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.7,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2025-59706",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.8,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "CVE-2025-59706: In N2W before 4.3.2 and 4.4.0 before 4.4.1, improper validation of API request parameters enables re",
+    "description": "In N2W before 4.3.2 and 4.4.0 before 4.4.1, improper validation of API request parameters enables remote code execution.",
+    "detect": {
+      "patterns": [
+        "request\\.headers\\.get\\(['\"]X-Forwarded-For",
+        "req\\.headers\\[['\"]x-forwarded-for",
+        "getHeader\\(['\"]X-Forwarded-For",
+        "HTTP_X_FORWARDED_FOR",
+        "X_REAL_IP",
+        "os\\.system\\(.*request\\.",
+        "subprocess\\.(call|run|Popen)\\(.*request\\.",
+        "eval\\(.*request\\.(GET|POST|data|params|json|body|args)",
+        "exec\\(.*request\\.(GET|POST|data|params|json|body|args)",
+        "pickle\\.loads\\(.*request\\.",
+        "yaml\\.load\\(.*request\\.",
+        "shell=True.*request\\.",
+        "request\\.(args|params|GET|POST|data).*shell=True"
+      ],
+      "file_types": [
+        "*.py",
+        "*.js",
+        "*.ts",
+        "*.php",
+        "*.go",
+        "*.rb"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "test",
+        "tests",
+        "__pycache__",
+        ".git",
+        "dist",
+        "build"
+      ],
+      "negative_patterns": [
+        "validate\\(",
+        "sanitize\\(",
+        "escapeshellarg",
+        "shlex\\.quote",
+        "shell=False",
+        "bleach\\.clean",
+        "input_validation",
+        "yaml\\.safe_load"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2025-59706.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-59706"
+      ]
+    },
+    "standards": [
+      "CWE-290",
+      "CWE-290"
+    ],
+    "epss_score": 0.00214,
+    "epss_percentile": 0.43889,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.7,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "GHSA-4jpw-hj22-2xmc",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "GHSA-4jpw-hj22-2xmc: OpenClaw: Pairing-scoped device tokens could mint `operator.admin` and reach node RCE",
+    "description": "OpenClaw: Pairing-scoped device tokens could mint `operator.admin` and reach node RCE",
+    "detect": {
+      "patterns": [
+        "(mintToken|issueToken|createToken|generateToken|signToken)\\s*\\(",
+        "['\"]?role['\"]?\\s*[:=]\\s*req\\.(body|params|query)\\.",
+        "jwt\\.sign\\s*\\(.*req\\.(body|params|query)",
+        "['\"]role['\"]\\s*:\\s*['\"].*admin['\"]",
+        "(scope|permissions?)\\s*=\\s*req\\.(body|params|query)\\.",
+        "(scope|role|permission)\\s*=\\s*request\\.(json\\(\\)|body|form|args|data)",
+        "token.*['\"]operator\\.admin['\"]|['\"]operator\\.admin['\"].*token"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.go",
+        "*.rb",
+        "*.java"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "dist",
+        "__tests__",
+        "test",
+        ".git"
+      ],
+      "negative_patterns": [
+        "validateScope",
+        "checkPrivilege",
+        "canGrant",
+        "maxRole",
+        "roleHierarchy",
+        "callerScope",
+        "assertCan",
+        "scopeAllowed",
+        "privilegeLevel",
+        "callerRole.*>=.*requestedRole"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected packages. See GitHub advisory GHSA-4jpw-hj22-2xmc.",
+      "references": [
+        "https://github.com/advisories/GHSA-4jpw-hj22-2xmc"
+      ]
+    },
+    "standards": [
+      "CWE-269"
+    ],
+    "epss_score": null,
+    "epss_percentile": null,
+    "source": "github",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.77,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 3,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.551354+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "GHSA-p224-6x5r-fjpm",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "api",
+    "subcategory": "cve-automated",
+    "title": "GHSA-p224-6x5r-fjpm: Ory Oathkeeper has a path traversal authorization bypass",
+    "description": "Ory Oathkeeper has a path traversal authorization bypass",
+    "detect": {
+      "patterns": [
+        "\\.\\./",
+        "\\.\\.\\\\",
+        "%2e%2e%2f",
+        "%2e%2e/",
+        "\\.\\.%2f",
+        "%252e%252e",
+        "path\\.join\\s*\\(.*req\\.(params|query|body)",
+        "filepath\\.Join\\s*\\(.*r\\.(URL|FormValue|PathValue)",
+        "os\\.path\\.join\\s*\\(.*(?:request|req)\\.",
+        "(?:open|read|write|stat|remove).*req\\.(params|query|body)\\.",
+        "(?:readFile|writeFile|createReadStream|createWriteStream)\\s*\\(.*req\\.",
+        "(?:ioutil\\.ReadFile|os\\.Open|os\\.ReadFile)\\s*\\(.*(?:r\\.URL|ctx\\.Param|c\\.Param)",
+        "url\\.path.*\\.\\.",
+        "request\\.path.*\\.\\.",
+        "(?:proxy|forward|route).*url.*(?:req|request)\\.(url|path|query)",
+        "http\\.StripPrefix|mux\\.StripPrefix",
+        "normalize.*path|path.*normalize",
+        "filepath\\.Clean\\s*\\([^)]*\\+[^)]*\\)",
+        "strings\\.Replace.*\\.\\./.*\\.\\."
+      ],
+      "file_types": [
+        "*.go",
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.yaml",
+        "*.yml",
+        "*.json",
+        "*.conf",
+        "*.toml"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        ".git",
+        "dist",
+        "build",
+        "__pycache__",
+        "test",
+        "tests",
+        "testdata"
+      ],
+      "negative_patterns": [
+        "filepath\\.Clean",
+        "path\\.resolve",
+        "os\\.path\\.abspath",
+        "path\\.normalize",
+        "sanitize.*path",
+        "validatePath",
+        "isUnder\\(base",
+        "strings\\.HasPrefix.*basePath",
+        "filepath\\.Rel\\s*\\(",
+        "cleanPath",
+        "securejoin",
+        "SecureJoin"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected packages. See GitHub advisory GHSA-p224-6x5r-fjpm.",
+      "references": [
+        "https://github.com/advisories/GHSA-p224-6x5r-fjpm"
+      ]
+    },
+    "standards": [
+      "CWE-23",
+      "CVE-2026-33494"
+    ],
+    "epss_score": 0.00043,
+    "epss_percentile": 0.13183,
+    "source": "github",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.77,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 3,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.551360+00:00",
+    "_domain": "api"
+  },
+  {
+    "id": "CVE-2026-32169",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "infrastructure",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-32169: Server-side request forgery (ssrf) in Azure Cloud Shell allows an unauthorized attacker to elevate p",
+    "description": "Server-side request forgery (ssrf) in Azure Cloud Shell allows an unauthorized attacker to elevate privileges over a network.",
+    "detect": {
+      "patterns": [
+        "requests\\.get\\(.*(?:url|uri|endpoint|host|target)\\s*[=+]",
+        "urllib(?:2|\\.request)?\\.(urlopen|Request)\\(.*(?:url|uri|endpoint|host|target)",
+        "http(?:s)?\\.(get|post|put|request)\\(.*(?:url|uri|endpoint|host|target)\\s*[=+]",
+        "curl_exec\\(.*\\$(?:_(?:GET|POST|REQUEST|SERVER)|url|uri|host|endpoint)",
+        "(?:fetch|axios|got|superagent|needle|node-fetch)\\(.*(?:process\\.env|config|settings)\\.(?:.*URL|.*URI|.*HOST|.*ENDPOINT)",
+        "(?:open|urlopen|requests\\.(?:get|post|put|head))\\(.*f['\"].*\\{.*(?:url|host|endpoint|ip|addr)",
+        "(?:HttpClient|WebClient|RestTemplate|OkHttpClient).*(?:url|uri|endpoint|host)\\s*[=+]",
+        "(?:socket|net\\.connect|createConnection)\\(.*(?:host|addr|ip|target)\\s*[=+]",
+        "(?:metadata|169\\.254\\.169\\.254|instance-data|computeMetadata)",
+        "(?:management\\.azure\\.com|graph\\.microsoft\\.com|login\\.microsoftonline\\.com).*(?:token|credential|secret|key)",
+        "(?:imds|IMDS|instance_metadata).*(?:fetch|request|get|curl)",
+        "(?:http|ftp|file|gopher|dict|ldap):\\/\\/.*(?:127\\.0\\.0\\.1|localhost|10\\.|172\\.1[6-9]\\.|192\\.168\\.)"
+      ],
+      "file_types": [
+        "*.py",
+        "*.js",
+        "*.ts",
+        "*.go",
+        "*.java",
+        "*.php",
+        "*.rb",
+        "*.cs",
+        "*.sh",
+        "*.ps1",
+        "*.tf",
+        "*.bicep",
+        "*.yaml",
+        "*.yml"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        ".git",
+        "dist",
+        "build",
+        "__pycache__",
+        ".terraform",
+        "test",
+        "tests",
+        "spec",
+        "__tests__"
+      ],
+      "negative_patterns": [
+        "allowedUrls",
+        "allowlist",
+        "whitelist",
+        "validateUrl",
+        "isAllowed",
+        "ssrfFilter",
+        "sanitizeUrl",
+        "blockedHosts",
+        "privateRangeCheck",
+        "isPrivateIp",
+        "denyInternalIp",
+        "safe_url_validator",
+        "urllib3\\.util\\.url\\.parse_url"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-32169.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-32169"
+      ]
+    },
+    "standards": [
+      "CWE-918"
+    ],
+    "epss_score": 0.00084,
+    "epss_percentile": 0.24605,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.77,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 3,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.619050+00:00",
+    "_domain": "infrastructure"
+  },
+  {
+    "id": "CVE-2025-43520",
+    "severity": "HIGH",
+    "cvss_v4": 7.1,
+    "category": "mobile",
+    "subcategory": "cve-automated",
+    "title": "CVE-2025-43520: A memory corruption issue was addressed with improved memory handling. This issue is fixed in watchO",
+    "description": "A memory corruption issue was addressed with improved memory handling. This issue is fixed in watchOS 26.1, iOS 18.7.2 and iPadOS 18.7.2, macOS Tahoe 26.1, visionOS 26.1, tvOS 26.1, macOS Sonoma 14.8.2, macOS Sequoia 15.7.2, iOS 26.1 and iPadOS 26.1. A malicious application may be able to cause unexpected system termination or write kernel memory.",
+    "detect": {
+      "patterns": [
+        "\\bstrcpy\\s*\\(",
+        "\\bstrcat\\s*\\(",
+        "\\bsprintf\\s*\\(",
+        "\\bgets\\s*\\(",
+        "\\bscanf\\s*\\([^,]*,\\s*\"%s\"",
+        "\\bmemcpy\\s*\\([^)]*\\)",
+        "UnsafeMutablePointer\\s*<[^>]+>\\s*\\.allocate\\(",
+        "withUnsafeMutableBytes\\s*\\{",
+        "withUnsafeMutableBufferPointer\\s*\\{",
+        "UnsafeMutableRawPointer\\.allocate\\(",
+        "assumingMemoryBound\\(to:",
+        "bindMemory\\(to:\\s*[^,]+\\.self,\\s*capacity:"
+      ],
+      "file_types": [
+        "*.swift",
+        "*.kt",
+        "*.java",
+        "*.m",
+        "*.mm",
+        "*.c",
+        "*.cpp",
+        "*.h"
+      ],
+      "exclude": [
+        "Pods",
+        "node_modules",
+        "build",
+        "DerivedData",
+        "vendor",
+        ".build",
+        ".gradle"
+      ],
+      "negative_patterns": [
+        "\\bstrlcpy\\b",
+        "\\bstrlcat\\b",
+        "\\bsnprintf\\b",
+        "\\bstrncpy\\b",
+        "\\bstrncat\\b",
+        "precondition\\(",
+        "guard\\s+.*\\.count",
+        "\\.count\\s*[<>]\\s*[0-9]"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2025-43520.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-43520"
+      ]
+    },
+    "standards": [
+      "CWE-787",
+      "CWE-120"
+    ],
+    "epss_score": 0.00475,
+    "epss_percentile": 0.64666,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-16T19:22:25.925835+00:00",
+    "confidence": 0.83,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 0.889,
+    "tested_at": "2026-04-16T19:22:48.630043+00:00",
+    "feedback_tp": 16,
+    "feedback_fp": 2,
+    "feedback_precision": 0.889,
+    "confidence_updated_at": "2026-05-29T04:14:48.587858+00:00",
+    "_domain": "mobile"
+  },
+  {
+    "id": "CVE-2025-31277",
+    "severity": "HIGH",
+    "cvss_v4": 8.8,
+    "category": "mobile",
+    "subcategory": "cve-automated",
+    "title": "CVE-2025-31277: The issue was addressed with improved memory handling. This issue is fixed in Safari 18.6, watchOS 1",
+    "description": "The issue was addressed with improved memory handling. This issue is fixed in Safari 18.6, watchOS 11.6, visionOS 2.6, iOS 18.6 and iPadOS 18.6, macOS Sequoia 15.6, tvOS 18.6. Processing maliciously crafted web content may lead to memory corruption.",
+    "detect": {
+      "patterns": [
+        "\\bstrcpy\\s*\\(",
+        "\\bstrcat\\s*\\(",
+        "\\bsprintf\\s*\\(",
+        "\\bgets\\s*\\(",
+        "\\bmemcpy\\s*\\([^,]+,\\s*[^,]+,\\s*(?!sizeof\\b)[^)]+\\)",
+        "\\bmemmove\\s*\\([^,]+,\\s*[^,]+,\\s*(?!sizeof\\b)[^)]+\\)",
+        "\\bloadHTMLString\\s*\\(",
+        "\\bloadData\\s*\\(.*mimeType",
+        "evaluateJavaScript\\s*\\(.*\\+.*\\)"
+      ],
+      "file_types": [
+        "*.c",
+        "*.cpp",
+        "*.m",
+        "*.mm",
+        "*.swift",
+        "*.kt",
+        "*.java"
+      ],
+      "exclude": [
+        "vendor",
+        "node_modules",
+        "Pods",
+        ".gradle",
+        "build",
+        "dist",
+        "test",
+        "__tests__"
+      ],
+      "negative_patterns": [
+        "\\bsnprintf\\s*\\(",
+        "\\bstrncpy\\s*\\(",
+        "\\bstrncat\\s*\\(",
+        "\\bstrlcpy\\s*\\(",
+        "\\bstrlcat\\s*\\(",
+        "WKContentRuleList",
+        "bounds_check",
+        "sanitize\\(",
+        "validate\\("
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2025-31277.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-31277"
+      ]
+    },
+    "standards": [
+      "CWE-119"
+    ],
+    "epss_score": 0.00267,
+    "epss_percentile": 0.5008,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.844,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 0.889,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 24,
+    "feedback_fp": 3,
+    "feedback_precision": 0.889,
+    "confidence_updated_at": "2026-05-29T04:14:48.587861+00:00",
+    "_domain": "mobile"
+  },
+  {
+    "id": "CVE-2026-20700",
+    "severity": "HIGH",
+    "cvss_v4": 7.8,
+    "category": "mobile",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-20700: A memory corruption issue was addressed with improved state management. This issue is fixed in iOS 2",
+    "description": "A memory corruption issue was addressed with improved state management. This issue is fixed in iOS 26.3 and iPadOS 26.3, macOS Tahoe 26.3, tvOS 26.3, visionOS 26.3, watchOS 26.3. An attacker with memory write capability may be able to execute arbitrary code. Apple is aware of a report that this issue may have been exploited in an extremely sophisticated attack against specific targeted individuals on versions of iOS before iOS 26. CVE-2025-14174 and CVE-2025-43529 were also issued in response to",
+    "detect": {
+      "patterns": [
+        "memcpy\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*,\\s*(?!sizeof)[^)]+\\)",
+        "memmove\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*,\\s*(?!sizeof)[^)]+\\)",
+        "strcpy\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+        "strcat\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+        "gets\\s*\\(\\s*\\w+\\s*\\)",
+        "sprintf\\s*\\(\\s*\\w+\\s*,\\s*[^,]+,",
+        "UnsafePointer\\s*<.*>\\s*\\(",
+        "UnsafeMutablePointer\\s*<.*>\\s*\\(",
+        "UnsafeRawPointer\\s*\\(",
+        "UnsafeMutableRawPointer\\s*\\(",
+        "withUnsafeBytes\\s*\\{",
+        "withUnsafeMutableBytes\\s*\\{",
+        "withUnsafeMutableBufferPointer\\s*\\{",
+        "malloc\\s*\\(.*\\+.*\\)",
+        "realloc\\s*\\(\\s*\\w+\\s*,\\s*[^)]+\\)",
+        "\\bassume(nonzero|Nonnull|Nonzero)\\b",
+        "ByteBuffer\\.allocate(?:Direct)?\\s*\\(\\s*(?!.*\\bMAX_SIZE\\b)[^)]+\\)",
+        "Buffer\\.from\\s*\\(\\s*\\w+\\s*,\\s*['\"]utf8['\"]\\s*,\\s*\\d+\\s*\\)",
+        "NSData\\s*\\(\\s*bytes\\s*:\\s*\\w+\\s*,\\s*length\\s*:",
+        "CFDataCreate\\s*\\(",
+        "\\[NSData\\s+dataWithBytes\\s*:\\s*\\w+\\s+length\\s*:",
+        "pointer\\s*\\(\\s*\\)\\s*\\+\\s*[^;]+",
+        "\\.assumingMemoryBound\\s*\\(",
+        "bindMemory\\s*\\(\\s*to\\s*:.*capacity\\s*:",
+        "UnsafeBufferPointer\\s*\\(\\s*start\\s*:.*count\\s*:"
+      ],
+      "file_types": [
+        "*.swift",
+        "*.m",
+        "*.mm",
+        "*.c",
+        "*.cpp",
+        "*.h",
+        "*.kt",
+        "*.java"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "Pods",
+        ".build",
+        "build",
+        "DerivedData",
+        "*.xcarchive",
+        "test",
+        "tests",
+        "__tests__",
+        "spec"
+      ],
+      "negative_patterns": [
+        "bounds.*check",
+        "boundsCheck",
+        "checkBounds",
+        "guard.*count\\s*[<>]=?",
+        "guard.*length\\s*[<>]=?",
+        "precondition\\s*\\(",
+        "assert\\s*\\(.*count",
+        "assert\\s*\\(.*length",
+        "strlcpy\\s*\\(",
+        "strlcat\\s*\\(",
+        "snprintf\\s*\\(",
+        "strncpy\\s*\\(",
+        "strncat\\s*\\(",
+        "\\.withContiguousStorageIfAvailable",
+        "SecureBytes",
+        "sanitize",
+        "validateBounds"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-20700.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-20700"
+      ]
+    },
+    "standards": [
+      "CWE-119"
+    ],
+    "epss_score": 0.00308,
+    "epss_percentile": 0.53884,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-16T19:22:25.925835+00:00",
+    "confidence": 0.768,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 0.857,
+    "tested_at": "2026-04-16T19:22:48.630043+00:00",
+    "feedback_tp": 12,
+    "feedback_fp": 2,
+    "feedback_precision": 0.857,
+    "confidence_updated_at": "2026-05-29T04:14:48.587863+00:00",
+    "_domain": "mobile"
+  },
+  {
+    "id": "CVE-2025-54236",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.1,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "CVE-2025-54236: Adobe Commerce versions 2.4.9-alpha2, 2.4.8-p2, 2.4.7-p7, 2.4.6-p12, 2.4.5-p14, 2.4.4-p15 and earlie",
+    "description": "Adobe Commerce versions 2.4.9-alpha2, 2.4.8-p2, 2.4.7-p7, 2.4.6-p12, 2.4.5-p14, 2.4.4-p15 and earlier are affected by an Improper Input Validation vulnerability. A successful attacker can abuse this to achieve session takeover, increasing the confidentiality, and integrity impact to high. Exploitation of this issue does not require user interaction.",
+    "detect": {
+      "patterns": [
+        "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\](?!.*(?:filter_var|htmlspecialchars|strip_tags|intval|preg_match|validate|sanitize|escape))",
+        "session(?:_id|_start|_regenerate_id)\\s*\\((?!.*regenerate)",
+        "\\$_SESSION\\s*\\[.*\\]\\s*=\\s*\\$_(?:GET|POST|REQUEST|COOKIE)\\s*\\[",
+        "(?:setcookie|header)\\s*\\(['\"]Set-Cookie.*session",
+        "Mage::getSingleton\\(['\"](?:customer/session|checkout/session|core/session)['\"]\\)",
+        "\\$this->_session->(?:set|add|replace)\\s*\\(",
+        "\\$objectManager->get\\(['\"]Magento\\\\Framework\\\\Session",
+        "protected\\s+function\\s+_(?:validate|process)\\w*\\((?:[^)]*\\$(?:data|input|params|request))[^)]*\\)(?!.*(?:filter|validate|sanitize))",
+        "\\$this->getRequest\\(\\)->(?:getParam|getPost|getQuery)\\([^)]*\\)(?!.*;.*(?:filter|validate|intval|trim\\(|htmlspecial))"
+      ],
+      "file_types": [
+        "*.php",
+        "*.phtml",
+        "*.xml",
+        "*.js",
+        "*.ts"
+      ],
+      "exclude": [
+        "vendor",
+        "node_modules",
+        "test",
+        "tests",
+        ".git",
+        "dev/tests"
+      ],
+      "negative_patterns": [
+        "filter_var",
+        "htmlspecialchars",
+        "strip_tags",
+        "intval",
+        "preg_match",
+        "validateData",
+        "sanitize",
+        "session_regenerate_id",
+        "Zend_Validate",
+        "Laminas\\\\Validator",
+        "\\\\Validator::validate"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2025-54236.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-54236"
+      ]
+    },
+    "standards": [
+      "CWE-20"
+    ],
+    "epss_score": 0.71568,
+    "epss_percentile": 0.98717,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.764,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 0.778,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 42,
+    "feedback_fp": 12,
+    "feedback_precision": 0.778,
+    "confidence_updated_at": "2026-05-29T04:14:48.594538+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "CVE-2026-0124",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-0124: There is a possible out of bounds write due to a missing bounds check. This could lead to local esca",
+    "description": "There is a possible out of bounds write due to a missing bounds check. This could lead to local escalation of privilege with no additional execution privileges needed. User interaction is not needed for exploitation.",
+    "detect": {
+      "patterns": [
+        "memcpy\\s*\\(.*,\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+        "memmove\\s*\\(.*,\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+        "memset\\s*\\(.*,\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+        "strcpy\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+        "strcat\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+        "sprintf\\s*\\(\\s*\\w+\\s*,",
+        "gets\\s*\\(\\s*\\w+\\s*\\)",
+        "scanf\\s*\\(\\s*\"[^\"]*%s[^\"]*\"",
+        "\\w+\\s*\\[\\s*\\w+\\s*\\]\\s*=(?!=)",
+        "\\*\\s*\\(\\s*\\w+\\s*\\+\\s*\\w+\\s*\\)\\s*=",
+        "index\\s*[><=!]+\\s*(?:sizeof|len|size|length|count|max|limit)\\b",
+        "\\bwrite\\s*\\(.*,\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+        "\\blen\\b(?!\\s*[<>]=?\\s*(?:sizeof|\\d))",
+        "\\bsize\\b(?!\\s*[<>]=?\\s*(?:sizeof|\\d))",
+        "\\+\\+\\s*\\w+\\s*;(?!.*(?:if|assert|check|bound|limit|guard))"
+      ],
+      "file_types": [
+        "*.c",
+        "*.cpp",
+        "*.cc",
+        "*.cxx",
+        "*.h",
+        "*.hpp",
+        "*.rs",
+        "*.go",
+        "*.java",
+        "*.kt"
+      ],
+      "exclude": [
+        "vendor",
+        "node_modules",
+        "third_party",
+        "third-party",
+        "external",
+        "deps",
+        ".git",
+        "test",
+        "tests",
+        "fixtures",
+        "__pycache__"
+      ],
+      "negative_patterns": [
+        "if\\s*\\(.*\\b(?:len|size|length|count|index)\\s*[><=]+",
+        "assert\\s*\\(",
+        "bounds_check",
+        "\\bsizeof\\s*\\(",
+        "strncpy\\s*\\(",
+        "strncat\\s*\\(",
+        "snprintf\\s*\\(",
+        "\\bsafe_memcpy\\b",
+        "\\bsafe_write\\b",
+        "\\bchecked_add\\b",
+        "\\bsaturating_add\\b",
+        "#pragma\\s+(?:bounds|safe)",
+        "AddressSanitizer",
+        "\\-fsanitize=address",
+        "\\bguard_page\\b",
+        "\\bMEMSAFE\\b"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-0124.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-0124"
+      ]
+    },
+    "standards": [
+      "CWE-787"
+    ],
+    "epss_score": 0.00018,
+    "epss_percentile": 0.0434,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-14T06:09:26.276446+00:00",
+    "confidence": 0.687,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 0.733,
+    "tested_at": "2026-04-14T06:09:31.854693+00:00",
+    "feedback_tp": 22,
+    "feedback_fp": 8,
+    "feedback_precision": 0.733,
+    "confidence_updated_at": "2026-05-29T04:14:48.594572+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "CVE-2026-3910",
+    "severity": "HIGH",
+    "cvss_v4": 8.8,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-3910: Inappropriate implementation in V8 in Google Chrome prior to 146.0.7680.75 allowed a remote attacker",
+    "description": "Inappropriate implementation in V8 in Google Chrome prior to 146.0.7680.75 allowed a remote attacker to execute arbitrary code inside a sandbox via a crafted HTML page. (Chromium security severity: High)",
+    "detect": {
+      "patterns": [
+        "new\\s+Function\\s*\\(",
+        "eval\\s*\\(",
+        "setTimeout\\s*\\(\\s*['\"`][^'\"`]*['\"`]",
+        "setInterval\\s*\\(\\s*['\"`][^'\"`]*['\"`]",
+        "execScript\\s*\\(",
+        "document\\.write\\s*\\([^)]*innerHTML",
+        "innerHTML\\s*=\\s*(?!.*DOMPurify|.*sanitize|.*escape)",
+        "outerHTML\\s*=\\s*[^;]*(?:user|input|param|query|data|payload)",
+        "insertAdjacentHTML\\s*\\(",
+        "document\\.createElement\\s*\\(\\s*['\"]script['\"]",
+        "src\\s*=\\s*['\"]?\\s*(?:https?:|data:|javascript:)",
+        "postMessage\\s*\\([^)]*\\)(?![\\s\\S]{0,200}origin)",
+        "addEventListener\\s*\\(['\"]message['\"][^)]*\\)(?![\\s\\S]{0,300}(?:origin|source)\\s*===)",
+        "WebAssembly\\.(?:instantiate|compile)\\s*\\(",
+        "SharedArrayBuffer\\s*\\(",
+        "Atomics\\.(?:wait|notify|store)\\s*\\(",
+        "\\.sandbox\\s*=\\s*['\"](?!allow-scripts['\"])[^'\"]*allow-scripts",
+        "allow-same-origin[^'\"]*allow-scripts|allow-scripts[^'\"]*allow-same-origin"
+      ],
+      "file_types": [
+        "*.js",
+        "*.mjs",
+        "*.cjs",
+        "*.ts",
+        "*.tsx",
+        "*.jsx",
+        "*.html",
+        "*.htm",
+        "*.vue",
+        "*.svelte"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        ".next",
+        "vendor",
+        "coverage",
+        "__pycache__",
+        ".git"
+      ],
+      "negative_patterns": [
+        "DOMPurify\\.sanitize",
+        "sanitizeHtml\\s*\\(",
+        "escapeHtml\\s*\\(",
+        "textContent\\s*=",
+        "createTextNode\\s*\\(",
+        "sandbox\\s*=\\s*['\"](?!.*allow-scripts)(?!.*allow-same-origin)",
+        "Content-Security-Policy",
+        "require-trusted-types-for",
+        "TrustedTypes",
+        "trusted_types"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-3910.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-3910"
+      ]
+    },
+    "standards": [
+      "CWE-94",
+      "CWE-119"
+    ],
+    "epss_score": 0.01332,
+    "epss_percentile": 0.79886,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.823,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 6,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.594586+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "CVE-2026-20963",
+    "severity": "HIGH",
+    "cvss_v4": 8.8,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-20963: Deserialization of untrusted data in Microsoft Office SharePoint allows an authorized attacker to ex",
+    "description": "Deserialization of untrusted data in Microsoft Office SharePoint allows an authorized attacker to execute code over a network.",
+    "detect": {
+      "patterns": [
+        "pickle\\.loads?\\s*\\(",
+        "pickle\\.load\\s*\\(",
+        "yaml\\.load\\s*\\([^,)]+\\)",
+        "marshal\\.loads?\\s*\\(",
+        "shelve\\.open\\s*\\(",
+        "jsonpickle\\.decode\\s*\\(",
+        "deserializ[e]?\\s*\\([^)]*request",
+        "deserializ[e]?\\s*\\([^)]*req\\b",
+        "deserializ[e]?\\s*\\([^)]*body",
+        "deserializ[e]?\\s*\\([^)]*data",
+        "ObjectInputStream\\s*\\(",
+        "readObject\\s*\\(",
+        "BinaryFormatter\\.Deserialize\\s*\\(",
+        "XmlSerializer\\.Deserialize\\s*\\(",
+        "JavaScriptSerializer\\.Deserialize\\s*\\(",
+        "NetDataContractSerializer\\.Deserialize\\s*\\(",
+        "LosFormatter\\.Deserialize\\s*\\(",
+        "TypeNameHandling\\s*=\\s*(?!None)",
+        "Newtonsoft\\.Json\\.JsonConvert\\.DeserializeObject.*TypeNameHandling",
+        "unserialize\\s*\\(\\s*\\$_(GET|POST|REQUEST|COOKIE)",
+        "Ois\\.readObject\\s*\\(",
+        "XStream\\.fromXML\\s*\\(",
+        "ObjectMapper\\.readValue\\s*\\(",
+        "SerializationUtils\\.deserialize\\s*\\(",
+        "Serializable.*readObject",
+        "JSON\\.parse\\s*\\([^)]*req\\.",
+        "JSON\\.parse\\s*\\([^)]*request\\.",
+        "msgpack\\.unpackb?\\s*\\(",
+        "cbor\\.loads?\\s*\\("
+      ],
+      "file_types": [
+        "*.py",
+        "*.java",
+        "*.cs",
+        "*.php",
+        "*.js",
+        "*.ts",
+        "*.rb",
+        "*.go"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "__pycache__",
+        ".git",
+        "dist",
+        "build",
+        "test",
+        "tests",
+        "spec",
+        "*.min.js"
+      ],
+      "negative_patterns": [
+        "yaml\\.safe_load\\s*\\(",
+        "pickle\\.loads.*hmac",
+        "pickle\\.loads.*verify",
+        "TypeNameHandling\\.None",
+        "SerializationBinder",
+        "IDeserializationCallback",
+        "\\[JsonConverter\\]",
+        "allow_dangerous_deserialization\\s*=\\s*False",
+        "restrict_types\\s*=",
+        "safe_load",
+        "defusedxml",
+        "jsonschema\\.validate"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-20963.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-20963"
+      ]
+    },
+    "standards": [
+      "CWE-502"
+    ],
+    "epss_score": 0.07096,
+    "epss_percentile": 0.91478,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.952,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 27,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.594594+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "CVE-2025-32432",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "CVE-2025-32432: Craft is a flexible, user-friendly CMS for creating custom digital experiences on the web and beyond",
+    "description": "Craft is a flexible, user-friendly CMS for creating custom digital experiences on the web and beyond. Starting from version 3.0.0-RC1 to before 3.9.15, 4.0.0-RC1 to before 4.14.15, and 5.0.0-RC1 to before 5.6.17, Craft is vulnerable to remote code execution. This is a high-impact, low-complexity attack vector. This issue has been patched in versions 3.9.15, 4.14.15, and 5.6.17, and is an additional fix for CVE-2023-41892.",
+    "detect": {
+      "patterns": [
+        "craft\\s*['\"]\\s*:\\s*['\"]\\^?[3-5]\\.",
+        "craftcms/cms.*['\"]\\s*:\\s*['\"]\\^?(?:3\\.[0-8]\\.|3\\.9\\.(?:[0-9]|1[0-4])[^0-9]|4\\.(?:[0-9]|1[0-3])\\.|4\\.14\\.(?:[0-9]|1[0-4])[^0-9]|5\\.[0-5]\\.|5\\.6\\.(?:[0-9]|1[0-6])[^0-9])",
+        "craftcms/cms",
+        "__callStatic\\s*\\(",
+        "\\$_GET\\[.*\\].*unserializ",
+        "unserialize\\s*\\(.*\\$_(?:GET|POST|REQUEST|COOKIE)",
+        "call_user_func(?:_array)?\\s*\\(\\s*\\$",
+        "\\$this->(?:module|behavior|component)\\s*=\\s*\\$_(?:GET|POST|REQUEST)",
+        "Yii::createObject\\s*\\(.*\\$_(?:GET|POST|REQUEST)",
+        "\\beval\\s*\\(.*\\$(?:_GET|_POST|_REQUEST|_COOKIE|input|data|payload)",
+        "object_class.*\\$_(?:GET|POST|REQUEST)",
+        "typeId.*\\$_(?:GET|POST|REQUEST)"
+      ],
+      "file_types": [
+        "composer.json",
+        "composer.lock",
+        "*.php",
+        "*.twig",
+        "*.json"
+      ],
+      "exclude": [
+        "vendor",
+        "node_modules",
+        ".git",
+        "storage/runtime",
+        "storage/logs"
+      ],
+      "negative_patterns": [
+        "craftcms/cms.*5\\.6\\.1[7-9]",
+        "craftcms/cms.*4\\.14\\.1[5-9]",
+        "craftcms/cms.*3\\.9\\.1[5-9]",
+        "allowedFileExtensions",
+        "sanitize\\(",
+        "security->validateData",
+        "Craft::$app->getSecurity\\(\\)"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2025-32432.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-32432"
+      ]
+    },
+    "standards": [
+      "CWE-94"
+    ],
+    "epss_score": 0.87671,
+    "epss_percentile": 0.99459,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.77,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 3,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.594604+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "CVE-2026-20131",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-20131: A vulnerability in the web-based management interface of Cisco Secure Firewall Management Center (FM",
+    "description": "A vulnerability in the web-based management interface of Cisco Secure Firewall Management Center (FMC) Software could allow an unauthenticated, remote attacker to execute arbitrary Java code as root&nbsp;on an affected device.\r\n\r\nThis vulnerability is due to insecure deserialization of a user-supplied Java byte stream. An attacker could exploit this vulnerability by sending a crafted serialized Java object to the web-based management interface of an affected device. A successful exploit could al",
+    "detect": {
+      "patterns": [
+        "ObjectInputStream\\s*\\(",
+        "readObject\\s*\\(\\s*\\)",
+        "readUnshared\\s*\\(\\s*\\)",
+        "ObjectInputStream\\s*ois\\s*=\\s*new\\s*ObjectInputStream",
+        "new\\s+ObjectInputStream\\s*\\(\\s*(?:request|req|getInputStream|socket|stream|input)",
+        "deserializ",
+        "fromBytes\\s*\\(",
+        "ByteArrayInputStream\\s*\\(.*(?:request|req|param|input|user|body)",
+        "SerializationUtils\\.deserialize\\s*\\(",
+        "XStream\\s*\\(",
+        "\\.fromXML\\s*\\(",
+        "Yaml\\s*\\(\\.load\\s*\\(",
+        "JSONObject\\s*\\(.*(?:request|req|body|param|input)",
+        "new\\s+Gson\\s*\\(\\)\\.fromJson\\s*\\(.*(?:request|req|body|param)",
+        "ObjectMapper\\s*\\(\\)\\.readValue\\s*\\(",
+        "readValue\\s*\\(.*(?:request|req|getInputStream|body|param)",
+        "BurlapInput\\s*\\(",
+        "HessianInput\\s*\\(",
+        "XMLDecoder\\s*\\(",
+        "enableDefaultTyping\\s*\\(",
+        "\\.decode\\s*\\([^)]*\\).*ObjectInputStream",
+        "Base64\\.decode.*ObjectInputStream",
+        "java\\.io\\.ObjectInputStream"
+      ],
+      "file_types": [
+        "*.java",
+        "*.kt",
+        "*.groovy",
+        "*.scala",
+        "*.xml",
+        "*.py",
+        "*.js",
+        "*.ts",
+        "*.rb",
+        "*.php"
+      ],
+      "exclude": [
+        "test",
+        "tests",
+        "__tests__",
+        "node_modules",
+        "vendor",
+        ".git",
+        "target",
+        "build",
+        "dist",
+        ".gradle"
+      ],
+      "negative_patterns": [
+        "ValidatingObjectInputStream",
+        "ObjectInputFilter",
+        "ClassFilter",
+        "createFilter\\s*\\(",
+        "setObjectInputFilter\\s*\\(",
+        "SerialKiller",
+        "NotSerializableException",
+        "allowClasses\\s*\\(",
+        "rejectClasses\\s*\\(",
+        "LookAheadObjectInputStream",
+        "WhitelistObjectInputStream",
+        "enableDefaultTypingAsProperty.*OBJECT_AND_NON_CONCRETE"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-20131.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-20131"
+      ]
+    },
+    "standards": [
+      "CWE-502"
+    ],
+    "epss_score": 0.0065,
+    "epss_percentile": 0.707,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:44:18.880682+00:00",
+    "confidence": 0.924,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 15,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.594608+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "CVE-2026-22557",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-22557: A malicious actor with access to the network could exploit a Path Traversal vulnerability found in t",
+    "description": "A malicious actor with access to the network could exploit a Path Traversal vulnerability found in the UniFi Network Application to access files on the underlying system that could be manipulated to access an underlying account.",
+    "detect": {
+      "patterns": [
+        "(?:open|read|load|get|fetch|download|send|stream|include|require|import)\\s*\\(.*(?:req|request)\\.(?:params|query|body|path|url)\\s*(?:\\.\\w+)?\\s*\\)",
+        "(?:readFile|readFileSync|createReadStream|sendFile|sendfile|res\\.download|fs\\.open|fs\\.read)\\s*\\(\\s*.*(?:req|request)\\.(?:params|query|body)",
+        "(?:path|filepath|filename|file_path|file_name)\\s*=\\s*.*(?:req|request)\\.(?:params|query|body)",
+        "\\.\\./|\\.\\.\\\\",
+        "(?:url|uri|path)\\s*[+\\.]\\s*(?:req|request)\\.(?:params|query|body|path)",
+        "(?:base_?dir|root_?dir|upload_?dir)\\s*\\+\\s*(?:req|request)\\.",
+        "(?:File|Stream|Resource)\\s*\\(\\s*.*(?:request|req)\\s*\\.\\s*(?:getParameter|getAttribute|getHeader|getPathInfo)",
+        "(?:new\\s+File|Paths\\.get|new\\s+FileInputStream|new\\s+FileReader)\\s*\\(\\s*.*(?:request|req)\\s*\\.\\s*(?:getParameter|getAttribute)",
+        "(?:open|open_file|read_file|send_file|send_from_directory)\\s*\\(\\s*.*(?:request\\.args|request\\.form|request\\.values|request\\.data)",
+        "(?:include|require|include_once|require_once)\\s*\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)",
+        "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[.*\\].*(?:fopen|file_get_contents|readfile|include|require)"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.cjs",
+        "*.java",
+        "*.py",
+        "*.php",
+        "*.go",
+        "*.rb",
+        "*.cs",
+        "*.groovy",
+        "*.kt",
+        "*.scala"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        ".git",
+        "dist",
+        "build",
+        "__pycache__",
+        ".next",
+        "coverage",
+        "test",
+        "tests",
+        "__tests__",
+        "spec"
+      ],
+      "negative_patterns": [
+        "path\\.normalize",
+        "path\\.resolve\\s*\\(\\s*__dirname",
+        "path\\.join\\s*\\(\\s*__dirname",
+        "sanitize(?:Path|File|Input|d)?",
+        "basename\\s*\\(",
+        "os\\.path\\.basename",
+        "realpath\\s*\\(",
+        "os\\.path\\.realpath",
+        "Paths\\.get.*\\.normalize",
+        "canonicalPath",
+        "\\.canonical(?:Path|File)?",
+        "stripTraversal",
+        "preventTraversal",
+        "validatePath",
+        "allowedPath",
+        "whitelist.*path",
+        "ALLOWED_(?:DIRS?|PATHS?|ROOTS?)"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-22557.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-22557"
+      ]
+    },
+    "standards": [
+      "CWE-22"
+    ],
+    "epss_score": 0.00031,
+    "epss_percentile": 0.0906,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-14T06:09:26.276446+00:00",
+    "confidence": 0.885,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T06:09:31.854693+00:00",
+    "feedback_tp": 10,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.594610+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "GHSA-pfjj-6f4p-rvmh",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.9,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "GHSA-pfjj-6f4p-rvmh: Apollo Federation vulnerable to prototype pollution via incomplete key sanitization",
+    "description": "Apollo Federation vulnerable to prototype pollution via incomplete key sanitization",
+    "detect": {
+      "patterns": [
+        "from\\s+['\"]@apollo/(?:federation|subgraph|gateway)['\"]",
+        "require\\(['\"]@apollo/(?:federation|subgraph|gateway)['\"]\\)",
+        "\\[\\s*['\"]__proto__['\"]\\s*\\]",
+        "__proto__\\s*[=:{\\[]",
+        "\\.constructor\\.prototype(?:\\s*[.=\\[]|\\b)",
+        "\\[\\s*['\"]constructor['\"]\\s*\\]\\s*\\[\\s*['\"]prototype['\"]\\s*\\]",
+        "Object\\.assign\\s*\\([^,)]+,\\s*(?:req\\.|body|params|query|input|data|payload)\\b"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.cjs",
+        "*.jsx",
+        "*.tsx"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        ".git",
+        "dist",
+        "build",
+        "coverage"
+      ],
+      "negative_patterns": [
+        "hasOwnProperty",
+        "Object\\.create\\(null\\)",
+        "Object\\.freeze\\(",
+        "!==\\s*['\"]__proto__['\"]",
+        "!==\\s*['\"]constructor['\"]",
+        "!==\\s*['\"]prototype['\"]",
+        "sanitizeKey|filterKey|allowedProperties"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected packages. See GitHub advisory GHSA-pfjj-6f4p-rvmh.",
+      "references": [
+        "https://github.com/advisories/GHSA-pfjj-6f4p-rvmh"
+      ]
+    },
+    "standards": [
+      "CWE-1321",
+      "CVE-2026-32621"
+    ],
+    "epss_score": 0.00032,
+    "epss_percentile": 0.09296,
+    "source": "github",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.75,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "GHSA-6r9f-759j-hjgv",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "GHSA-6r9f-759j-hjgv: SandboxJS affected by a Sandbox Escape",
+    "description": "SandboxJS affected by a Sandbox Escape",
+    "detect": {
+      "patterns": [
+        "require\\s*\\(\\s*['\"]sandbox(?:js)?['\"]\\s*\\)",
+        "from\\s+['\"]sandbox(?:js)?['\"]",
+        "import\\s+.*\\bsandbox(?:js)?\\b",
+        "new\\s+Sandbox\\s*\\(",
+        "Sandbox\\.prototype",
+        "\\.run\\s*\\(\\s*(?:userInput|untrustedCode|code|script|input|data)",
+        "vm\\.runInNewContext\\s*\\(",
+        "vm\\.runInThisContext\\s*\\(",
+        "vm\\.runInContext\\s*\\(",
+        "Function\\s*\\(\\s*['\"]return\\s+this['\"]\\s*\\)\\s*\\(\\)",
+        "constructor\\.constructor\\s*\\(",
+        "__proto__\\s*\\.\\s*constructor",
+        "\\beval\\s*\\(.*(?:req\\.|request\\.|input|param|query|body)",
+        "new\\s+Function\\s*\\(.*(?:req\\.|request\\.|input|param|query|body)"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.cjs",
+        "*.jsx",
+        "*.tsx",
+        "package.json"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "dist",
+        "build",
+        ".git",
+        "coverage",
+        "__pycache__",
+        ".cache"
+      ],
+      "negative_patterns": [
+        "vm2",
+        "isolated-vm",
+        "safeEval",
+        "sandbox\\.allow",
+        "restrictedSandbox",
+        "secureContext",
+        "\"sandboxjs\"\\s*:\\s*\"[^\"]*\".*//.*deprecated",
+        "ContentSecurityPolicy",
+        "dompurify"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected packages. See GitHub advisory GHSA-6r9f-759j-hjgv.",
+      "references": [
+        "https://github.com/advisories/GHSA-6r9f-759j-hjgv"
+      ]
+    },
+    "standards": [
+      "CWE-94",
+      "CVE-2026-26954"
+    ],
+    "epss_score": 0.00061,
+    "epss_percentile": 0.19211,
+    "source": "github",
+    "auto_generated": true,
+    "generated_at": "2026-04-16T19:22:25.925835+00:00",
+    "confidence": 0.793,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-16T19:22:48.630043+00:00",
+    "feedback_tp": 4,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.594647+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "GHSA-mxrg-77hm-89hv",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "GHSA-mxrg-77hm-89hv: n8n: Prototype Pollution in XML and GSuiteAdmin node parameters lead to RCE",
+    "description": "n8n: Prototype Pollution in XML and GSuiteAdmin node parameters lead to RCE",
+    "detect": {
+      "patterns": [
+        "__proto__\\s*[\\[:]",
+        "constructor\\s*\\[\\s*['\"]prototype['\"]\\s*\\]",
+        "Object\\.assign\\s*\\(\\s*(?:{}|\\[\\]|target)?\\s*,\\s*(?:req\\.body|req\\.params|req\\.query|userInput|xmlParsed|parsed)",
+        "merge\\s*\\(\\s*(?:{}|target)?\\s*,\\s*(?:req\\.body|req\\.params|req\\.query|xmlParsed|parsed)",
+        "(?:xml2js|fast-xml-parser|xml-js|xmldom)\\.parse(?:String|r)?\\s*\\([^,)]+\\)[^;]*(?:Object\\.assign|merge|extend|_.merge|deepmerge)",
+        "(?:xml2js|fast-xml-parser|xml-js)\\.parse(?:String|r)?\\s*\\(",
+        "for\\s*\\(.*in\\s+(?:req\\.body|req\\.params|req\\.query|xmlData|params)\\s*\\)\\s*\\{[^}]*\\[key\\]\\s*=",
+        "obj\\s*\\[\\s*key\\s*\\]\\s*=\\s*(?:value|data|input|param)(?!.*hasOwnProperty)",
+        "(?:_.merge|deepmerge|merge-deep|lodash\\.merge|deepExtend)\\s*\\([^,]+,\\s*(?:req\\.body|req\\.params|req\\.query|userInput|parsedXml)",
+        "setValueByPath\\s*\\(|setValue\\s*\\(.*,\\s*['\"]__proto__['\"]",
+        "(?:JSON\\.parse|xmlParser).*['\"]__proto__['\"]",
+        "['\"]__proto__['\"]\\s*:\\s*\\{",
+        "['\"]constructor['\"]\\s*:\\s*\\{[^}]*['\"]prototype['\"]"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.cjs",
+        "*.jsx",
+        "*.tsx"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "dist",
+        ".git",
+        "coverage",
+        "__tests__",
+        "test",
+        "spec"
+      ],
+      "negative_patterns": [
+        "hasOwnProperty\\s*\\(\\s*key\\s*\\)",
+        "Object\\.prototype\\.hasOwnProperty\\.call",
+        "Object\\.create\\s*\\(\\s*null\\s*\\)",
+        "allowPrototypes\\s*:\\s*false",
+        "prototype\\.pollution",
+        "sanitize\\s*\\(",
+        "schema\\.validate\\s*\\(",
+        "joi\\.validate|Joi\\.object|zod\\.parse|yup\\.validate",
+        "__proto__.*=.*undefined"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected packages. See GitHub advisory GHSA-mxrg-77hm-89hv.",
+      "references": [
+        "https://github.com/advisories/GHSA-mxrg-77hm-89hv"
+      ]
+    },
+    "standards": [
+      "CWE-1321",
+      "CVE-2026-33696"
+    ],
+    "epss_score": 0.00461,
+    "epss_percentile": 0.64016,
+    "source": "github",
+    "auto_generated": true,
+    "generated_at": "2026-04-16T19:22:25.925835+00:00",
+    "confidence": 0.7,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-16T19:22:48.630043+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "GHSA-58qr-rcgv-642v",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "supply-chain",
+    "subcategory": "cve-automated",
+    "title": "GHSA-58qr-rcgv-642v: n8n has Multiple Remote Code Execution Vulnerabilities in Merge Node AlaSQL SQL Mode",
+    "description": "n8n has Multiple Remote Code Execution Vulnerabilities in Merge Node AlaSQL SQL Mode",
+    "detect": {
+      "patterns": [
+        "alasql\\s*\\(",
+        "alasql\\.query\\s*\\(",
+        "require\\s*\\(\\s*['\"]alasql['\"]\\s*\\)",
+        "import\\s+.*\\bfrom\\s+['\"]alasql['\"]",
+        "import\\s+alasql",
+        "alasql.*\\$\\{",
+        "alasql.*\\+\\s*(?:req|input|param|data|query|user|body|row)",
+        "SELECT\\s+.*\\$\\{[^}]*\\}",
+        "alasql.*(?:INTO\\s+FILE|FROM\\s+FILE|ATTACH)",
+        "alasql.*(?:REQUIRE|IMPORT|LOAD\\s+DATA)"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.cjs",
+        "*.json"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        ".git",
+        "coverage",
+        "vendor"
+      ],
+      "negative_patterns": [
+        "parameterized",
+        "sanitize",
+        "escapeString",
+        "prepared.*statement",
+        "allowlist",
+        "whitelist"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected packages. See GitHub advisory GHSA-58qr-rcgv-642v.",
+      "references": [
+        "https://github.com/advisories/GHSA-58qr-rcgv-642v"
+      ]
+    },
+    "standards": [
+      "CWE-94",
+      "CVE-2026-33660"
+    ],
+    "epss_score": 0.00111,
+    "epss_percentile": 0.29506,
+    "source": "github",
+    "auto_generated": true,
+    "generated_at": "2026-04-16T19:22:25.925835+00:00",
+    "confidence": 0.7,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-16T19:22:48.630043+00:00",
+    "_domain": "supply-chain"
+  },
+  {
+    "id": "CVE-2023-1283",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "web-app",
+    "subcategory": "cve-automated",
+    "title": "CVE-2023-1283: Code Injection in GitHub repository builderio/qwik prior to 0.21.0.\n\n",
+    "description": "Code Injection in GitHub repository builderio/qwik prior to 0.21.0.\n\n",
+    "detect": {
+      "patterns": [
+        "\\beval\\s*\\(\\s*(?:req|request|params|query|body|input|data|user|untrusted)",
+        "new\\s+Function\\s*\\(.*(?:req|request|params|query|body|input|data|user)",
+        "\\beval\\s*\\([^)]*\\+[^)]*\\)",
+        "vm\\.runInNewContext\\s*\\(",
+        "vm\\.runInThisContext\\s*\\(",
+        "vm\\.Script\\s*\\(",
+        "\\bexecScript\\s*\\(",
+        "Function\\s*\\(\\s*['\"][^'\"]*['\"]\\s*\\)\\s*\\(",
+        "setTimeout\\s*\\(\\s*(?:req|request|params|query|body|input|data|user)",
+        "setInterval\\s*\\(\\s*(?:req|request|params|query|body|input|data|user)"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.jsx",
+        "*.tsx",
+        "*.mjs",
+        "*.cjs"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        ".next",
+        "build",
+        "coverage",
+        "__tests__",
+        "test",
+        "spec"
+      ],
+      "negative_patterns": [
+        "JSON\\.parse",
+        "sanitize\\(",
+        "escape\\(",
+        "encodeURIComponent\\(",
+        "DOMPurify",
+        "allowlist",
+        "whitelist",
+        "validator\\.escape"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2023-1283.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-1283"
+      ]
+    },
+    "standards": [
+      "CWE-94"
+    ],
+    "epss_score": 0.00282,
+    "epss_percentile": 0.51448,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-16T19:22:25.925835+00:00",
+    "confidence": 0.793,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-16T19:22:48.630043+00:00",
+    "feedback_tp": 4,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.568352+00:00",
+    "_domain": "web-app"
+  },
+  {
+    "id": "CVE-2025-68613",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.9,
+    "category": "web-app",
+    "subcategory": "cve-automated",
+    "title": "CVE-2025-68613: n8n is an open source workflow automation platform. Versions starting with 0.211.0 and prior to 1.12",
+    "description": "n8n is an open source workflow automation platform. Versions starting with 0.211.0 and prior to 1.120.4, 1.121.1, and 1.122.0 contain a critical Remote Code Execution (RCE) vulnerability in their workflow expression evaluation system. Under certain conditions, expressions supplied by authenticated users during workflow configuration may be evaluated in an execution context that is not sufficiently isolated from the underlying runtime. An authenticated attacker could abuse this behavior to execut",
+    "detect": {
+      "patterns": [
+        "eval\\s*\\(.*(?:req\\.|params|query|body|expression|expr|input|template|workflow)",
+        "new\\s+Function\\s*\\(.*(?:expression|expr|input|req\\.|params|query|body|template|workflow)",
+        "new\\s+Function\\s*\\(\\s*['\"][^'\"]*['\"]\\s*,\\s*['\"]",
+        "vm\\.runIn(?:Context|NewContext|ThisContext)\\s*\\(",
+        "vm\\.Script\\s*\\(.*(?:expression|expr|code|input|template|user)",
+        "evaluate(?:Expression|Template|Code|Workflow)\\s*\\(",
+        "exec(?:ute)?Expression\\s*\\(",
+        "parseExpression\\s*\\(",
+        "\\$\\{.*eval\\s*\\(",
+        "tmpl\\s*\\(.*(?:req\\.|user|input|expression)"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.cjs"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        ".git",
+        "__tests__",
+        "spec",
+        "vendor",
+        "coverage"
+      ],
+      "negative_patterns": [
+        "isolated-vm",
+        "sandbox",
+        "safeEval",
+        "quickjs",
+        "allowedGlobals",
+        "vm\\.createContext\\s*\\(\\s*Object\\.create\\s*\\(\\s*null",
+        "restrictedContext",
+        "secureContext",
+        "vm2"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2025-68613.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-68613"
+      ]
+    },
+    "standards": [
+      "CWE-913",
+      "CWE-913"
+    ],
+    "epss_score": 0.76931,
+    "epss_percentile": 0.98944,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-13T08:06:57.445195+00:00",
+    "confidence": 0.85,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-14T04:52:48.170093+00:00",
+    "feedback_tp": 6,
+    "feedback_fp": 0,
+    "feedback_precision": 1.0,
+    "confidence_updated_at": "2026-05-29T04:14:48.568364+00:00",
+    "_domain": "web-app"
+  },
+  {
+    "id": "CVE-2025-0987",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.9,
+    "category": "web-app",
+    "subcategory": "cve-automated",
+    "title": "CVE-2025-0987: Authorization Bypass Through User-Controlled Key vulnerability in CB Project Ltd. Co. CVLand allows ",
+    "description": "Authorization Bypass Through User-Controlled Key vulnerability in CB Project Ltd. Co. CVLand allows Parameter Injection.This issue affects CVLand: from 2.1.0 through 20251103. NOTE: The vendor was contacted early about this disclosure but did not respond in any way.",
+    "detect": {
+      "patterns": [
+        "req\\.body\\.(userId|user_id|accountId|account_id|ownerId|owner_id|role|isAdmin|admin|privilege)",
+        "req\\.query\\.(userId|user_id|accountId|account_id|role|isAdmin|admin|privilege)",
+        "req\\.params\\.(userId|user_id|accountId|account_id)",
+        "Object\\.assign\\([^)]*req\\.(body|query|params)",
+        "\\.\\.\\.req\\.(body|query|params)",
+        "findBy(Id|One)\\(req\\.(body|query)\\.",
+        "where[\\s\\S]{0,60}userId[\\s\\S]{0,40}req\\.(body|query)"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.php",
+        "*.py",
+        "*.rb",
+        "*.go"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        "test",
+        "tests",
+        "__tests__",
+        "spec",
+        "fixtures",
+        ".git"
+      ],
+      "negative_patterns": [
+        "req\\.user\\.(id|_id|userId)",
+        "session\\.(userId|user_id|user\\.id)",
+        "decoded\\.(userId|sub|id)",
+        "jwt\\.verify",
+        "checkOwnership",
+        "isOwner",
+        "hasPermission",
+        "verifyToken"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2025-0987.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-0987"
+      ]
+    },
+    "standards": [
+      "CWE-639"
+    ],
+    "epss_score": 0.00073,
+    "epss_percentile": 0.2221,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.7,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "_domain": "web-app"
+  },
+  {
+    "id": "CVE-2026-32525",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.9,
+    "category": "web-app",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-32525: Improper Control of Generation of Code ('Code Injection') vulnerability in jetmonsters JetFormBuilde",
+    "description": "Improper Control of Generation of Code ('Code Injection') vulnerability in jetmonsters JetFormBuilder jetformbuilder allows Code Injection.This issue affects JetFormBuilder: from n/a through <= 3.5.6.1.",
+    "detect": {
+      "patterns": [
+        "\\beval\\s*\\(\\s*\\$_(POST|GET|REQUEST|COOKIE)",
+        "\\beval\\s*\\(.*\\$_(POST|GET|REQUEST|COOKIE|INPUT)",
+        "\\beval\\s*\\(.*(?:stripslashes|base64_decode|str_rot13|gzinflate|gzuncompress|str_replace)\\s*\\(",
+        "\\bcreate_function\\s*\\(",
+        "\\bpreg_replace\\s*\\(\\s*['\"].*\\/e['\"]",
+        "\\bassert\\s*\\(\\s*\\$_(POST|GET|REQUEST|COOKIE)",
+        "\\bassert\\s*\\(\\s*\\$[a-zA-Z_][a-zA-Z0-9_]*\\s*\\)",
+        "\\bcall_user_func(?:_array)?\\s*\\(\\s*\\$_(POST|GET|REQUEST|COOKIE)",
+        "\\barray_map\\s*\\(\\s*['\"](?:assert|eval|system|exec|passthru)['\"]",
+        "\\barray_filter\\s*\\(.*['\"](?:assert|system|exec)['\"]",
+        "\\$[a-zA-Z_][a-zA-Z0-9_]*\\s*\\(\\s*\\$_(POST|GET|REQUEST|COOKIE)",
+        "\\bwp_unslash\\s*\\(.*\\$_(POST|GET|REQUEST).*\\).*eval\\s*\\(",
+        "<?php.*eval\\s*\\(",
+        "\\bpreg_replace_callback\\s*\\(.*\\$_(POST|GET|REQUEST)",
+        "process\\.env|\\beval\\s*\\(.*(?:req\\.body|req\\.query|req\\.params)"
+      ],
+      "file_types": [
+        "*.php",
+        "*.js",
+        "*.ts"
+      ],
+      "exclude": [
+        "vendor",
+        "node_modules",
+        "tests",
+        "test",
+        ".git",
+        "dist",
+        "build"
+      ],
+      "negative_patterns": [
+        "wp_kses\\(",
+        "sanitize_text_field\\(",
+        "esc_html\\(",
+        "esc_attr\\(",
+        "intval\\s*\\(",
+        "absint\\s*\\(",
+        "wp_strip_all_tags\\(",
+        "sanitize_key\\(",
+        "filter_var\\s*\\(.*FILTER_SANITIZE",
+        "htmlspecialchars\\(",
+        "htmlentities\\("
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-32525.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-32525"
+      ]
+    },
+    "standards": [
+      "CWE-94"
+    ],
+    "epss_score": 0.00047,
+    "epss_percentile": 0.14684,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-05-29T04:09:20.860432+00:00",
+    "confidence": 0.7,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-05-29T04:14:19.198363+00:00",
+    "_domain": "web-app"
+  },
+  {
+    "id": "CVE-2026-33494",
+    "severity": "CRITICAL",
+    "cvss_v4": 10.0,
+    "category": "web-app",
+    "subcategory": "cve-automated",
+    "title": "CVE-2026-33494: ORY Oathkeeper is an Identity & Access Proxy (IAP) and Access Control Decision API that authorizes H",
+    "description": "ORY Oathkeeper is an Identity & Access Proxy (IAP) and Access Control Decision API that authorizes HTTP requests based on sets of Access Rules. Versions prior to 26.2.0 are vulnerable to an authorization bypass via HTTP path traversal. An attacker can craft a URL containing path traversal sequences (e.g. `/public/../admin/secrets`) that resolves to a protected path after normalization, but is matched against a permissive rule because the raw, un-normalized path is used during rule evaluation. Ve",
+    "detect": {
+      "patterns": [
+        "\\.matchRule\\s*\\(.*req\\.(url|path|originalUrl)",
+        "rule\\.match\\s*\\(.*\\.(url|path|rawPath)",
+        "accessRules\\.find\\s*\\(.*req\\.(url|path)",
+        "matchAccessRule\\s*\\(.*req\\.(url|path|originalUrl)",
+        "req\\.(url|path|originalUrl)\\s*\\.match\\s*\\(",
+        "router\\.match\\s*\\(.*req\\.(url|path)",
+        "\\.startsWith\\s*\\(req\\.(url|path|originalUrl)\\)",
+        "new\\s+RegExp\\s*\\(.*rule.*\\)\\.test\\s*\\(req\\.(url|path)",
+        "url\\.includes\\s*\\(.*\\.\\.[\\/\\\\]",
+        "path\\.join\\s*\\(.*req\\.(url|params|query|body)",
+        "decodeURIComponent\\s*\\(req\\.(url|path|originalUrl)\\)",
+        "\\/\\.\\.\\/|\\/\\.\\.\\\\"
+      ],
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.mjs",
+        "*.go",
+        "*.java",
+        "*.py",
+        "*.rb",
+        "*.php"
+      ],
+      "exclude": [
+        "node_modules",
+        "vendor",
+        ".git",
+        "dist",
+        "build",
+        "__pycache__",
+        "test",
+        "tests",
+        "spec"
+      ],
+      "negative_patterns": [
+        "path\\.normalize",
+        "path\\.resolve",
+        "cleanURL",
+        "sanitizePath",
+        "normalizePath",
+        "url\\.cleanPath",
+        "strings\\.Contains.*\\.\\.",
+        "filepath\\.Clean",
+        "URI\\.normalize",
+        "getCanonicalPath",
+        "realpath",
+        "urllib\\.parse\\.quote"
+      ]
+    },
+    "remediation": {
+      "description": "Update affected components to patched versions. See NVD entry for CVE-2026-33494.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-33494"
+      ]
+    },
+    "standards": [
+      "CWE-23"
+    ],
+    "epss_score": 0.00043,
+    "epss_percentile": 0.13183,
+    "source": "nvd",
+    "auto_generated": true,
+    "generated_at": "2026-04-16T19:22:25.925835+00:00",
+    "confidence": 0.7,
+    "generated_by": "llm",
+    "status": "active",
+    "test_precision": 1.0,
+    "tested_at": "2026-04-16T19:22:48.630043+00:00",
+    "_domain": "web-app"
+  }
+]

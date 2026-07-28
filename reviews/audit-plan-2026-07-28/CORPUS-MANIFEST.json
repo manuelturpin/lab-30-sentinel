@@ -1,0 +1,289 @@
+{
+  "commit": "824275da2d44f6924ba43ac9a6afc48a145db5fe",
+  "tree": "b464aa2316e4e514747d32dca30c5015b961adb1",
+  "note": "Les artefacts du round (PLAN.md, MANDAT.md, schema, verdicts) ne sont pas hashes ici : ils sont commites dans git, ce qui les epingle et horodate. Voir \u00a72.",
+  "files": {
+    "skills/security/SKILL.md": {
+      "sha256": "c2d9b3e438818cb787539eef1e5bd5fd0057274a3416eb27e886b0c5f09abfe4",
+      "bytes": 39683
+    },
+    "skills/security/agents/_protocol.md": {
+      "sha256": "50bcf1614284ced113f47c9bc09b48b71126ed9f597d1878e2f075d36ce9597c",
+      "bytes": 8733
+    },
+    "skills/security/agents/api-audit.md": {
+      "sha256": "45754b7f90661451386821866f0f177083cd808708118e6cc444db46fdacab62",
+      "bytes": 5929
+    },
+    "skills/security/agents/cors-audit.md": {
+      "sha256": "75fb43edc7f65303ce54c051178761344bbd43d419f9902555b60a07476df719",
+      "bytes": 3702
+    },
+    "skills/security/agents/data-privacy-audit.md": {
+      "sha256": "b6c712f2771f1b666dfcad23a3879fc1ad4510ba70df339f88914320acf3e486",
+      "bytes": 4470
+    },
+    "skills/security/agents/database-audit.md": {
+      "sha256": "0054c758ddf63a0497dcf3a94d629adefb06231de0f1fc881ac35be5f08a35a5",
+      "bytes": 4065
+    },
+    "skills/security/agents/infrastructure-audit.md": {
+      "sha256": "7df7fa33571787cf8056b2f08f80ae8e4630102827ba165bd037d471f0a8fb2d",
+      "bytes": 4581
+    },
+    "skills/security/agents/llm-ai-audit.md": {
+      "sha256": "5511bbf284d79d3adab26af241ba06e5e1ed2930f5e793d0e75b698703382e19",
+      "bytes": 6050
+    },
+    "skills/security/agents/mobile-audit.md": {
+      "sha256": "b480c52d513d2265874393a15398708ec649833617b78588312d5b487738e999",
+      "bytes": 4567
+    },
+    "skills/security/agents/ssl-tls-audit.md": {
+      "sha256": "19abede3437e20be4ef4c912ade56c63efaac24bc51993e5f44d3fc2bd07e5ca",
+      "bytes": 3697
+    },
+    "skills/security/agents/static-site-audit.md": {
+      "sha256": "96c9eb064e74653f87fdd60c05dfef3eba0ff218cfe5a569fd22b6546571b938",
+      "bytes": 4214
+    },
+    "skills/security/agents/supply-chain-audit.md": {
+      "sha256": "2b6e50c1b9cf6f25a4bd9a4b300148c504d909db009b713d723c27699ca99a86",
+      "bytes": 4764
+    },
+    "skills/security/agents/web-audit.md": {
+      "sha256": "519361308bbc7e509923d4ed89f385cdb1c1fb6a740fb7572936f3b67c786771",
+      "bytes": 6613
+    },
+    "skills/security/agents/websocket-audit.md": {
+      "sha256": "2db763e6fe134f413ba1a974c1bd93801cdd29482c773306fb4877e752b09461",
+      "bytes": 3558
+    },
+    "scripts/cve-sync.py": {
+      "sha256": "c7fdc92d13f127c20978781a3bca70fee513cf47f5271a2b09242e98d8c820bc",
+      "bytes": 26612
+    },
+    "scripts/pattern-gen.py": {
+      "sha256": "60a2dffa7248588c9d7fe82df88184e557a61779b9ce535dd5b13473babef249",
+      "bytes": 20415
+    },
+    "scripts/rule-tester.py": {
+      "sha256": "a0b922a78068dfd0356aa9fd60f3cd575f89f1645a775a7292cba0b17f0d99de",
+      "bytes": 17190
+    },
+    "scripts/feedback-loop.py": {
+      "sha256": "7110db43c5dab8c5913cf28a7f141634d899211b7decd3f52ca76a13e59babf6",
+      "bytes": 25944
+    },
+    "knowledge-base/domains/api/rules.json": {
+      "sha256": "6941a2e3a22eff86b01b3207d01c2285d0a0c43f6eb8421c7c4d0548b5e1f582",
+      "bytes": 19289
+    },
+    "knowledge-base/domains/cors/rules.json": {
+      "sha256": "6279b75e8437fd0514d9656ed4089e16b377bca09904dd6b7a9ae59fad23bbf6",
+      "bytes": 4696
+    },
+    "knowledge-base/domains/data-privacy/rules.json": {
+      "sha256": "b3a6069f4e529ce122b9d491e738300762df38deed3b3e93698357b2d5d015d5",
+      "bytes": 18658
+    },
+    "knowledge-base/domains/database/rules.json": {
+      "sha256": "617d2ee299d7294ec03e1b863e344bf4d878e8bb3f1584e7e8d93f86cdb327af",
+      "bytes": 17527
+    },
+    "knowledge-base/domains/infrastructure/rules.json": {
+      "sha256": "e2e03c4663ee729f84dd8e80af41aa94aa236a0d612e95d74e77956ff4aea87e",
+      "bytes": 17181
+    },
+    "knowledge-base/domains/llm-ai/rules.json": {
+      "sha256": "8e312c45d4d9d77477634857299c2968da109eab6bf3dfdd0e0363e3f370c977",
+      "bytes": 65840
+    },
+    "knowledge-base/domains/mobile/rules.json": {
+      "sha256": "26c02e9a3ce4839f6ef8a86373ec008c3a34bb34b4bd4f73e81855b9fbf10e63",
+      "bytes": 30290
+    },
+    "knowledge-base/domains/ssl-tls/rules.json": {
+      "sha256": "11490954fe90a73cb2fa9337c481423b9a1c53deae315c70b4e9b42f14a3f6a6",
+      "bytes": 5938
+    },
+    "knowledge-base/domains/static-sites/rules.json": {
+      "sha256": "a9152cb863e2542738f50e8d883258c531e11f21c79d131e11ed6b32a5907c36",
+      "bytes": 7428
+    },
+    "knowledge-base/domains/supply-chain/rules.json": {
+      "sha256": "fd62da8917ab0799b0ab48c2f76fa7d7838a31540bd3e35addaeb1262155d0cc",
+      "bytes": 18966
+    },
+    "knowledge-base/domains/web-app/rules.json": {
+      "sha256": "ff3daddb673bd0a87e76dcaa4aa66d520e2f2763483c8eab8e56482e86b682c2",
+      "bytes": 23484
+    },
+    "tests/fixtures/safe/clean-api.py": {
+      "sha256": "e520580e8660bbb6a15ce2eddf2c5b137e6aa3f4c4ed3b988f57e1a1587e3f48",
+      "bytes": 2730
+    },
+    "tests/fixtures/safe/clean-native.c": {
+      "sha256": "02755e2511515a902941ef10395931af91bb81f2cc46169d62e03f1013dc986f",
+      "bytes": 1979
+    },
+    "tests/fixtures/safe/clean-php.php": {
+      "sha256": "105947588f14540b1ba48e00a78bc647a84af8dbd16bc600cfc0540c98bbd4c9",
+      "bytes": 1276
+    },
+    "tests/fixtures/safe/clean-supply-chain.py": {
+      "sha256": "020cd9e8b69ed7b2dc36bd0012b2af0038534cd99ce24f9cf0b246a5566121d7",
+      "bytes": 1923
+    },
+    "tests/fixtures/safe/clean-tls.go": {
+      "sha256": "5bb4e70270e0f2a56688fca4e05d6d57cfafdd5ac931f44f4ad2220ccb40d122",
+      "bytes": 1782
+    },
+    "tests/fixtures/safe/clean-web.js": {
+      "sha256": "86bab86041fd78edd9aab4a5212924b0ae23485ada8c5dfdedefb09a3525c95f",
+      "bytes": 2564
+    },
+    "tests/fixtures/url-validator/private.txt": {
+      "sha256": "7a27e7c11cb14e02df9017af9b8392bc2997fadcdeee2b0c32d9fd7d8cac3ca3",
+      "bytes": 184
+    },
+    "tests/fixtures/url-validator/public.txt": {
+      "sha256": "7ba422d9a278ac3a0c86ae4e1d0e1a9ffbec33087e7b6675ca9f4dbcad8e0b94",
+      "bytes": 165
+    },
+    "tests/fixtures/vulnerable/input-validation.js": {
+      "sha256": "47c14f68daf4e48b447f6a6c42d3a9f144b2f2be0cc96d88af0b4558df1c9775",
+      "bytes": 1759
+    },
+    "tests/fixtures/vulnerable/memory-safety.c": {
+      "sha256": "a9dc4db88d0f2e9fdf28d4b392f8f1a352a9b374cd36120f9a7ef3b4284f216f",
+      "bytes": 1930
+    },
+    "tests/fixtures/vulnerable/ssrf-deserialization.py": {
+      "sha256": "0940225df1ec8f23c22647f8cd605c5e2082140078d1378a4b1fe50f3d235ce2",
+      "bytes": 2614
+    },
+    "tests/fixtures/vulnerable/ssrf-injection.js": {
+      "sha256": "b8c9b70732047d6dfeff565af5d0ecbebb7a244dd67bc395378723d3197b006c",
+      "bytes": 2468
+    },
+    "tests/fixtures/vulnerable/supply-chain.php": {
+      "sha256": "15748a63435a796f938333b10eb6835527a611fddd82c08ca61df2b40d724e53",
+      "bytes": 996
+    },
+    "tests/fixtures/vulnerable/supply-chain.py": {
+      "sha256": "632dec45a222e602dae50d28e6cd0f312c7c426e859f8878a85cf6cbda4e32b5",
+      "bytes": 1555
+    },
+    "tests/fixtures/vulnerable/tls-auth.go": {
+      "sha256": "ce58b689e44a276b2e529557115b624e8fb4d5ce240858f3e88c8b665ed5d667",
+      "bytes": 1325
+    },
+    "tests/vulnerable-app/README.md": {
+      "sha256": "b475938b0850594706a90c1000dc8df811d52792c4b1135609cd92faafd32937",
+      "bytes": 947
+    },
+    "tests/vulnerable-app/dummy-env.txt": {
+      "sha256": "25e9f0599d2744f7f034b81cb8cc29593c60485f9e2ccc58f95ef3f99c01c07e",
+      "bytes": 145
+    },
+    "tests/vulnerable-app/package.json": {
+      "sha256": "2eb4aa5e59c96a6b83ea8888f4489779e5b2ad88ab80153dbc461fd99eb128e4",
+      "bytes": 254
+    },
+    "tests/vulnerable-app/src/server.js": {
+      "sha256": "b21f181f5e6bc65b772ea0bf080426eb5f8da489b3c7faadba864dd62297e34e",
+      "bytes": 1829
+    },
+    "mcp-servers/sentinel-scanner/src/index.ts": {
+      "sha256": "c4168e41f5890f4227741c96caf0c60e77670cf4a0637b456212e37d0a2fd36c",
+      "bytes": 3516
+    },
+    "mcp-servers/sentinel-scanner/src/tools/scan-dependencies.ts": {
+      "sha256": "daaad33f413bdfdb7eb6f0c79cde40adf6ee742506aaab131e1c3c196dfbe162",
+      "bytes": 13449
+    },
+    "mcp-servers/sentinel-scanner/src/tools/scan-headers.ts": {
+      "sha256": "1be7ef1eb717be484470af38e38341e3ac6a2e59aa6d6df0f0114131c23e0368",
+      "bytes": 8107
+    },
+    "mcp-servers/sentinel-scanner/src/utils/report-renderer.ts": {
+      "sha256": "ce827319a7ff6a529e6202eec14c532ca1e323fa28bde8c355a50d9f98bb9e08",
+      "bytes": 8217
+    },
+    "mcp-servers/sentinel-scanner/src/utils/risk-scorer.ts": {
+      "sha256": "00424410cae4188c70f0ec24d091470deed25f48090589540090abdf34610247",
+      "bytes": 2076
+    },
+    "mcp-servers/sentinel-scanner/src/utils/sarif-generator.ts": {
+      "sha256": "8a5cfdf98a5091c5768e79900386143b574477cfc3a010a067e3ab888fb2f9c5",
+      "bytes": 4445
+    },
+    "mcp-servers/sentinel-scanner/src/utils/sbom-generator.ts": {
+      "sha256": "da3c61a53c52609d3962da887f33338b1a290300f45f22b3125e4377073b02f0",
+      "bytes": 11313
+    },
+    "mcp-servers/sentinel-scanner/src/utils/stack-detector.ts": {
+      "sha256": "c1123b28317be4ba6bf4fb137a337dbe39d5929893a9eac6e300095d46ad9cc1",
+      "bytes": 14362
+    },
+    "mcp-servers/sentinel-scanner/src/utils/types.ts": {
+      "sha256": "8cd9261d78b0fa42f972c265c3395ddd4b8d53cdc2adcf94ac373ebf38a3f7d3",
+      "bytes": 589
+    },
+    "mcp-servers/sentinel-scanner/src/utils/url-validator.test.ts": {
+      "sha256": "3b0c13afc03da28deda7df5ba432b8d90e8b0ca8194d5e549127234a412d6c9e",
+      "bytes": 853
+    },
+    "mcp-servers/sentinel-scanner/src/utils/url-validator.ts": {
+      "sha256": "20ae1a5d7bed07c0cc38768cb097b7063ca71152100ccec717a9f2c5edb0d169",
+      "bytes": 2207
+    },
+    "rag/query.py": {
+      "sha256": "d935e3b8d46981ecec14c117381abeac17267c49f8e3693c7d4e0b2ba343ce80",
+      "bytes": 8218
+    },
+    "rag/indexer.py": {
+      "sha256": "87e7eb4384e0dd4b0d98e544ec295978b704a2391b4303328cf52667d2f63f29",
+      "bytes": 8495
+    },
+    "rag/config.json": {
+      "sha256": "b918a6f6ac33db37702a2a38ebe024a1b94df6a3b900d662772d2b90869bba5c",
+      "bytes": 446
+    },
+    "reports/templates/audit-report.md": {
+      "sha256": "c2c374aacea09a83bc296d1efec645120546a6f14e12ffadb7cd7013b4cc5862",
+      "bytes": 1014
+    },
+    "reports/templates/evolve-report.md": {
+      "sha256": "cb287c0bab0bfe11588336a098b31e18ba50c95a16303808114cb8ac74494d59",
+      "bytes": 987
+    },
+    "reports/templates/executive-summary.md": {
+      "sha256": "df65ab74ca794c88466dc42c3f10ba6d0161cbe7ea22b66dbcaa61c8216dc119",
+      "bytes": 770
+    },
+    "reports/templates/full-report.md": {
+      "sha256": "b4aaa9367c02cab66886aea42708c3ccc3527cd6fc851327b0d33f9378ad449a",
+      "bytes": 1987
+    },
+    "reports/templates/threat-intel-report.md": {
+      "sha256": "d39912af075128741a9aa5e87307962af88fb9dea14c42c3da3404537ed2be90",
+      "bytes": 1168
+    },
+    "reviews/audit-plan-2026-07-28/pipeline-output-active.json": {
+      "sha256": "2869f509e29173247c66f442b6d97b3b6201ac7913ea11499e06f6854df0fbb5",
+      "bytes": 87977
+    },
+    "reviews/audit-plan-2026-07-28/rule-tester-run.log": {
+      "sha256": "894dee1fb81e28ed2ca93843e8fd45ed77cf282181b46f127b7ebb44a8da207c",
+      "bytes": 283
+    },
+    "reviews/audit-plan-2026-07-28/gate-probe.log": {
+      "sha256": "c948aa02c0068ab9a8fefc71571b40fab2f8395da33b7588ddc028a4f017fc19",
+      "bytes": 234
+    }
+  },
+  "file_count": 70,
+  "total_bytes": 633222
+}

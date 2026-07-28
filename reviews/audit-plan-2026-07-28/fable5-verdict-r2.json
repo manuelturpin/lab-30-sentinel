@@ -1,0 +1,166 @@
+{
+  "evaluateur": "Claude Fable 5",
+  "verdict": "revise",
+  "synthese": "La v2 est un progrès réel et vérifié : le manifeste tient (55/55 hashes recalculés conformes sur l'arbre de travail, 6/6 recalculés contre le commit épinglé 824275d dont web-app et cors rules.json, tree b464aa2 conforme, 518 468 octets exacts), les 11 rules.json sont inclus et l'incohérence de sévérité qu'ils portent est confirmée dans les fichiers réels, les fixtures et les sources MCP sont là, une exécution a eu lieu, et la lecture du §3 est démontrée par le code de rule-tester.py. Mais quatre défauts changent la décision. (1) Le gel couvre le corpus audité et pas les artefacts du round : PLAN.md, MANDAT.md, schéma, rule-tester-run.log et le manifeste lui-même sont non hashés dans un dossier untracked (`?? reviews/audit-plan-2026-07-28/`) — le mode d'échec exact du 27/07 (mutation de l'objet revu en vol) reste ouvert pour l'objet même de ce round ; et l'étalon réel du gate inclut tests/vulnerable-app/src/server.js (rule-tester.py:69, le 8ᵉ fichier vulnérable du log), absent du manifeste. (2) Le §0 surdéclare une fermeture : le finding r1 « corpus incapable de répondre à §1.2 » demandait fixtures ET un échantillon de cve-rules.json ; la v2 inclut les fixtures et laisse zéro règle produite par le pipeline au corpus (3 390 en repo, dont les 31 « active » promues par le gate), le motif d'exclusion ne couvrant que les 12 535 runtime. (3) Le §5 implémente l'invalidation fail-closed demandée par le r1 mais pas sa seconde moitié (relance ou remplacement) : sur un corpus 100 % sécurité où le fallback est documenté « persistant, attendu », le dispositif peut devenir inexécutable sans branche de reprise. (4) Le défaut websocket signalé par Sol r1 (12 agents, 11 domaines — l'agent lit un fichier qui n'existe ni en repo ni en runtime, vérifié des deux côtés) n'est ni porté ni déclaré, et « Tous les domaines » le masque. Réponses aux sept questions dans affirmations_evaluees. Le retrait de l'auteur du rôle de juge est majoritairement un mécanisme (règle de traitement pré-engagée, finding sans veto) avec un maillon en confiance : rien ne contraint la publication des verdicts bruts avant synthèse.",
+  "territoires": [
+    {
+      "nom": "exactitude_factuelle",
+      "etat": "reserves",
+      "commentaire": "Tous les chiffres load-bearing vérifiés exacts : 55 fichiers, 518 468 octets, hashes 55/55 conformes (working tree) et 6/6 conformes au commit 824275d, tree du manifeste identique à celui du commit, comptes du tableau §2 (14+4+11+15+11=55) justes. Trois imprécisions : « 8 fichiers vulnérables + 6 sains, documentés dans son propre CLAUDE.md » alors que CLAUDE.md documente « 7 fichiers vulnérables + 6 safe » (le 8ᵉ vient de tests/vulnerable-app, hors décompte) ; « tests/fixtures/** — L'étalon du gate » alors que l'étalon réel inclut aussi VULN_APP_DIR (rule-tester.py:69) ; « Tous les domaines — plus d'exclusion » masque l'absence du 12ᵉ domaine websocket attendu par un agent du corpus."
+    },
+    {
+      "nom": "doctrine",
+      "etat": "reserves",
+      "commentaire": "Panel conforme à la doctrine du 26/07 (deux familles, xhigh, gabarit scellé non réécrit — le MANDAT.md de ce round reprend les six territoires verbatim). Une récidive : la règle 20 exige « un timeout et une détection de non-progression » ; le §5 intitule sa puce « Timeout ou non-progression » mais son corps ne donne que timeout 2400 s et stdin fermé — le mineur r1 est renommé, pas fermé, exactement une violation « commise en croyant la protéger »."
+    },
+    {
+      "nom": "trous",
+      "etat": "defaut",
+      "commentaire": "Cinq trous : aucune branche de reprise après un round invalidé par bascule de classifieur (§5 détecte et invalide, ne prévoit ni relance ni remplacement — la moitié manquante de ce que le r1 demandait) ; zéro sortie du pipeline au corpus alors que §1.2 demande si « le pipeline produit des détecteurs valides » ; tests/vulnerable-app/src/server.js (partie de l'étalon) hors manifeste ; rag/query.py référencé par SKILL.md:282 absent du corpus (moitié RAG du finding Sol r1 non fermée) ; drift repo↔runtime toujours non déclaré au §6 (mineur r1 non fermé, non mentionné au §0)."
+    },
+    {
+      "nom": "coherence_interne",
+      "etat": "defaut",
+      "commentaire": "Le §0 — la prétention centrale que ce round éprouve — surdéclare deux fermetures : le correctif §1.2 n'inclut que la moitié demandée (fixtures oui, échantillon de cve-rules.json non, sans le dire), et « cible d'audit explicite (§2, Q4) » pointe vers une question qui n'existe nulle part dans le plan (§1 n'a que 3 questions ; la Q4 du mandat de validation n'est pas le mandat d'audit à venir). De plus le §3 présente sa conclusion comme lecture du run alors que « Untested rules: 0 » seul ne la démontre pas — c'est le code qui la prouve (la conclusion est juste, la chaîne de preuve affichée est incomplète)."
+    },
+    {
+      "nom": "proportionnalite",
+      "etat": "reserves",
+      "commentaire": "Le plan est globalement sobre : corpus borné et motivé, budget extrapolé de mesures réelles, limites déclarées. Un excès localisé : invalider un round entier sur toute divergence de hash (§2 et §5) alors que le commit épinglé fournit gratuitement la copie correcte (`git show 824275d:<chemin>`) — la réparation coûte zéro, l'invalidation devrait se réserver aux cas non réparables."
+    },
+    {
+      "nom": "regressions_du_correctif",
+      "etat": "defaut",
+      "commentaire": "Le correctif central — le gel par manifeste — reproduit la faille qu'il ferme, un périmètre plus loin : il fige le corpus audité mais aucun des artefacts du round (PLAN.md, MANDAT.md, schema-review.json, rule-tester-run.log, CORPUS-MANIFEST.json lui-même) n'est hashé ni committé (`git status` : `?? reviews/audit-plan-2026-07-28/`). Le mode d'échec n°1 documenté du lab — mutation de l'objet revu pendant la revue — reste possible sans trace sur l'objet même de ce round. Seconde régression, cosmétique : la puce « Timeout ou non-progression » crée l'apparence de fermer le mineur r1 sans mécanisme."
+    }
+  ],
+  "findings": [
+    {
+      "gravite": "majeur",
+      "territoire": "trous",
+      "resume": "Le §5 invalide le round sur bascule de classifieur mais ne définit aucune branche de reprise (relance, remplacement d'évaluateur, décompte des rounds invalides) — sur un corpus 100 % sécurité où le fallback est documenté « persistant, attendu », le dispositif peut devenir inexécutable.",
+      "citation": "PLAN.md §5 : « Si la valeur n'est pas `claude-fable-5`, **le round est invalide** — le panel perd sa diversité de famille et le résultat est annoncé comme tel » ; CLAUDE.md (lab-30) : « le fallback Fable 5→Opus sur contenu sécurité est désormais documenté officiellement (persistant, attendu) » ; fable5-plan-verdict-r1.json demandait : « bascule détectée = lecture invalide, **avec relance ou remplacement de l'évaluateur** ».",
+      "consequence_decisionnelle": "Ajouter la branche de reprise : nombre de relances autorisées, évaluateur de substitution ou dégradation annoncée du panel, et préciser si un round invalidé consomme l'un des 3 rounds du §7. Sans cela, le précédent favorable du 27/07 est un n=1 sur un corpus 4× plus petit, et une série de bascules bloque l'audit sans issue définie."
+    },
+    {
+      "gravite": "majeur",
+      "territoire": "regressions_du_correctif",
+      "resume": "Le gel couvre le corpus audité mais pas les artefacts du round : plan, mandat, schéma, log d'exécution et manifeste lui-même sont non hashés dans un dossier untracked — le mode d'échec du 27/07 (mutation de l'objet revu en vol) reste ouvert pour l'objet même de ce round, et aucune procédure ne dit contre quoi vérifier (working tree ou `git show`).",
+      "citation": "git status --porcelain : « ?? reviews/audit-plan-2026-07-28/ » ; CORPUS-MANIFEST.json : aucune entrée pour PLAN.md, MANDAT.md, rule-tester-run.log ni pour lui-même ; PLAN.md §2 : « Toute divergence entre un fichier lu et son hash invalide le round » (sans dire qui vérifie, quand, ni contre quelle source).",
+      "consequence_decisionnelle": "Committer le dossier du round avant envoi aux évaluateurs (le commit devient le gel des artefacts de revue, comme 824275d l'est pour le corpus) et prescrire la vérification contre `git show <commit>:<chemin>` — une vérification contre le working tree ne détecte pas un manifeste régénéré après mutation."
+    },
+    {
+      "gravite": "majeur",
+      "territoire": "coherence_interne",
+      "resume": "Le §0 présente comme fermé le défaut « corpus incapable de répondre à §1.2 » alors que la moitié du correctif demandé au r1 — un échantillon de cve-rules.json, la production du pipeline — est silencieusement absente : zéro des 3 390 règles produites en repo (dont les 31 « active » promues par le gate) ne figure au corpus, et le motif d'exclusion ne couvre que les 12 535 runtime.",
+      "citation": "PLAN.md §0 : « Corpus incapable de répondre à la question §1.2 → **`tests/fixtures/` (15 fichiers) inclus** — c'est l'étalon du gate » ; fable5-plan-verdict-r1.json : « Ajouter tests/fixtures/ **et un échantillon de 10-20 règles de cve-rules.json** » ; mesuré sur le repo : knowledge-base/domains/*/cve-rules.json = 3 390 règles ({active: 31, sans statut: 3 244, no-matches: 100, needs-review: 15}), aucune au manifeste.",
+      "consequence_decisionnelle": "Juger « le pipeline produit-il des détecteurs valides » sans voir un seul détecteur produit revient à juger le générateur sur son code source seul. Ajouter les 146 règles à statut (strate exhaustive, ~pas d'échantillonnage requis) ou motiver leur exclusion explicitement — et corriger le §0 pour ne pas déclarer fermé un correctif à moitié appliqué."
+    },
+    {
+      "gravite": "majeur",
+      "territoire": "trous",
+      "resume": "L'étalon réel du gate inclut tests/vulnerable-app/src (le 8ᵉ fichier vulnérable visible dans le log que le plan cite lui-même), absent du manifeste : un huitième du corpus vulnérable de référence peut changer sans invalider le round.",
+      "citation": "scripts/rule-tester.py:69 : « vulnerable += load_files_from_dir(VULN_APP_DIR) » avec VULN_APP_DIR = tests/vulnerable-app/src ; rule-tester-run.log : « Vulnerable files: 8 (512 lines) » ; CORPUS-MANIFEST.json : 7 fichiers tests/fixtures/vulnerable/*, aucun tests/vulnerable-app/*.",
+      "consequence_decisionnelle": "Ajouter tests/vulnerable-app/src/server.js (1 829 octets) au manifeste. Sans lui, la promesse §2 « L'étalon du gate » est fausse d'un fichier et l'invariant d'intégrité ne couvre pas tout ce que l'exécution du §3 a réellement chargé."
+    },
+    {
+      "gravite": "majeur",
+      "territoire": "trous",
+      "resume": "L'agent websocket du corpus lit un fichier de règles qui n'existe ni en repo ni en runtime (11 domaines vérifiés des deux côtés) ; ce défaut, signalé par Sol au round 1, n'est ni porté au §0 ni déclaré, et « Tous les domaines — plus d'exclusion » le masque.",
+      "citation": "skills/security/agents/websocket-audit.md:75 : « `Read` rules from `/Users/manuelturpin/.sentinel/knowledge-base/domains/websocket/rules.json` » ; ls knowledge-base/domains/ (repo) et ls ~/.sentinel/knowledge-base/domains/ (runtime) : 11 domaines, pas de websocket ; sol-plan-r1.json : « l'agent WebSocket, qui attend un douzième domaine non représenté parmi ces onze fichiers ».",
+      "consequence_decisionnelle": "Sans mention au plan, l'audit peut conclure des 11 fichiers que la couverture domaines↔agents est complète alors qu'un agent sur douze lit un fichier inexistant — précisément le genre de défaut d'architecture que §1.1 doit trouver. Déclarer l'asymétrie 12 agents / 11 domaines dans le plan (comme fait connu ou comme cible d'audit)."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "coherence_interne",
+      "resume": "« Cible d'audit explicite (§2, Q4) » est une référence pendante : le plan ne contient aucune Q4 — §1 n'a que trois questions et le mandat de l'audit (étape 3 du §7) n'existe pas encore.",
+      "citation": "PLAN.md §0 : « L'incohérence de sévérité devient une **cible d'audit explicite** (§2, Q4) » ; PLAN.md §1 : trois questions numérotées 1-3 ; §2 : tableau de corpus, aucune question.",
+      "consequence_decisionnelle": "La Q4 du MANDAT.md de ce round valide le plan, elle n'auditera pas Sentinel. Ancrer l'incohérence de sévérité dans les questions du §1 (ou dans le futur mandat d'audit), sinon la promesse de fermeture du premier défaut r1 repose sur une question que personne ne posera."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "doctrine",
+      "resume": "La détection de non-progression exigée par la règle 20 est nommée dans l'intitulé du §5 mais toujours sans mécanisme — le mineur r1 est renommé, pas fermé.",
+      "citation": "PLAN.md §5 : « **Timeout ou non-progression** : 2400 s, stdin fermé. » ; CLAUDE.md global : « porte un timeout **et une détection de non-progression**. Un appel sans borne est resté bloqué 14 h sans alerte le 25/07 ».",
+      "consequence_decisionnelle": "Ajouter le mécanisme (croissance du fichier de sortie ou heartbeat). Le timeout borne le dégât à 40 min ; la gravité est mineure, mais un intitulé qui nomme la garantie sans l'implémenter est une fermeture cosmétique — la classe de régression que ce gabarit traque."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "trous",
+      "resume": "rag/query.py, appelé par les agents pour l'enrichissement RAG selon SKILL.md, est absent du corpus — la moitié RAG du finding Sol r1 « sources SARIF/report/risk, query/indexer/config RAG » n'est pas fermée (la moitié MCP l'est).",
+      "citation": "skills/security/SKILL.md:282 : « **RAG Enrichment**: `python3 /Users/manuelturpin/Desktop/bonsai974/claude/lab/lab-30-sentinel/rag/query.py --query \"{query}\" --domain {domain} --limit 3` — agents call via Bash » ; CORPUS-MANIFEST.json : aucun fichier rag/.",
+      "consequence_decisionnelle": "L'architecture jugée en §1.1 inclut un maillon RAG dont le corpus ne montre que l'appel, pas l'implémentation. Ajouter rag/query.py (et indexer.py) ou déclarer l'exclusion avec motif au §2."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "exactitude_factuelle",
+      "resume": "« 8 fichiers vulnérables + 6 sains, documentés dans son propre CLAUDE.md » : CLAUDE.md documente 7+6 ; le 8ᵉ fichier vient de tests/vulnerable-app, hors du décompte documenté.",
+      "citation": "PLAN.md §0 : « Le dépôt embarque 8 fichiers vulnérables + 6 sains, documentés dans son propre CLAUDE.md » ; CLAUDE.md (lab-30) : « valide les patterns LLM contre un corpus de test (7 fichiers vulnérables + 6 safe) ».",
+      "consequence_decisionnelle": "Imprécision dans la ligne même qui corrige une affirmation « factuellement fausse » du r1 — corriger en « 7+1 fixtures/vulnerable-app + 6 » pour que la généalogie des correctifs reste exacte."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "trous",
+      "resume": "Le drift repo↔runtime documenté au CLAUDE.md n'apparaît toujours pas dans les limites du §6 — mineur r1 non fermé et non mentionné au §0, alors que les agents lisent le runtime et que l'audit lira le repo.",
+      "citation": "PLAN.md §6 : quatre limites (« Pas de scan réel... Aucun jugement de couverture... Aucune comparaison au plugin... Panel à moitié endogame »), aucune sur le drift ; CLAUDE.md (lab-30) : « runtime a 12 535 CVE rules (vs 3390 repo) suite aux crons ».",
+      "consequence_decisionnelle": "Une ligne au §6 suffit, ou une vérification repo==runtime sur les 55 fichiers au moment du gel (diff trivial). Sinon la question §1.2 est jugée sur un objet qui n'est pas exactement celui qui tourne."
+    },
+    {
+      "gravite": "mineur",
+      "territoire": "proportionnalite",
+      "resume": "Invalider un round entier sur toute divergence de hash est plus lourd que nécessaire : le commit épinglé fournit gratuitement la copie correcte de chaque fichier.",
+      "citation": "PLAN.md §2 : « Toute divergence entre un fichier lu et son hash invalide le round » ; §5 : « **Divergence de hash** entre un fichier et le manifeste : round invalide » — alors que le manifeste porte « \"commit\": \"824275da2d44f6924ba43ac9a6afc48a145db5fe\" » et que `git show 824275d:<chemin>` restitue l'état gelé à coût nul (vérifié : 6/6 hashes recalculés conformes).",
+      "consequence_decisionnelle": "Prévoir la réparation (relecture depuis le commit) avant l'invalidation ; réserver celle-ci au cas où le commit lui-même est indisponible ou réécrit. En l'état, un fichier modifié par un cron pendant le round détruit 20-35 $ de lectures réparables en une commande."
+    }
+  ],
+  "affirmations_evaluees": [
+    {
+      "numero": 1,
+      "statut": "faux",
+      "justification": "La prétention universelle du §0 (« Cette version les corrige par des mécanismes, pas par des déclarations ») ne tient pas, bien que la majorité des correctifs soit réelle et vérifiée : 11 rules.json inclus (manifeste), manifeste d'intégrité fonctionnel (55/55 + commit), rétractation de l'affirmation fausse, exécution réelle (log cohérent avec le code), affirmations non sourcées retirées du corps (elles ne survivent qu'en citation dans le tableau §0), schéma/mandat alignés à 7 questions, argument du plafond retiré. Deux fermetures sont surdéclarées : le correctif §1.2 n'applique que la moitié demandée (fixtures incluses, échantillon de cve-rules.json silencieusement absent — cf. finding majeur) et « cible d'audit explicite (§2, Q4) » référence une question inexistante dans le plan. Deux sont partielles sans le dire : MCP inclus mais RAG absent (le finding Sol couvrait les deux) ; retrait du juge réel sur la règle, non contraint sur la publication (Q5)."
+    },
+    {
+      "numero": 2,
+      "statut": "etabli",
+      "justification": "Le gel tient pour ce qu'il couvre, vérifié par recalcul : 55/55 SHA-256 conformes sur l'arbre de travail, 6 fichiers recalculés contre `git show 824275d:` (rule-tester.py, web-app, cors, mobile, database rules.json, SKILL.md) tous conformes, tree du manifeste identique à celui du commit, file_count et total_bytes exacts (518 468). Trois échecs restent silencieux : les artefacts du round (plan, mandat, schéma, log, manifeste lui-même) sont hors manifeste et untracked — une mutation en vol de l'objet revu, le mode d'échec historique, resterait invisible ; aucune procédure ne prescrit la vérification contre le commit plutôt que le working tree (seule la première détecte un manifeste régénéré) ; tests/vulnerable-app/src/server.js, chargé par l'exécution du §3, est hors gel."
+    },
+    {
+      "numero": 3,
+      "statut": "faux",
+      "justification": "Le corpus est nettement amélioré mais toujours insuffisant pour §1.2, et le motif d'exclusion contient une affirmation réfutable. Insuffisant : zéro détecteur produit par le pipeline au corpus (ni les 31 « active » promues par le gate, ni les 15 needs-review), et rag/query.py référencé par SKILL.md:282 absent. Réfutable : « un échantillon stratifié suffirait, mais aucun échantillonnage neutre n'est possible sans biaiser » — pour les 3 390 règles du repo, épinglées au commit, la strate des 146 règles à statut ({active: 31, needs-review: 15, no-matches: 100}, mesuré) peut être prise **exhaustivement** : aucun échantillonnage, donc aucun biais. L'argument ne vaut, affaibli, que pour les 12 535 runtime, dont l'exclusion est défendable (volume, hors commit) — mais le §2 étend silencieusement ce motif aux règles repo qu'il ne couvre pas."
+    },
+    {
+      "numero": 4,
+      "statut": "etabli",
+      "justification": "Vérifié dans les fichiers réels : deux des trois cas cités sont des défauts de conception, le troisième une variation légitime. CORS : WEB-MISCONF-003 « MEDIUM, 5.3, Permissive CORS configuration » (pattern `origin:\\s*true`) contre CORS-ORIGIN-001 « HIGH, 8.0, Wildcard Access-Control-Allow-Origin on authenticated endpoint » (pattern `Access-Control-Allow-Origin.*\\*`) — le qualificatif « authenticated endpoint » ne vit que dans le titre, aucun pattern ne distingue l'authentification : deux agents dispatchés en parallèle peuvent scorer la même mauvaise configuration 5.3 ou 8.0. Défaut de conception (pas de normalisation inter-domaines). SQLi : DB-INJECT-002 9.3 / WEB-INJ-004 9.4, quasi-doublons à patterns recouvrants — l'écart de 0.1 est cosmétique, le vrai défaut est le double-signalement sous deux IDs. Debug : MOB-CONF-001 7.4 (pattern `android:allowBackup=\"true\"`, exfiltration par backup Android) contre WEB-MISCONF-002 3.7 (`DEBUG\\s*[:=]\\s*true`) — plateformes et conséquences réellement différentes, variation contextuelle défendable. L'inclusion des 11 fichiers était donc nécessaire."
+    },
+    {
+      "numero": 5,
+      "statut": "avance_sans_preuve",
+      "justification": "Le retrait est plus qu'une promesse mais moins qu'un mécanisme complet. Réel : la règle de traitement est fixée avant les résultats et « le finding **reste au rapport** quoi qu'il arrive » supprime le veto de l'auteur — c'est le point le plus fort du §4. Non contraint : rien ne force la publication des verdicts bruts « avant toute synthèse » (le dossier reviews/ est untracked, aucun commit ni hash des verdicts n'est exigé, l'antériorité temporelle est invérifiable a posteriori) ; le rédacteur de la synthèse n'est pas nommé (§7.4 « puis synthèse » — par élimination, l'auteur) ; pas de contre-signature externe, demandée au r1. Échec sans trace possible : une synthèse omettant un finding resterait détectable seulement si quelqu'un diffe verdicts et synthèse — personne n'en est chargé. Un commit git des verdicts bruts avant rédaction de la synthèse mécaniserait l'ordre à coût nul ; il n'est pas prévu."
+    },
+    {
+      "numero": 6,
+      "statut": "etabli",
+      "justification": "La lecture est correcte, et le code la prouve plus fortement que le plan ne l'énonce : load_untested_rules ne lit que les cve-rules.json (rule-tester.py:81 : `os.path.join(DOMAINS_DIR, domain_filter or \"*\", \"cve-rules.json\")`) et ne retient que `status == \"untested\"` (ligne 87) ; aucun flag CLI (--domain/--precision/--verbose/--dry-run) ne permet de retester une règle active ; les rules.json écrites à la main ne sont jamais chargées par le testeur ; seul pattern-gen.py:407 (`rule[\"status\"] = \"untested\"`) crée ce statut — ni cve-sync ni feedback-loop ne l'assignent (grep sur les trois scripts). Deux nuances : le log seul (« Untested rules: 0 ») ne démontre pas la conclusion — la même sortie apparaîtrait si tout avait déjà été testé ; c'est le code qui tranche, et le §3 gagnerait à le citer. Et la lecture omet un fait aggravant mesuré : 3 244 des 3 390 cve-rules du repo n'ont aucun champ status — le gate n'a réellement statué que sur 146 règles."
+    },
+    {
+      "numero": 7,
+      "statut": "avance_sans_preuve",
+      "justification": "Le principe est le bon et n'est pas trop rigide : un panel silencieusement devenu Opus-évaluant-Opus détruirait la raison d'être du dispositif, et le fail-closed est ce que le r1 demandait. Mais le plan avance que ce traitement suffit sans traiter la reprise : le r1 exigeait « lecture invalide, **avec relance ou remplacement de l'évaluateur** » et le §5 s'arrête à « le round est invalide... annoncé comme tel » — pas de protocole de relance, pas d'évaluateur de substitution, pas de règle disant si un round invalidé consomme l'un des 3 du §7. Sur un corpus 100 % sécurité 4× plus gros que le n=1 favorable du 27/07, avec un fallback documenté « persistant, attendu », le déclenchement est plausiblement fréquent : sans branche de reprise, le mécanisme juste devient un dispositif inexécutable. À l'inverse, pour la divergence de hash, l'invalidation totale est trop rigide (réparation gratuite via le commit épinglé — cf. finding proportionnalité)."
+    }
+  ],
+  "sur_ingenierie": [
+    "CORPUS-MANIFEST.json : le champ « tree » est redondant — le commit détermine son tree de façon univoque (vérifié : `git cat-file -p 824275d` donne b464aa2). Une ligne, sans dégât, supprimable.",
+    "CORPUS-MANIFEST.json : le champ « bytes » par fichier est redondant avec le SHA-256 pour l'intégrité (toute troncature change le hash) ; il ne sert que le confort de lecture. Tolérable, mais le plus petit mécanisme suffisant est le hash seul plus le commit.",
+    "PLAN.md §2/§5 : la règle « divergence de hash → round invalide » est énoncée deux fois ; une seule occurrence, au §5 (traitement des incidents), suffirait."
+  ],
+  "angle_mort": [
+    "Je suis Claude Fable 5, même famille que l'auteur (Opus 5) et même modèle que l'évaluateur du round 1 dont on m'a donné le verdict à vérifier : l'ancrage sur sa liste de findings a mécaniquement orienté mes vérifications — mes findings « nouveaux » (server.js hors gel, 3 244 règles sans statut, référence Q4 pendante, périmètre du gel) sont ceux que cette liste m'a menés à chercher, pas nécessairement les seuls qui existent.",
+    "J'ai recalculé les 55 hashes contre l'arbre de travail mais seulement 6 contre le commit épinglé : une divergence commit↔working-tree sur l'un des 49 autres fichiers, avec manifeste aligné sur le working tree, m'aurait échappé — improbable (6/6 conformes, git status propre sur les chemins du corpus) mais non exclu.",
+    "Je n'ai pas ré-exécuté rule-tester.py : j'ai jugé rule-tester-run.log — un artefact non hashé — sur sa cohérence avec le code et le corpus, pas sur une reproduction. Un log fabriqué cohérent serait passé.",
+    "Je n'ai pas ouvert sol-plan-r2.err ni les artefacts vides du round 2 présents dans le dossier (fable5-plan-r2.json à 0 octet, sol-plan-r2.log à 0 octet), pour préserver l'indépendance des lectures — ils suggèrent pourtant que des exécutions parallèles de ce même round ont déjà échoué ou sont en cours, ce qui pourrait corroborer mon finding sur l'absence de branche de reprise sans que je le sache.",
+    "Je n'ai pas lu le contenu des 12 agents au-delà de _protocol.md et websocket-audit.md, ni aucune des 3 244 cve-rules sans statut, ni évalué les estimations de coût du §7 autrement qu'en plausibilité : la qualité réelle des règles et des agents — l'objet de l'audit à venir — reste entièrement hors de ma preuve.",
+    "Aucun appel headless de calibration n'a été lancé : la probabilité réelle de bascule du classifieur sur ce corpus précis (le paramètre qui décide si le §5 est exécutable) reste une inférence documentaire, pas une mesure."
+  ]
+}
