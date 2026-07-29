@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Sentinel",
+          "fullName": "Sentinel Cybersecurity Audit",
+          "version": "0.1.0",
+          "informationUri": "https://github.com/bonsai974/sentinel",
+          "rules": [
+            { "id": "SEN-AUTH-001", "name": "AuthenticationBypass", "shortDescription": { "text": "Login endpoint issues tokens without verifying credentials" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "9.8", "cwe": "CWE-287", "owasp": "API2:2023 Broken Authentication" } },
+            { "id": "SEN-SQLI-001", "name": "SqlInjection", "shortDescription": { "text": "SQL query built by string interpolation of user input" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "9.8", "cwe": "CWE-89", "owasp": "A03:2021 Injection" } },
+            { "id": "SEN-AUTHZ-001", "name": "MissingAuthorization", "shortDescription": { "text": "Privileged endpoint exposed without authentication or authorization" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "9.1", "cwe": "CWE-862", "owasp": "API1:2023 Broken Object Level Authorization" } },
+            { "id": "SEN-SSRF-001", "name": "ServerSideRequestForgery", "shortDescription": { "text": "Server-side fetch of a user-controlled URL with response returned to client" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "9.1", "cwe": "CWE-918", "owasp": "A10:2021 SSRF" } },
+            { "id": "SEN-SECRET-001", "name": "HardcodedCredentials", "shortDescription": { "text": "Credentials and API keys hardcoded in source" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "9.1", "cwe": "CWE-798", "owasp": "A07:2021 Identification and Authentication Failures" } },
+            { "id": "SEN-SECRET-002", "name": "SecretsInVersionControl", "shortDescription": { "text": "Secrets committed to git history" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "9.1", "cwe": "CWE-540", "owasp": "A05:2021 Security Misconfiguration" } },
+            { "id": "SEN-DOS-001", "name": "UnhandledPromiseRejection", "shortDescription": { "text": "Async route handler without error handling crashes the process" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "7.5", "cwe": "CWE-248", "owasp": "A05:2021 Security Misconfiguration" } },
+            { "id": "SEN-XSS-001", "name": "ReflectedCrossSiteScripting", "shortDescription": { "text": "User input reflected into an HTML response without encoding" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "7.6", "cwe": "CWE-79", "owasp": "A03:2021 Injection" } },
+            { "id": "SEN-JWT-001", "name": "InsecureJwtIssuance", "shortDescription": { "text": "JWT signed without expiry or pinned algorithm" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "7.5", "cwe": "CWE-613", "owasp": "API2:2023 Broken Authentication" } },
+            { "id": "SEN-EXPO-001", "name": "ExcessiveDataExposure", "shortDescription": { "text": "SELECT * returns every column of a sensitive table to the client" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "7.5", "cwe": "CWE-213", "owasp": "API3:2023 Broken Object Property Level Authorization" } },
+            { "id": "SEN-LOG-001", "name": "SensitiveDataInLogs", "shortDescription": { "text": "Cleartext password written to application logs" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "7.1", "cwe": "CWE-532", "owasp": "A09:2021 Security Logging and Monitoring Failures" } },
+            { "id": "SEN-DEP-001", "name": "VulnerableDependency", "shortDescription": { "text": "Dependency range pinned to an unmaintained major with known CVEs" }, "defaultConfiguration": { "level": "error" }, "properties": { "security-severity": "7.5", "cwe": "CWE-1395", "owasp": "A06:2021 Vulnerable and Outdated Components" } },
+            { "id": "SEN-CORS-001", "name": "PermissiveCors", "shortDescription": { "text": "CORS enabled with wildcard origin on an authenticated API" }, "defaultConfiguration": { "level": "warning" }, "properties": { "security-severity": "5.3", "cwe": "CWE-942", "owasp": "A05:2021 Security Misconfiguration" } },
+            { "id": "SEN-HDR-001", "name": "MissingSecurityHeaders", "shortDescription": { "text": "No security response headers (CSP, HSTS, X-Content-Type-Options)" }, "defaultConfiguration": { "level": "warning" }, "properties": { "security-severity": "5.3", "cwe": "CWE-693", "owasp": "A05:2021 Security Misconfiguration" } },
+            { "id": "SEN-SUPPLY-001", "name": "MissingLockfile", "shortDescription": { "text": "No dependency lockfile — builds are unreproducible and unscannable" }, "defaultConfiguration": { "level": "warning" }, "properties": { "security-severity": "5.9", "cwe": "CWE-1104", "owasp": "A06:2021 Vulnerable and Outdated Components" } },
+            { "id": "SEN-RATE-001", "name": "MissingRateLimit", "shortDescription": { "text": "Authentication endpoint without rate limiting" }, "defaultConfiguration": { "level": "warning" }, "properties": { "security-severity": "5.3", "cwe": "CWE-307", "owasp": "API4:2023 Unrestricted Resource Consumption" } },
+            { "id": "SEN-CFG-001", "name": "MissingGitignore", "shortDescription": { "text": "No .gitignore — secrets and build artifacts are committed by default" }, "defaultConfiguration": { "level": "note" }, "properties": { "security-severity": "3.1", "cwe": "CWE-1188" } }
+          ]
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "startTimeUtc": "2026-07-29T05:36:00Z",
+          "endTimeUtc": "2026-07-29T05:41:00Z",
+          "workingDirectory": { "uri": "file:///private/tmp/claude-501/-Users-manuelturpin-Desktop-bonsai974-claude-lab-lab-30-sentinel/bb97605d-984f-4066-a973-4d082b1ffc92/scratchpad/bench-target/" },
+          "toolExecutionNotifications": [
+            {
+              "level": "warning",
+              "message": { "text": "MCP tool scan-dependencies returned totalDependencies=0 for a project declaring 4 npm dependencies. Result discarded as a false negative; dependency analysis was performed manually against the declared ranges in package.json. Dependency findings in this run are NOT OSV-confirmed." },
+              "descriptor": { "id": "SEN-TOOL-001" }
+            },
+            {
+              "level": "note",
+              "message": { "text": "Single-context audit: project is 4 source files / 204K. Multi-agent fan-out was not used." }
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        { "location": { "uri": "src/server.js" }, "mimeType": "text/javascript", "length": 1287 },
+        { "location": { "uri": ".env" }, "mimeType": "text/plain", "length": 145 },
+        { "location": { "uri": "package.json" }, "mimeType": "application/json", "length": 254 }
+      ],
+      "results": [
+        {
+          "ruleId": "SEN-AUTH-001",
+          "level": "error",
+          "message": { "text": "POST /api/login signs and returns a JWT for whatever username the caller supplies. No password is read from the request, no credential store is queried, no comparison is performed. Any unauthenticated caller can mint a valid token for any user, including administrators. This is a complete authentication bypass, not a weakness in it." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 43, "endLine": 46 } } } ],
+          "properties": { "cvss_v4": 9.8, "severity": "CRITICAL", "agent": "api-audit", "remediation": "Look up the user, verify the submitted password against a stored argon2id/bcrypt hash with a constant-time comparison, and only issue a token on success. Return 401 on failure without revealing whether the username exists." }
+        },
+        {
+          "ruleId": "SEN-SQLI-001",
+          "level": "error",
+          "message": { "text": "DELETE /api/admin/users/:id interpolates req.params.id straight into a DELETE statement. A request to /api/admin/users/1%20OR%201=1 deletes every row in the users table. The endpoint is also unauthenticated, so this is reachable by anyone who can reach the port." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 32, "startColumn": 20 } } } ],
+          "properties": { "cvss_v4": 9.8, "severity": "CRITICAL", "agent": "database-audit", "remediation": "Use a parameterised query: pool.query('DELETE FROM users WHERE id = $1', [req.params.id]). Validate that id is an integer before use." }
+        },
+        {
+          "ruleId": "SEN-SQLI-001",
+          "level": "error",
+          "message": { "text": "GET /api/users/:id interpolates req.params.id into a SELECT. A UNION-based payload reads arbitrary tables; pg allows stacked statements through this path, so writes are reachable too. The result set is returned verbatim to the caller, making this a direct read primitive over the whole database." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 26, "startColumn": 38 } } } ],
+          "properties": { "cvss_v4": 9.3, "severity": "CRITICAL", "agent": "database-audit", "remediation": "Use pool.query('SELECT ... FROM users WHERE id = $1', [req.params.id]) and enumerate the columns explicitly instead of SELECT *." }
+        },
+        {
+          "ruleId": "SEN-AUTHZ-001",
+          "level": "error",
+          "message": { "text": "DELETE /api/admin/users/:id carries no authentication middleware, no session check and no role check. The 'admin' segment in the path is the only thing marking it privileged, and path naming is not an access control. Any anonymous caller can delete arbitrary users." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 31, "endLine": 34 } } } ],
+          "properties": { "cvss_v4": 9.1, "severity": "CRITICAL", "agent": "api-audit", "remediation": "Add authentication middleware that verifies the JWT, then a distinct authorization check asserting the caller holds an admin role, before the handler runs. Deny by default at the router level rather than per-route." }
+        },
+        {
+          "ruleId": "SEN-SSRF-001",
+          "level": "error",
+          "message": { "text": "POST /api/fetch-url passes req.body.url to fetch() with no scheme allowlist, no host allowlist and no redirect handling, then returns the response body to the caller. This turns the service into an open proxy into its own network: cloud instance metadata (http://169.254.169.254/), internal admin panels and localhost services are all reachable, and the response is exfiltrated back to the attacker." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 49, "endLine": 53 } } } ],
+          "properties": { "cvss_v4": 9.1, "severity": "CRITICAL", "agent": "api-audit", "remediation": "Drop the endpoint if possible. Otherwise enforce an allowlist of permitted hosts, restrict the scheme to https, resolve the hostname and reject private/link-local/loopback ranges before connecting, set redirect: 'manual' and re-validate each hop, and never return the upstream body verbatim." }
+        },
+        {
+          "ruleId": "SEN-SECRET-001",
+          "level": "error",
+          "message": { "text": "The JWT signing secret, a provider API key and the PostgreSQL connection string (including the password) are literals in the source file. Anyone with read access to the repository can forge tokens for any user and connect directly to the database. The JWT secret is additionally low-entropy and guessable." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 16, "endLine": 22 } } } ],
+          "properties": { "cvss_v4": 9.1, "severity": "CRITICAL", "agent": "data-privacy-audit", "remediation": "Load all three from the environment or a secret manager, fail closed at startup if absent, and rotate every value that has been in source. Generate the JWT secret as at least 32 bytes from a CSPRNG." }
+        },
+        {
+          "ruleId": "SEN-SECRET-002",
+          "level": "error",
+          "message": { "text": ".env is tracked by git and its contents are present in commit a1da5c0. The database password, JWT secret and API key are therefore in the repository history. Removing the file from the working tree does not remove it from history, and any clone or fork retains the values." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": ".env" }, "region": { "startLine": 1, "endLine": 3 } } } ],
+          "properties": { "cvss_v4": 9.1, "severity": "CRITICAL", "agent": "data-privacy-audit", "remediation": "Treat all three secrets as compromised and rotate them now — that is the step that actually closes the exposure. Then git rm --cached .env, add it to .gitignore, and purge history with git-filter-repo before any push to a shared remote." }
+        },
+        {
+          "ruleId": "SEN-DOS-001",
+          "level": "error",
+          "message": { "text": "Three async handlers (lines 25, 31, 49) have no try/catch and Express 4 does not capture rejected promises from handlers. Under Node 15+ an unhandled rejection terminates the process by default, and this runs on Node 22. POST /api/fetch-url with url set to a non-URL string rejects inside fetch() and kills the server — an unauthenticated one-request denial of service. A malformed id that triggers a pg error does the same." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 25, "endLine": 53 } } } ],
+          "properties": { "cvss_v4": 7.5, "severity": "HIGH", "agent": "api-audit", "remediation": "Wrap each async handler so rejections reach Express (upgrade to Express 5, or use an asyncHandler wrapper), and register a four-argument error middleware that logs and returns 500 without leaking a stack trace." }
+        },
+        {
+          "ruleId": "SEN-XSS-001",
+          "level": "error",
+          "message": { "text": "GET /api/search interpolates req.query.q into an HTML fragment and passes the string to res.send(), which sets Content-Type: text/html. A crafted q value executes attacker script in the origin of the application. No CSP is set to blunt the impact." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 38, "endLine": 39 } } } ],
+          "properties": { "cvss_v4": 7.6, "severity": "HIGH", "agent": "web-audit", "remediation": "Return JSON via res.json() if this is an API. If HTML is genuinely required, contextually escape the value with a maintained encoder and add a restrictive Content-Security-Policy." }
+        },
+        {
+          "ruleId": "SEN-JWT-001",
+          "level": "error",
+          "message": { "text": "jwt.sign() is called with no options: no expiresIn, so issued tokens are valid forever and cannot be aged out; no algorithm pinned, so the token's alg header governs verification and any future verify path that does not pin algorithms is exposed to algorithm-confusion. The payload also carries no issuer, audience or subject to constrain replay." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 44 } } } ],
+          "properties": { "cvss_v4": 7.5, "severity": "HIGH", "agent": "api-audit", "remediation": "Sign with { algorithm: 'HS256', expiresIn: '15m', issuer, audience }, verify with the same algorithm explicitly pinned in an allowlist, and add refresh-token rotation for longer sessions." }
+        },
+        {
+          "ruleId": "SEN-EXPO-001",
+          "level": "error",
+          "message": { "text": "GET /api/users/:id runs SELECT * and returns result.rows unfiltered, so every column of the users table reaches the caller — password hashes, email addresses, reset tokens and any other sensitive column present. The endpoint has no authentication, so this is an anonymous read of arbitrary user records by id (BOLA)." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 26, "endLine": 27 } } } ],
+          "properties": { "cvss_v4": 7.5, "severity": "HIGH", "agent": "api-audit", "remediation": "Require authentication, assert the caller may read the requested id, enumerate only the columns the client needs, and map rows through an explicit serialiser so new columns are not exposed by default." }
+        },
+        {
+          "ruleId": "SEN-LOG-001",
+          "level": "error",
+          "message": { "text": "POST /api/register writes req.body.password to stdout in cleartext. Passwords then persist in container logs, log shippers and any downstream aggregation, widening the blast radius of the credentials well beyond the application and typically outliving the account itself." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 57 } } } ],
+          "properties": { "cvss_v4": 7.1, "severity": "HIGH", "agent": "data-privacy-audit", "remediation": "Remove the statement. Log a non-sensitive correlation id instead, and add a redaction serialiser to the logger so password/token/authorization fields can never be emitted." }
+        },
+        {
+          "ruleId": "SEN-DEP-001",
+          "level": "error",
+          "message": { "text": "jsonwebtoken is declared as ^8.5.1. 8.5.1 is the final 8.x release, so the caret range can never resolve to a fixed version. The 8.x line is affected by CVE-2022-23529, CVE-2022-23539, CVE-2022-23540 and CVE-2022-23541 (key/algorithm confusion and insufficient signature verification), all fixed only in 9.0.0. Not confirmed against OSV in this run: the scan-dependencies tool returned an empty result set." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "package.json" }, "region": { "startLine": 7 } } } ],
+          "properties": { "cvss_v4": 7.5, "severity": "HIGH", "agent": "supply-chain-audit", "confidence": "unverified-by-osv", "remediation": "Upgrade to jsonwebtoken ^9.0.2 and review the verify call sites, since 9.x tightens key-type and algorithm handling. Then re-run a dependency scan against a committed lockfile." }
+        },
+        {
+          "ruleId": "SEN-SUPPLY-001",
+          "level": "warning",
+          "message": { "text": "No package-lock.json, yarn.lock or pnpm-lock.yaml exists. Every install resolves caret ranges afresh, so two deploys of the same commit can ship different transitive trees, a compromised release of any dependency is picked up automatically, and no scanner can determine what is actually deployed. This is what made the OSV scan in this run unusable." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "package.json" }, "region": { "startLine": 5, "endLine": 10 } } } ],
+          "properties": { "cvss_v4": 5.9, "severity": "MEDIUM", "agent": "supply-chain-audit", "remediation": "Commit a lockfile, install with npm ci in CI, and gate the pipeline on npm audit against that lockfile." }
+        },
+        {
+          "ruleId": "SEN-CORS-001",
+          "level": "warning",
+          "message": { "text": "cors() with no options sends Access-Control-Allow-Origin: * on every route, so any web origin can read responses from every endpoint, including the unauthenticated user-record and admin routes. Browsers do block credentialed requests under a wildcard, which is what keeps this out of the high band — but that mitigation disappears the moment credentials: true is added." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 13 } } } ],
+          "properties": { "cvss_v4": 5.3, "severity": "MEDIUM", "agent": "cors-audit", "remediation": "Pass an explicit origin allowlist and restrict methods and headers to what the clients actually use." }
+        },
+        {
+          "ruleId": "SEN-HDR-001",
+          "level": "warning",
+          "message": { "text": "No security response headers are set: no Content-Security-Policy, no Strict-Transport-Security, no X-Content-Type-Options, and Express advertises itself via X-Powered-By. CSP in particular would have limited the impact of the reflected XSS on /api/search." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 9, "endLine": 13 } } } ],
+          "properties": { "cvss_v4": 5.3, "severity": "MEDIUM", "agent": "web-audit", "remediation": "Add helmet() before the routes and terminate TLS in front of the service." }
+        },
+        {
+          "ruleId": "SEN-RATE-001",
+          "level": "warning",
+          "message": { "text": "No rate limiting on any route, including POST /api/login. Once the authentication bypass at line 43 is fixed, this endpoint becomes the natural target for credential stuffing; /api/fetch-url is also an unbounded outbound-request amplifier." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": "src/server.js" }, "region": { "startLine": 43 } } } ],
+          "properties": { "cvss_v4": 5.3, "severity": "MEDIUM", "agent": "api-audit", "remediation": "Apply express-rate-limit globally with a tighter per-IP and per-account budget on the authentication routes." }
+        },
+        {
+          "ruleId": "SEN-CFG-001",
+          "level": "note",
+          "message": { "text": "The repository has no .gitignore. This is the proximate cause of .env being committed, and leaves node_modules and future local artefacts committable by default." },
+          "locations": [ { "physicalLocation": { "artifactLocation": { "uri": ".gitignore" }, "region": { "startLine": 1 } } } ],
+          "properties": { "cvss_v4": 3.1, "severity": "LOW", "agent": "data-privacy-audit", "remediation": "Add a .gitignore covering .env*, node_modules/ and local build output, and add a secret-scanning pre-commit hook." }
+        }
+      ]
+    }
+  ]
+}

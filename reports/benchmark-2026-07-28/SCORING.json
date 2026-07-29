@@ -1,0 +1,16 @@
+{
+  "recall": "10/13",
+  "manques": [
+    "CORS permissif (wildcard)",
+    "Absence de rate limiting (login)",
+    "JWT sans expiration"
+  ],
+  "hors_oracle_reels": [
+    "F4 auth bypass",
+    "F6/F10 IDOR"
+  ],
+  "cout_usd": 8.52,
+  "duree_s": 268,
+  "constats_bruts": 16,
+  "distincts_estimes": 12
+}
