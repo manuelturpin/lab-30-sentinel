@@ -16,10 +16,28 @@
         "logging\\.(info|warning|error|debug)\\s*\\(.*\\b(email|password|ssn)\\b"
       ],
       "negative_patterns": [
-        "mask(ed)?\\s*\\(", "redact(ed)?\\s*\\(", "\\*{3,}", "\\[REDACTED\\]", "sanitize\\s*\\("
+        "mask(ed)?\\s*\\(",
+        "redact(ed)?\\s*\\(",
+        "\\*{3,}",
+        "\\[REDACTED\\]",
+        "sanitize\\s*\\("
       ],
-      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go", "*.rb"],
-      "exclude": ["node_modules", "dist", "build", "test", "__pycache__", "__tests__"]
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.java",
+        "*.go",
+        "*.rb"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "test",
+        "__pycache__",
+        "__tests__"
+      ]
     },
     "remediation": {
       "description": "Never log raw PII. Use a masking utility to redact sensitive fields before writing to any log output.",
@@ -29,9 +47,20 @@
         "https://cwe.mitre.org/data/definitions/532.html"
       ]
     },
-    "standards": ["CWE-532", "GDPR-Art-5", "GDPR-Art-25"],
+    "standards": [
+      "CWE-532",
+      "GDPR-Art-5",
+      "GDPR-Art-25"
+    ],
     "ai_specific": false,
-    "frameworks": ["express", "django", "flask", "fastapi", "spring", "rails"]
+    "frameworks": [
+      "express",
+      "django",
+      "flask",
+      "fastapi",
+      "spring",
+      "rails"
+    ]
   },
   {
     "id": "PRIV-PII-002",
@@ -50,11 +79,31 @@
         "res\\.(json|send)\\s*\\(\\s*await\\s+.*\\.find(One|ById|ByPk)\\("
       ],
       "negative_patterns": [
-        "\\.select\\(", "\\.exclude\\(", "pick\\(", "omit\\(", "toDTO", "serialize",
-        "password.*undefined", "delete.*password", "\\.project\\(", "values\\("
+        "\\.select\\(",
+        "\\.exclude\\(",
+        "pick\\(",
+        "omit\\(",
+        "toDTO",
+        "serialize",
+        "password.*undefined",
+        "delete.*password",
+        "\\.project\\(",
+        "values\\("
       ],
-      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go"],
-      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.java",
+        "*.go"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "test",
+        "__pycache__"
+      ]
     },
     "remediation": {
       "description": "Never return raw database objects in API responses. Use DTOs, serializers, or explicit field selection to exclude sensitive attributes.",
@@ -64,9 +113,20 @@
         "https://cwe.mitre.org/data/definitions/200.html"
       ]
     },
-    "standards": ["CWE-200", "GDPR-Art-5", "OWASP-API3:2023"],
+    "standards": [
+      "CWE-200",
+      "GDPR-Art-5",
+      "OWASP-API3:2023"
+    ],
     "ai_specific": false,
-    "frameworks": ["express", "fastify", "django", "flask", "fastapi", "spring"]
+    "frameworks": [
+      "express",
+      "fastify",
+      "django",
+      "flask",
+      "fastapi",
+      "spring"
+    ]
   },
   {
     "id": "PRIV-CONSENT-001",
@@ -88,11 +148,29 @@
         "<script[^>]*segment\\.com"
       ],
       "negative_patterns": [
-        "consent", "cookie.*accept", "gdpr", "CookieConsent", "onConsentGranted",
-        "data-consent", "type=['\"]text/plain['\"]"
+        "consent",
+        "cookie.*accept",
+        "gdpr",
+        "CookieConsent",
+        "onConsentGranted",
+        "data-consent",
+        "type=['\"]text/plain['\"]"
       ],
-      "file_types": ["*.html", "*.htm", "*.ejs", "*.hbs", "*.pug", "*.jsx", "*.tsx", "*.vue"],
-      "exclude": ["node_modules", "dist", "build"]
+      "file_types": [
+        "*.html",
+        "*.htm",
+        "*.ejs",
+        "*.hbs",
+        "*.pug",
+        "*.jsx",
+        "*.tsx",
+        "*.vue"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build"
+      ]
     },
     "remediation": {
       "description": "Load tracking scripts only after the user has given explicit consent. Use a consent management platform (CMP) or implement a consent gate that loads scripts dynamically.",
@@ -102,9 +180,21 @@
         "https://cwe.mitre.org/data/definitions/359.html"
       ]
     },
-    "standards": ["CWE-359", "GDPR-Art-6", "GDPR-Art-7", "ePrivacy-Art-5"],
+    "standards": [
+      "CWE-359",
+      "GDPR-Art-6",
+      "GDPR-Art-7",
+      "ePrivacy-Art-5"
+    ],
     "ai_specific": false,
-    "frameworks": ["react", "next", "nuxt", "vue", "angular", "html"]
+    "frameworks": [
+      "react",
+      "next",
+      "nuxt",
+      "vue",
+      "angular",
+      "html"
+    ]
   },
   {
     "id": "PRIV-CONSENT-002",
@@ -123,11 +213,29 @@
         "res\\.cookie\\s*\\("
       ],
       "negative_patterns": [
-        "consent", "hasConsent", "cookieConsent", "gdpr", "isAccepted",
-        "checkConsent", "consentGranted", "essential", "necessary"
+        "consent",
+        "hasConsent",
+        "cookieConsent",
+        "gdpr",
+        "isAccepted",
+        "checkConsent",
+        "consentGranted",
+        "essential",
+        "necessary"
       ],
-      "file_types": ["*.js", "*.ts", "*.jsx", "*.tsx", "*.vue"],
-      "exclude": ["node_modules", "dist", "build", "test"]
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.jsx",
+        "*.tsx",
+        "*.vue"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Implement a consent check before setting any non-essential cookie. Classify cookies into categories (essential, analytics, marketing) and only set non-essential ones after consent.",
@@ -137,9 +245,20 @@
         "https://cwe.mitre.org/data/definitions/359.html"
       ]
     },
-    "standards": ["CWE-359", "GDPR-Art-6", "GDPR-Art-7", "ePrivacy-Art-5"],
+    "standards": [
+      "CWE-359",
+      "GDPR-Art-6",
+      "GDPR-Art-7",
+      "ePrivacy-Art-5"
+    ],
     "ai_specific": false,
-    "frameworks": ["react", "next", "vue", "angular", "express"]
+    "frameworks": [
+      "react",
+      "next",
+      "vue",
+      "angular",
+      "express"
+    ]
   },
   {
     "id": "PRIV-RETAIN-001",
@@ -158,11 +277,34 @@
         "class\\s+User.*Model"
       ],
       "negative_patterns": [
-        "expires", "ttl", "TTL", "expireAt", "expireAfter", "retention",
-        "deletedAt", "purge", "cleanup", "archiv", "createdAt.*index.*expireAfterSeconds"
+        "expires",
+        "ttl",
+        "TTL",
+        "expireAt",
+        "expireAfter",
+        "retention",
+        "deletedAt",
+        "purge",
+        "cleanup",
+        "archiv",
+        "createdAt.*index.*expireAfterSeconds"
       ],
-      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.sql", "*.go"],
-      "exclude": ["node_modules", "dist", "build", "test", "__pycache__", "migrations"]
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.java",
+        "*.sql",
+        "*.go"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "test",
+        "__pycache__",
+        "migrations"
+      ]
     },
     "remediation": {
       "description": "Implement a data retention policy with automatic expiration or scheduled cleanup jobs. For MongoDB, use TTL indexes. For SQL, implement soft-delete with scheduled hard-delete jobs.",
@@ -172,9 +314,20 @@
         "https://cwe.mitre.org/data/definitions/459.html"
       ]
     },
-    "standards": ["CWE-459", "GDPR-Art-5", "GDPR-Art-17"],
+    "standards": [
+      "CWE-459",
+      "GDPR-Art-5",
+      "GDPR-Art-17"
+    ],
     "ai_specific": false,
-    "frameworks": ["mongoose", "sequelize", "typeorm", "prisma", "django", "sqlalchemy"]
+    "frameworks": [
+      "mongoose",
+      "sequelize",
+      "typeorm",
+      "prisma",
+      "django",
+      "sqlalchemy"
+    ]
   },
   {
     "id": "PRIV-LOG-001",
@@ -193,11 +346,32 @@
         "log\\.\\w+\\s*\\(.*\\b(password|secret|token|apiKey|api_key)\\b"
       ],
       "negative_patterns": [
-        "mask", "redact", "\\*{3,}", "\\[REDACTED\\]", "sanitize", "obfuscate",
-        "\"token\":\\s*\"\\*+\"", "FILTERED"
+        "mask",
+        "redact",
+        "\\*{3,}",
+        "\\[REDACTED\\]",
+        "sanitize",
+        "obfuscate",
+        "\"token\":\\s*\"\\*+\"",
+        "FILTERED"
       ],
-      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go", "*.rb", "*.php"],
-      "exclude": ["node_modules", "dist", "build", "test", "__pycache__", "__tests__"]
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.java",
+        "*.go",
+        "*.rb",
+        "*.php"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "test",
+        "__pycache__",
+        "__tests__"
+      ]
     },
     "remediation": {
       "description": "Implement a structured logging library with automatic PII redaction. Register sensitive field names in a deny-list and strip them before writing to any log sink.",
@@ -207,9 +381,22 @@
         "https://cwe.mitre.org/data/definitions/532.html"
       ]
     },
-    "standards": ["CWE-532", "GDPR-Art-5", "GDPR-Art-32", "PCI-DSS-3.4"],
+    "standards": [
+      "CWE-532",
+      "GDPR-Art-5",
+      "GDPR-Art-32",
+      "PCI-DSS-3.4"
+    ],
     "ai_specific": false,
-    "frameworks": ["express", "django", "flask", "fastapi", "spring", "rails", "laravel"]
+    "frameworks": [
+      "express",
+      "django",
+      "flask",
+      "fastapi",
+      "spring",
+      "rails",
+      "laravel"
+    ]
   },
   {
     "id": "PRIV-TRANS-001",
@@ -227,11 +414,31 @@
         "fetch\\s*\\(['\"]https?://(?!localhost)[^'\"]+['\"].*\\b(pii|personal|userData)\\b"
       ],
       "negative_patterns": [
-        "encrypt", "cipher", "tls", "https", "scc", "dpa", "dataProcessingAgreement",
-        "gdprCompliant", "adequacyDecision", "standardContractualClauses"
+        "encrypt",
+        "cipher",
+        "tls",
+        "https",
+        "scc",
+        "dpa",
+        "dataProcessingAgreement",
+        "gdprCompliant",
+        "adequacyDecision",
+        "standardContractualClauses"
       ],
-      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go"],
-      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.java",
+        "*.go"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "test",
+        "__pycache__"
+      ]
     },
     "remediation": {
       "description": "Encrypt personal data before cross-border transfer. Ensure third-party processors have signed Data Processing Agreements (DPAs) with Standard Contractual Clauses (SCCs). Conduct Transfer Impact Assessments (TIAs) for transfers outside the EU/EEA.",
@@ -241,9 +448,20 @@
         "https://cwe.mitre.org/data/definitions/319.html"
       ]
     },
-    "standards": ["CWE-319", "GDPR-Art-44", "GDPR-Art-46", "GDPR-Art-49"],
+    "standards": [
+      "CWE-319",
+      "GDPR-Art-44",
+      "GDPR-Art-46",
+      "GDPR-Art-49"
+    ],
     "ai_specific": false,
-    "frameworks": ["express", "django", "flask", "fastapi", "spring"]
+    "frameworks": [
+      "express",
+      "django",
+      "flask",
+      "fastapi",
+      "spring"
+    ]
   },
   {
     "id": "PRIV-GDPR-001",
@@ -261,11 +479,32 @@
         "@app\\.(get|post|put|patch)\\s*\\(['\"]/(users?|accounts?|profiles?|customers?)"
       ],
       "negative_patterns": [
-        "\\.(delete|del)\\s*\\(", "DELETE", "destroy", "remove", "erase", "purge",
-        "@DeleteMapping", "@app\\.delete", "router\\.delete", "app\\.delete"
+        "\\.(delete|del)\\s*\\(",
+        "DELETE",
+        "destroy",
+        "remove",
+        "erase",
+        "purge",
+        "@DeleteMapping",
+        "@app\\.delete",
+        "router\\.delete",
+        "app\\.delete"
       ],
-      "file_types": ["*.js", "*.ts", "*.py", "*.java", "*.go", "*.rb"],
-      "exclude": ["node_modules", "dist", "build", "test", "__pycache__"]
+      "file_types": [
+        "*.js",
+        "*.ts",
+        "*.py",
+        "*.java",
+        "*.go",
+        "*.rb"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "test",
+        "__pycache__"
+      ]
     },
     "remediation": {
       "description": "Implement a DELETE endpoint for user data that performs cascading deletion of all associated personal data across all storage systems (database, cache, backups, logs). Support both hard-delete and anonymization strategies.",
@@ -275,9 +514,21 @@
         "https://cwe.mitre.org/data/definitions/459.html"
       ]
     },
-    "standards": ["CWE-459", "GDPR-Art-17", "CCPA-1798.105"],
+    "standards": [
+      "CWE-459",
+      "GDPR-Art-17",
+      "CCPA-1798.105"
+    ],
     "ai_specific": false,
-    "frameworks": ["express", "fastify", "django", "flask", "fastapi", "spring", "rails"]
+    "frameworks": [
+      "express",
+      "fastify",
+      "django",
+      "flask",
+      "fastapi",
+      "spring",
+      "rails"
+    ]
   },
   {
     "id": "PRIV-ENVBYPASS-001",
@@ -301,8 +552,19 @@
         "# development only",
         "NODE_ENV.*test"
       ],
-      "file_types": [".env", ".env.*", "Dockerfile", "docker-compose.*", "*.yaml", "*.yml"],
-      "exclude": ["node_modules", "dist", "test"]
+      "file_types": [
+        ".env",
+        ".env.*",
+        "Dockerfile",
+        "docker-compose.*",
+        "*.yaml",
+        "*.yml"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist",
+        "test"
+      ]
     },
     "remediation": {
       "description": "Never commit security bypass variables to production configs. Use separate environment files for dev/test/prod. Audit CI pipelines for security-disabling variables. Add pre-commit hooks to block commits containing security bypass patterns.",
@@ -311,7 +573,53 @@
         "https://cheatsheetseries.owasp.org/cheatsheets/Environment_Secrets_Cheat_Sheet.html"
       ]
     },
-    "standards": ["CWE-489", "CWE-215", "OWASP-A05:2025"],
+    "standards": [
+      "CWE-489",
+      "CWE-215",
+      "OWASP-A05:2025"
+    ],
+    "ai_specific": false,
+    "frameworks": []
+  },
+  {
+    "id": "DP-SECRET-002",
+    "severity": "CRITICAL",
+    "cvss_v4": 9.1,
+    "category": "data-privacy",
+    "subcategory": "secrets-at-rest",
+    "title": "Secrets in a committed .env file",
+    "description": "A .env file carries live-looking secret assignments and is present in the working tree. If it is tracked by git, every value is in the repository history and must be treated as compromised — deleting the file does not remove it from history. Added 2026-07-29 after a benchmark showed no rule covered .env contents; WEB-CRYPTO-001 only matched secrets embedded in source files.",
+    "detect": {
+      "patterns": [
+        "(?im)^\\s*[A-Z0-9_]*(SECRET|PASSWORD|PASSWD|TOKEN|API[_-]?KEY|PRIVATE[_-]?KEY|CREDENTIAL)[A-Z0-9_]*\\s*=\\s*\\S{8,}",
+        "(?im)^\\s*DATABASE_URL\\s*=\\s*[a-z+]+://[^:@\\s]+:[^@\\s]+@"
+      ],
+      "negative_patterns": [
+        "(?im)=\\s*(changeme|your[_-]|xxx+|<[a-z_]+>|dummy|example|placeholder|\\$\\{)",
+        "# local only"
+      ],
+      "file_types": [
+        ".env",
+        ".env.*",
+        "*.env"
+      ],
+      "exclude": [
+        "node_modules",
+        "dist"
+      ]
+    },
+    "remediation": {
+      "description": "Add .env to .gitignore, remove it from tracking with `git rm --cached .env`, and rotate every value it held — the history still contains them. Ship a .env.example with placeholder values instead. Purge history with git-filter-repo if the repository is or was public.",
+      "code_example": "# .gitignore\n.env\n.env.*\n!.env.example\n\n# rotation\n$ git rm --cached .env && git commit -m 'remove tracked .env'\n# puis faire tourner chaque secret : ils restent dans l'historique",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/540.html"
+      ]
+    },
+    "standards": [
+      "CWE-540",
+      "CWE-798",
+      "OWASP-A05:2021"
+    ],
     "ai_specific": false,
     "frameworks": []
   }

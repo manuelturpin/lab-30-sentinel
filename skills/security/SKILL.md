@@ -109,6 +109,28 @@ Then map the detected files to agents using this table:
 - `supply-chain-audit` (every project has dependencies)
 - `data-privacy-audit` (every project may handle data)
 
+### Step 1b: Mechanical rule pass — ALWAYS, BEFORE any agent dispatch
+
+**This step is not optional and not skippable on small targets.** It costs no model tokens and, on the 2026-07-28 benchmark, the curated rules alone reached **12/13 on the oracle** — matching the official `claude-security` plugin (10/13) at zero cost. That run also exposed why this step exists: the scan judged the target "too small to justify multi-agent fan-out", reasoned everything from scratch, and **never touched the rule base**. None of the 17 rule IDs it emitted matched a KB rule. The differentiator stayed on the shelf.
+
+Apply every curated rule in `knowledge-base/domains/*/rules.json` to the target, mechanically:
+
+```
+For each rules.json across all domains:
+  For each rule with a non-empty detect.patterns:
+    Compile each pattern; skip (and count) any that fails to compile
+    Apply to files matching detect.file_types, minus detect.exclude
+    Record every match: rule id, severity, file, line
+```
+
+Three rules of engagement, each learned from a measured failure:
+
+1. **`detect.negative_patterns` are applied FILE-WIDE by the engine.** A broad negative such as `\$\{` suppresses the rule across any file containing a template literal — including genuine findings elsewhere in that file. Keep negatives narrow (annotation markers like `# local only`); push exclusion logic into the positive pattern instead. *(Measured 2026-07-29: `WEB-CRYPTO-002` initially missed a plaintext database password for exactly this reason.)*
+2. **A rule carrying `detection_method: "semantic"` has empty patterns on purpose.** An absence — no auth middleware, no rate limiter — cannot be detected by matching a presence. Such rules are instructions for the agent pass, never mechanical matches. `WEB-AC-001` and `API-RESOURCE-001` were neutralised on 2026-07-29 after matching every Express route in existence.
+3. **Attribute a finding only to a rule whose subject actually fits.** Proximity is not detection: crediting an oracle item to a rule that fired two lines away for another reason inflates recall. *(Measured the same day: a rate-limiting gap was briefly credited to a JWT rule and a CSRF rule firing on the same line.)*
+
+Feed the resulting hit list into Step 2 as **prior findings**. Agents then spend model budget on what the rules could not reach — semantic gaps, business logic, cross-file data flows — instead of re-deriving what a regex already had.
+
 ### Step 2: Agent Dispatch
 
 **Agent model tiers** — use the right model for each agent's complexity:
