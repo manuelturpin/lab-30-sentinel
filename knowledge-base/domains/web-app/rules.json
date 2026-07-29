@@ -1102,7 +1102,7 @@
     ]
   },
   {
-    "id": "WEB-CRYPTO-002",
+    "id": "WEB-CRYPTO-004",
     "severity": "CRITICAL",
     "cvss_v4": 9.1,
     "category": "web-app",
@@ -1149,6 +1149,6 @@
     ],
     "ai_specific": false,
     "frameworks": [],
-    "detection_note": "Les negative_patterns sont volontairement minimaux : le moteur les applique au FICHIER ENTIER, donc un motif large comme `\\$\\{` supprimerait la règle sur tout fichier contenant un template literal. L'exclusion de l'interpolation est portée par le motif positif lui-même ([^@/\\s'\"$]+ interdit le $ dans le segment mot de passe). Corrigé le 2026-07-29 après avoir reproduit ce bug de neutralisation croisée."
+    "detection_note": "Les negative_patterns sont volontairement minimaux : le moteur les applique au FICHIER ENTIER, donc un motif large comme `\\$\\{` supprimerait la règle sur tout fichier contenant un template literal. L'exclusion de l'interpolation est portée par le motif positif lui-même ([^@/\\s'\"$]+ interdit le $ dans le segment mot de passe). Corrigé le 2026-07-29 après avoir reproduit ce bug de neutralisation croisée. ID initialement attribué à WEB-CRYPTO-002, déjà pris par « Insecure cookie configuration » — collision détectée au contrôle d'intégrité et corrigée."
   }
 ]
