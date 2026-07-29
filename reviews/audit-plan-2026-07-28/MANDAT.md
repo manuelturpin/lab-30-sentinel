@@ -58,51 +58,49 @@ d'évaluateur — répétition du même reviewer, portée du corpus fourni, abse
 
 ## Objet du round
 
-**Round 2 sur 3.** Tu valides un **plan d'audit** révisé — pas des résultats. L'audit n'a pas eu lieu.
+**Round 3 sur 3 — le dernier.** Sans double `seal`, l'audit n'est pas lancé et la main revient à
+l'utilisateur. Tu valides un **plan d'audit**, pas des résultats : l'audit n'a pas eu lieu.
 
-`.../reviews/audit-plan-2026-07-28/PLAN.md` (v2)
+`./PLAN.md` (v3)
 
-**Historique du chantier, à vérifier plutôt qu'à croire.** La v1 de ce plan a reçu deux `revise` le
-28/07. Les verdicts bruts sont à ta disposition — **relis-les et vérifie si les défauts sont
-réellement fermés, ou seulement reformulés** :
+**Historique complet, vérifiable dans git.** Le dossier de revue est commité — plan, mandat, schéma,
+manifeste et **verdicts bruts des rounds 1 et 2** sont épinglés et horodatés par l'historique. Relis
+tes propres verdicts et ceux de l'autre siège, et **juge si les défauts sont fermés ou reformulés** :
 
-    ./fable5-plan-verdict-r1.json      (Claude Fable 5, round 1, 11 findings)
-    ./sol-plan-r1.json                 (GPT-5.6-Sol, round 1, verdict revise)
+    ./fable5-plan-verdict-r1.json  ./sol-plan-r1.json      (round 1, revise / revise)
+    ./fable5-verdict-r2.json       ./sol-plan-r2.json      (round 2, revise / revise)
 
-Le §0 du plan v2 prétend corriger sept défauts convergents. C'est cette prétention que ce round
-éprouve en premier.
+Le §0 du plan v3 prétend fermer six défauts convergents du round 2. C'est cette prétention que ce
+round éprouve en premier.
 
-**Le conflit d'intérêt reste double** : l'auteur du plan est l'auteur du système audité. La v2
-prétend le neutraliser en retirant l'auteur du rôle de juge (§4). Juge si ce retrait est réel.
+**Conflit d'intérêt** : l'auteur du plan est l'auteur du système audité. La v3 prétend le neutraliser
+en le retirant du rôle de juge et en rendant l'ordre de publication vérifiable par git (§4).
 
-**Artefacts produits par la v2, à inspecter directement :**
+**Artefacts à inspecter directement :**
 
-    ./CORPUS-MANIFEST.json     55 fichiers, commit épinglé 824275d, SHA-256 par fichier
-    ./rule-tester-run.log      exécution réelle du banc de test local
+    ./CORPUS-MANIFEST.json          70 fichiers ; deux classes déclarées (corpus_audite / artefacts_du_round)
+    ./gate-probe.log                sonde de précision, 48 règles
+    ./rule-tester-run.log           exécution du banc en l'état
+    ./pipeline-output-active.json   les 31 règles status=active promues par le gate
 
-**Le dépôt audité**, référentiel de jugement : `.../lab-30-sentinel/CLAUDE.md`
-**Le corpus gelé** est énuméré dans le manifeste — inspecte les fichiers réels, pas la liste.
+**Le dépôt audité**, référentiel de jugement : `../../CLAUDE.md`
 
-**Sept questions que ce round doit trancher.** Elles portent des décisions ; tu restes tenu par les
-six territoires ci-dessus et tu dois signaler ce qui n'est pas dans cette liste.
+**Sept questions que ce round doit trancher.** Tu restes tenu par les six territoires ci-dessus et tu
+dois signaler ce qui n'est pas dans cette liste.
 
-1. **Les sept correctifs du §0 sont-ils réels ou cosmétiques ?** Prends-les un par un contre les
-   verdicts du round 1. Lesquels ferment vraiment le défaut, lesquels le déplacent ?
-2. **Le gel par manifeste tient-il ?** `CORPUS-MANIFEST.json` épingle un commit et un SHA-256 par
-   fichier. Qu'est-ce qui échoue encore silencieusement ? Recalcule au moins deux hashes.
-3. **Le corpus est-il maintenant suffisant** pour répondre aux trois questions du §1 ? L'exclusion
-   restante — les 12 535 règles CVE générées en runtime — est-elle défendable, sachant que le plan
-   admet ne pas savoir les échantillonner sans biais ?
-4. **L'incohérence de sévérité inter-domaines existe-t-elle vraiment ?** Le round 1 a signalé
-   « Permissive CORS configuration » MEDIUM 5.3 (web-app) contre CORS-ORIGIN-001 HIGH 8.0 (cors),
-   deux SQLi à 9.3 et 9.4, un debug mode HIGH 7.4 contre LOW 3.7. Vérifie dans les fichiers réels
-   et dis si c'est un défaut de conception ou une variation légitime par contexte.
-5. **Le retrait de l'auteur du rôle de juge (§4) est-il un mécanisme ou une promesse de plus ?**
-   Rien ne contraint la publication des verdicts bruts ni le maintien au rapport d'un finding
-   contesté. Qu'est-ce qui échoue sans laisser de trace ?
-6. **La lecture du §3 est-elle correcte ?** L'auteur conclut d'un `Untested rules: 0` que le gate
-   de précision ne revalide jamais les règles existantes. Lis `scripts/rule-tester.py` et dis si
-   cette lecture tient, si elle est incomplète, ou si elle est fausse.
-7. **Le traitement des incidents (§5) est-il proportionné ?** Invalider un round entier sur une
-   bascule de `canonicalModel` est-il la bonne réponse, ou un mécanisme trop rigide qui rendra le
-   dispositif inexécutable en pratique ?
+1. **Les six correctifs du §0 ferment-ils réellement ?** Un par un contre les verdicts r2.
+2. **Le gel tient-il maintenant** que le dossier de revue est commité et que le manifeste sépare
+   corpus audité et artefacts du round ? Recalcule au moins trois hashes et vérifie que
+   `git diff 824275d..HEAD` est vide sur les 67 fichiers du corpus audité. Qu'est-ce qui échoue encore ?
+3. **La sonde du §3c est-elle probante ?** 48 règles remises en `untested`, 0 précision calculable.
+   Lis `gate-probe.log` et `scripts/rule-tester.py`. La réserve que l'auteur porte lui-même — « le
+   corpus du gate ne peut pas évaluer ces règles » — est-elle la bonne lecture, trop généreuse, ou
+   insuffisante ?
+4. **L'exclusion résiduelle des 3 244 règles sans statut est-elle défendable ?** Le plan l'assume au
+   motif que la sonde montre qu'elles ne matchent rien de mesurable. Circulaire ou légitime ?
+5. **Le §4 est-il enfin un mécanisme ?** Publication des verdicts bruts par commit git antérieur à la
+   synthèse, finding contesté maintenu au rapport. Qu'est-ce qui échoue sans laisser de trace ?
+6. **Le §5 réécrit est-il proportionné ?** Relance du siège défaillant, conservation de l'autre
+   verdict, relance ne consommant pas de round. Crée-t-il une nouvelle faille ?
+7. **Le corpus de 70 fichiers permet-il enfin de répondre aux trois questions du §1 ?** Si non, nomme
+   précisément ce qui manque et ce que son absence rend invisible.

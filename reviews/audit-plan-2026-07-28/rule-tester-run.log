@@ -1,0 +1,10 @@
+============================================================
+Sentinel Rule Tester
+============================================================
+
+Corpus loaded:
+  Vulnerable files: 8 (512 lines)
+  Safe files:       6 (422 lines)
+
+Untested rules: 0
+No untested rules to validate. Done.

@@ -1,0 +1,4 @@
+=== Sonde du gate de precision — 48 regles, echantillon stratifie (seed 42) ===
+precision calculable : 0/48
+precision NON calculable (0 match sur le corpus vulnerable) : 48  -> 100%
+statuts que le gate leur attribuerait : {'?': 48}
