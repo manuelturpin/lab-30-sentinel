@@ -1,7 +1,7 @@
 {
   "commit": "824275da2d44f6924ba43ac9a6afc48a145db5fe",
   "tree": "b464aa2316e4e514747d32dca30c5015b961adb1",
-  "note": "Circularite assumee : manifeste.commit = 824275d, le commit ou vivent les fichiers du corpus et ou ils ont ete modifies pour la derniere fois. HEAD est posterieur (c01bce5) car il ajoute le dossier de revue lui-meme \u2014 un manifeste ne peut pas hasher le commit qui le contient. Verification : les 70 SHA-256 ci-dessous doivent correspondre aux fichiers a 824275d ET a HEAD, puisque aucun fichier du corpus n'a bouge entre les deux. `git diff 824275d..HEAD -- <chemins du corpus>` doit etre vide.",
+  "note": "Deux classes distinctes. (1) corpus_audite : 67 fichiers figes au commit 824275d, inchanges depuis. (2) artefacts_du_round : 3 fichiers produits pour ce round (sortie du pipeline, journaux d'execution), commites a partir de c01bce5. La v3 du plan affirmait a tort que le diff complet devait etre vide \u2014 il ne l'est pas, et ne peut pas l'etre. Correction apportee avant soumission du round 3.",
   "files": {
     "skills/security/SKILL.md": {
       "sha256": "c2d9b3e438818cb787539eef1e5bd5fd0057274a3416eb27e886b0c5f09abfe4",
@@ -285,5 +285,20 @@
     }
   },
   "file_count": 70,
-  "total_bytes": 633222
+  "total_bytes": 633222,
+  "corpus_audite": {
+    "commit": "824275d",
+    "fichiers": 67,
+    "verification": "git diff 824275d..HEAD -- <ces chemins> doit etre VIDE (aucun n'a bouge)"
+  },
+  "artefacts_du_round": {
+    "commit": "c01bce5 et suivants",
+    "fichiers": 3,
+    "liste": [
+      "reviews/audit-plan-2026-07-28/pipeline-output-active.json",
+      "reviews/audit-plan-2026-07-28/rule-tester-run.log",
+      "reviews/audit-plan-2026-07-28/gate-probe.log"
+    ],
+    "note": "Generes POUR ce round : ils n'existent pas a 824275d. Ne pas les inclure dans le diff de verification ci-dessus."
+  }
 }
