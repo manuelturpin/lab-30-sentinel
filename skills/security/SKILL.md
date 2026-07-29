@@ -116,9 +116,21 @@ Then map the detected files to agents using this table:
 Apply every curated rule in `knowledge-base/domains/*/rules.json` to the target, mechanically:
 
 ```
+Engine: Python 3 `re`, or `rg --pcre2`. NOT plain ripgrep — its default engine
+rejects 43 of the 632 patterns currently in the KB (lookarounds), and they fail
+silently as "no match" rather than as an error.
+Flags: none global. Case-insensitivity is carried per-pattern by an inline (?i).
+Multiline: patterns are applied to the WHOLE FILE text, not line by line — some
+rules span lines. Line numbers come from counting newlines before the match.
+
+Rules path: /Users/manuelturpin/.sentinel/knowledge-base/domains/*/rules.json
+  (the deployed runtime copy, not the source repo)
+
 For each rules.json across all domains:
-  For each rule with a non-empty detect.patterns:
-    Compile each pattern; skip (and count) any that fails to compile
+  For each rule where detect.patterns is non-empty:
+    Skip the rule entirely if any detect.negative_patterns matches the file
+      (the engine applies negatives FILE-WIDE — see rule of engagement 1)
+    Compile each positive pattern; count and report any that fails to compile
     Apply to files matching detect.file_types, minus detect.exclude
     Record every match: rule id, severity, file, line
 ```

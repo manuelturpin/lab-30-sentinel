@@ -1,0 +1,20 @@
+{
+  "cible": "copie isolée de tests/vulnerable-app, commentaires // VULN retirés, numéros de ligne préservés",
+  "source_oracle": "tests/vulnerable-app/README.md — 13 vulnérabilités documentées",
+  "regle_de_scoring": "Un item est TROUVÉ si le rapport identifie la vulnérabilité au bon emplacement (fichier + ligne à ±2, ou clé pour le .env). Un rapport qui signale la bonne classe au mauvais endroit ne compte pas. Tout finding hors de cette liste est classé HORS-ORACLE et examiné à la main : faux positif, ou vraie vulnérabilité que le README a manquée.",
+  "items": [
+    {"id": 1,  "vuln": "CORS permissif (wildcard)",        "fichier": "src/server.js", "ligne": 13},
+    {"id": 2,  "vuln": "Secret en dur — JWT_SECRET",       "fichier": "src/server.js", "ligne": 16},
+    {"id": 3,  "vuln": "Secret en dur — API_KEY",          "fichier": "src/server.js", "ligne": 17},
+    {"id": 4,  "vuln": "Credentials DB en dur",            "fichier": "src/server.js", "ligne": 21},
+    {"id": 5,  "vuln": "Injection SQL (GET /users/:id)",   "fichier": "src/server.js", "ligne": 26},
+    {"id": 6,  "vuln": "Absence d'autorisation (DELETE admin)", "fichier": "src/server.js", "ligne": 31},
+    {"id": 7,  "vuln": "Injection SQL (DELETE admin)",     "fichier": "src/server.js", "ligne": 32},
+    {"id": 8,  "vuln": "XSS reflété",                      "fichier": "src/server.js", "ligne": 38},
+    {"id": 9,  "vuln": "Absence de rate limiting (login)", "fichier": "src/server.js", "ligne": 43},
+    {"id": 10, "vuln": "JWT sans expiration",              "fichier": "src/server.js", "ligne": 44},
+    {"id": 11, "vuln": "SSRF (URL contrôlée par l'utilisateur)", "fichier": "src/server.js", "ligne": 50},
+    {"id": 12, "vuln": "Mot de passe en clair dans les logs",    "fichier": "src/server.js", "ligne": 57},
+    {"id": 13, "vuln": "Secrets exposés en fichier .env",  "fichier": ".env", "ligne": null}
+  ]
+}

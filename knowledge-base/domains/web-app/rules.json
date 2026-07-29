@@ -164,10 +164,11 @@
     "description": "Sensitive credentials (API keys, passwords, tokens) are hardcoded in the source code, risking exposure through version control or build artifacts.",
     "detect": {
       "patterns": [
-        "(api[_-]?key|apiKey|API_KEY)\\s*[:=]\\s*['\"][A-Za-z0-9_\\-]{16,}['\"]",
-        "(password|passwd|pwd|secret)\\s*[:=]\\s*['\"][^'\"]{8,}['\"]",
-        "sk-[a-zA-Z0-9]{20,}",
-        "AKIA[0-9A-Z]{16}"
+        "(?i)(api[_-]?key|apikey)\\s*[:=]\\s*['\"][A-Za-z0-9_\\-]{16,}['\"]",
+        "(?i)(password|passwd|pwd|secret|token)\\s*[:=]\\s*['\"][^'\"]{8,}['\"]",
+        "sk-[a-zA-Z0-9_\\-]{20,}",
+        "AKIA[0-9A-Z]{16}",
+        "gh[pousr]_[A-Za-z0-9]{36,}"
       ],
       "file_types": [
         "*.js",
@@ -203,7 +204,8 @@
     "ai_specific": false,
     "frameworks": [
       "*"
-    ]
+    ],
+    "detection_note": "Corrigé le 2026-07-29 après test ligne à ligne. Deux defauts : (1) le motif `secret` etait sensible a la casse et ratait JWT_SECRET en majuscules — cas majoritaire pour une constante ; (2) `sk-[a-zA-Z0-9]{20,}` ratait les cles a segments comme sk-proj-xxx, le tiret manquant dans la classe. Les deux passaient inapercus parce que la regle matchait quand meme la ligne voisine."
   },
   {
     "id": "WEB-CRYPTO-002",
@@ -215,8 +217,9 @@
     "description": "Session cookies set without HttpOnly, Secure, or SameSite flags, making them vulnerable to XSS theft or CSRF attacks.",
     "detect": {
       "patterns": [
-        "(postgres|postgresql|mysql|mongodb(\\+srv)?|redis|amqp|mssql)://[A-Za-z0-9._%-]+:[^@/\\s'\"$]+@",
-        "connectionString\\s*[:=]\\s*['\"][a-z+]+://[A-Za-z0-9._%-]+:[^@'\"$]+@"
+        "res\\.cookie\\((?![^)]*httpOnly)",
+        "cookie\\s*:\\s*\\{(?![^}]*httpOnly)",
+        "session\\(\\{(?![^}]*cookie.*secure)"
       ],
       "file_types": [
         "*.js",
@@ -227,10 +230,6 @@
         "node_modules",
         "dist",
         "build"
-      ],
-      "negative_patterns": [
-        "# local only",
-        "# example only"
       ]
     },
     "remediation": {
@@ -251,7 +250,7 @@
       "fastify",
       "koa"
     ],
-    "detection_note": "Les negative_patterns sont volontairement minimaux : le moteur les applique au FICHIER ENTIER, donc un motif large comme `\\$\\{` supprimerait la règle sur tout fichier contenant un template literal. L'exclusion de l'interpolation est portée par le motif positif lui-même ([^@/\\s'\"$]+ interdit le $ dans le segment mot de passe). Corrigé le 2026-07-29 après avoir reproduit ce bug de neutralisation croisée."
+    "detection_note": "Restaurée le 2026-07-29 : un correctif du même jour avait écrase ses patterns avec ceux d'une nouvelle regle qui portait temporairement le meme ID. Detection cookie perdue silencieusement pendant ~20 minutes. Lecon : toute boucle `if r['id']==X` doit verifier qu'un seul objet porte cet ID, ou filtrer aussi sur le titre."
   },
   {
     "id": "WEB-CRYPTO-003",
