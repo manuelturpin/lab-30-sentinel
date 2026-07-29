@@ -4,18 +4,10 @@ description: Audit de cybersecurite complet pour tout projet (web, API, mobile, 
 user_invocable: true
 effort: high
 keep-coding-instructions: true
-paths:
-  - "**/package.json"
-  - "**/requirements.txt"
-  - "**/pyproject.toml"
-  - "**/go.mod"
-  - "**/Gemfile"
-  - "**/Cargo.toml"
-  - "**/Dockerfile"
-  - "**/*.tf"
-  - "**/SKILL.md"
-  - "**/CLAUDE.md"
-  - "**/.env"
+# NOTE 2026-07-29 : le bloc `paths:` a ete retire. Mesure par experience controlee
+# (deux copies identiques du skill, seule difference le bloc paths) : sa presence rend
+# le skill INDECOUVRABLE — `/sentinel-security` renvoyait `Unknown command` en session
+# fraiche. Ne pas le reintroduire sans avoir reverifie ce comportement.
 ---
 
 # /sentinel-security — Sentinel Cybersecurity Audit
